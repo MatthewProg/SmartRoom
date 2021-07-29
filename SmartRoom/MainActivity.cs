@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -24,9 +25,6 @@ namespace SmartRoom
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-            FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            fab.Click += FabOnClick;
-
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -34,6 +32,10 @@ namespace SmartRoom
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            var mainTransaction = SupportFragmentManager.BeginTransaction();
+            mainTransaction.Add(Resource.Id.main_view, new Fragments.FragmentMain(), "Main");
+            mainTransaction.Commit();
         }
 
         public override void OnBackPressed()
@@ -58,7 +60,11 @@ namespace SmartRoom
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
+            if (id == Resource.Id.action_reconnect)
+            {
+                return true;
+            }
+            else if(id == Resource.Id.action_exit)
             {
                 return true;
             }
@@ -66,40 +72,27 @@ namespace SmartRoom
             return base.OnOptionsItemSelected(item);
         }
 
-        private void FabOnClick(object sender, EventArgs eventArgs)
-        {
-            View view = (View) sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
-        }
-
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
 
-            if (id == Resource.Id.nav_camera)
+            if (id == Resource.Id.nav_switches)
             {
-                // Handle the camera action
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(), "Switches");
+                transaction.Commit();
             }
-            else if (id == Resource.Id.nav_gallery)
+            else if (id == Resource.Id.nav_sensors)
             {
-
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSensors(), "Switches");
+                transaction.Commit();
             }
-            else if (id == Resource.Id.nav_slideshow)
+            else if (id == Resource.Id.nav_settings)
             {
-
-            }
-            else if (id == Resource.Id.nav_manage)
-            {
-
-            }
-            else if (id == Resource.Id.nav_share)
-            {
-
-            }
-            else if (id == Resource.Id.nav_send)
-            {
-
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(), "Switches");
+                transaction.Commit();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
