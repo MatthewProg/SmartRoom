@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="20dip"
+    android:paddingVertical="15dip">
+
+    <TextView 
+        android:id="@+id/popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="1"
+        android:textStyle="bold"
+        android:textSize="20dip" />
+    <TextView 
+        android:id="@+id/popup_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_title"
+        android:maxLines="1"
+        android:textStyle="normal"
+        android:textSize="14dip"/>
+    <EditText
+        android:id="@+id/popup_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_subtitle"
+        android:inputType="text" 
+        android:hint="Value" 
+        android:imeOptions="actionDone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/popup_value">
+        <Button
+            android:id="@+id/popup_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="2dip"
+            android:text="@android:string/cancel"/>
+        <Button
+            android:id="@+id/popup_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="2dip"
+            android:text="@android:string/ok"/>
+    </LinearLayout>
+</RelativeLayout>

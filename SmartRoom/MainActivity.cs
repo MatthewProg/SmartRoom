@@ -66,6 +66,8 @@ namespace SmartRoom
             }
             else if(id == Resource.Id.action_exit)
             {
+                this.FinishAffinity();
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
                 return true;
             }
 
