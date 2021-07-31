@@ -70,7 +70,7 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\SettingsAdapter.cs" />
+    <Compile Include="Adapters\ListCellAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
     <Compile Include="Fragments\FragmentSensors.cs" />
     <Compile Include="Fragments\FragmentSettings.cs" />
@@ -78,6 +78,8 @@
     <Compile Include="Fragments\FragmentValuePopup.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\ListCellModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -127,6 +129,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.2.0.5" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />

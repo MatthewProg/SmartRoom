@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -17,6 +18,7 @@ namespace SmartRoom
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private ViewModels.SettingsViewModel _settings;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -36,6 +38,9 @@ namespace SmartRoom
             var mainTransaction = SupportFragmentManager.BeginTransaction();
             mainTransaction.Add(Resource.Id.main_view, new Fragments.FragmentMain(), "Main");
             mainTransaction.Commit();
+
+            _settings = new ViewModels.SettingsViewModel();
+            Task.Run(async () => await _settings.LoadSettingsAsync());
         }
 
         public override void OnBackPressed()
@@ -93,7 +98,7 @@ namespace SmartRoom
             else if (id == Resource.Id.nav_settings)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(), "Switches");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(_settings.SettingsCollection), "Switches");
                 transaction.Commit();
             }
 

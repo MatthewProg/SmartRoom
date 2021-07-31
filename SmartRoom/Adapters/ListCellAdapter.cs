@@ -13,12 +13,12 @@ using System.Text;
 
 namespace SmartRoom.Adapters
 {
-    public class SettingsAdapter : BaseAdapter<Models.ListCellModel>
+    public class ListCellAdapter : BaseAdapter<Models.ListCellModel>
     {
         ObservableCollection<Models.ListCellModel> _settings;
         Activity _context;
 
-        public SettingsAdapter(Activity context, ObservableCollection<Models.ListCellModel> items)
+        public ListCellAdapter(Activity context, ObservableCollection<Models.ListCellModel> items)
         {
             _context = context;
             _settings = items;

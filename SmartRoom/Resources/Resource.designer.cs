@@ -4674,43 +4674,55 @@ namespace SmartRoom
 			public const int hide_bottom_view_on_scroll_behavior = 2131623976;
 			
 			// aapt resource value: 0x7F0E0029
-			public const int mtrl_chip_close_icon_content_description = 2131623977;
+			public const int input_address = 2131623977;
 			
 			// aapt resource value: 0x7F0E002A
-			public const int navigation_drawer_close = 2131623978;
+			public const int input_empty = 2131623978;
 			
 			// aapt resource value: 0x7F0E002B
-			public const int navigation_drawer_open = 2131623979;
+			public const int input_pins = 2131623979;
 			
 			// aapt resource value: 0x7F0E002C
-			public const int navigation_sensors = 2131623980;
+			public const int input_port = 2131623980;
 			
 			// aapt resource value: 0x7F0E002D
-			public const int navigation_settings = 2131623981;
+			public const int mtrl_chip_close_icon_content_description = 2131623981;
 			
 			// aapt resource value: 0x7F0E002E
-			public const int navigation_switches = 2131623982;
+			public const int navigation_drawer_close = 2131623982;
 			
 			// aapt resource value: 0x7F0E002F
-			public const int password_toggle_content_description = 2131623983;
+			public const int navigation_drawer_open = 2131623983;
 			
 			// aapt resource value: 0x7F0E0030
-			public const int path_password_eye = 2131623984;
+			public const int navigation_sensors = 2131623984;
 			
 			// aapt resource value: 0x7F0E0031
-			public const int path_password_eye_mask_strike_through = 2131623985;
+			public const int navigation_settings = 2131623985;
 			
 			// aapt resource value: 0x7F0E0032
-			public const int path_password_eye_mask_visible = 2131623986;
+			public const int navigation_switches = 2131623986;
 			
 			// aapt resource value: 0x7F0E0033
-			public const int path_password_strike_through = 2131623987;
+			public const int password_toggle_content_description = 2131623987;
 			
 			// aapt resource value: 0x7F0E0034
-			public const int search_menu_title = 2131623988;
+			public const int path_password_eye = 2131623988;
 			
 			// aapt resource value: 0x7F0E0035
-			public const int status_bar_notification_info_overflow = 2131623989;
+			public const int path_password_eye_mask_strike_through = 2131623989;
+			
+			// aapt resource value: 0x7F0E0036
+			public const int path_password_eye_mask_visible = 2131623990;
+			
+			// aapt resource value: 0x7F0E0037
+			public const int path_password_strike_through = 2131623991;
+			
+			// aapt resource value: 0x7F0E0038
+			public const int search_menu_title = 2131623992;
+			
+			// aapt resource value: 0x7F0E0039
+			public const int status_bar_notification_info_overflow = 2131623993;
 			
 			static String()
 			{
