@@ -79,6 +79,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\ColorModel.cs" />
     <Compile Include="Models\ColorSwitchModel.cs" />
+    <Compile Include="Models\ColorTypes.cs" />
     <Compile Include="Models\ListCellModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\SliderSwitchModel.cs" />

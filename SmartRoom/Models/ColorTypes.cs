@@ -38,9 +38,9 @@ namespace SmartRoom.Models.ColorTypes
             V = v;
         }
 
-        public float H { get => _h; set => _h = Math.Clamp(value, 0F, 360F); }
-        public float S { get => _s; set => _s = Math.Clamp(value, 0F, 1F); }
-        public float V { get => _v; set => _v = Math.Clamp(value, 0F, 1F); }
+        public float H { get => _h; set => _h = Math.Max(0F, Math.Min(value, 360F)); }
+        public float S { get => _s; set => _s = Math.Max(0F, Math.Min(value, 1F)); }
+        public float V { get => _v; set => _v = Math.Max(0F, Math.Min(value, 1F)); }
     }
 
     public struct HSL
@@ -56,8 +56,8 @@ namespace SmartRoom.Models.ColorTypes
             L = l;
         }
 
-        public float H { get => _h; set => _h = Math.Clamp(value, 0F, 360F); }
-        public float S { get => _s; set => _s = Math.Clamp(value, 0F, 1F); }
-        public float L { get => _l; set => _l = Math.Clamp(value, 0F, 1F); }
+        public float H { get => _h; set => _h = Math.Max(0F, Math.Min(value, 360F)); }
+        public float S { get => _s; set => _s = Math.Max(0F, Math.Min(value, 1F)); }
+        public float L { get => _l; set => _l = Math.Max(0F, Math.Min(value, 1F)); }
     }
 }
