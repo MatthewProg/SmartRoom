@@ -77,8 +77,13 @@
     <Compile Include="Fragments\FragmentSwitches.cs" />
     <Compile Include="Fragments\FragmentValuePopup.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Models\ColorModel.cs" />
+    <Compile Include="Models\ColorSwitchModel.cs" />
     <Compile Include="Models\ListCellModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
+    <Compile Include="Models\SliderSwitchModel.cs" />
+    <Compile Include="Models\SwitchModel.cs" />
+    <Compile Include="Models\ToggleSwitchModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
