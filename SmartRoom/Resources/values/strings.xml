@@ -10,8 +10,18 @@
     <string name="fab_switch">Switch</string>
     <string name="fab_slider">Slider</string>
     <string name="fab_rgb">RGB</string>
+    <string name="input_wrong">Wrong value</string>
     <string name="input_empty">Input value cannot be empty</string>
     <string name="input_address">Input value should be valid address</string>
     <string name="input_port">Input value should be in range 1-65535</string>
     <string name="input_pins">Pin numbers should be separeted with a coma</string>
+    <string name="popup_title_switch">Edit switch</string>
+    <string name="popup_title_slider">Edit slider</string>
+    <string name="popup_title_rgb">Edit RGB</string>
+    <string name="button_save">Save</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="text_title">Title</string>
+    <string name="text_value">Value</string>
+    <string name="text_toggle_pin">Toggle pin</string>
 </resources>

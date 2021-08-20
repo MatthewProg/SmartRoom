@@ -6,7 +6,7 @@
     android:paddingVertical="15dip">
 
     <TextView 
-        android:id="@+id/popup_title"
+        android:id="@+id/popup_value_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -14,41 +14,41 @@
         android:textStyle="bold"
         android:textSize="20dip" />
     <TextView 
-        android:id="@+id/popup_subtitle"
+        android:id="@+id/popup_value_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/popup_title"
+        android:layout_below="@id/popup_value_title"
         android:maxLines="1"
         android:textStyle="normal"
         android:textSize="14dip"/>
     <EditText
-        android:id="@+id/popup_value"
+        android:id="@+id/popup_value_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/popup_subtitle"
+        android:layout_below="@id/popup_value_subtitle"
         android:inputType="text" 
-        android:hint="Value" 
+        android:hint="@string/text_value" 
         android:imeOptions="actionDone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/popup_value">
+        android:layout_below="@id/popup_value_value">
         <Button
-            android:id="@+id/popup_cancel"
+            android:id="@+id/popup_value_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:layout_weight="1"
             android:layout_marginHorizontal="2dip"
-            android:text="@android:string/cancel"/>
+            android:text="@string/button_cancel"/>
         <Button
-            android:id="@+id/popup_ok"
+            android:id="@+id/popup_value_ok"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:layout_weight="1"
             android:layout_marginHorizontal="2dip"
-            android:text="@android:string/ok"/>
+            android:text="@string/button_ok"/>
     </LinearLayout>
 </RelativeLayout>

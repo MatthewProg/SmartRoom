@@ -100,7 +100,7 @@ namespace SmartRoom.Fragments
             var s = sender as FloatingActionButton;
 
             DialogFragment popup = null;
-            //if (s.Id == Resource.Id.fab_add_switch) popup = new FragmentSwitchPopup();
+            if (s.Id == Resource.Id.fab_add_switch) popup = new FragmentPopupSwitch();
             //else if (s.Id == Resource.Id.fab_add_slider) popup = new FragmentSliderPopup();
             //else if (s.Id == Resource.Id.fab_add_rgb) popup = new FragmentRgbPopup();
 

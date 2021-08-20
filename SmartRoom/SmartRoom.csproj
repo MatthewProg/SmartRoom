@@ -73,11 +73,12 @@
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
+    <Compile Include="Fragments\FragmentPopupSwitch.cs" />
     <Compile Include="Fragments\FragmentSensors.cs" />
     <Compile Include="Fragments\FragmentSettings.cs" />
     <Compile Include="Fragments\FragmentSwitches.cs" />
     <Compile Include="Fragments\FragmentSwitchesFabMenu.cs" />
-    <Compile Include="Fragments\FragmentValuePopup.cs" />
+    <Compile Include="Fragments\FragmentPopupValue.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\ColorModel.cs" />
     <Compile Include="Models\ColorSwitchModel.cs" />
@@ -212,6 +213,9 @@
     <AndroidResource Include="Resources\layout\switches_fab_menu.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_toggle.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

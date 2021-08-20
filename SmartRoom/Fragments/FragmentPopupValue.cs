@@ -15,12 +15,12 @@ using System.Text.RegularExpressions;
 
 namespace SmartRoom.Fragments
 {
-    public class FragmentValuePopup : DialogFragment
+    public class FragmentPopupValue : DialogFragment
     {
         private Models.ListCellModel _model;
         private InputMethodManager _imm;
 
-        public FragmentValuePopup(ListCellModel model)
+        public FragmentPopupValue(ListCellModel model)
         {
             _model = model;
         }
@@ -38,17 +38,17 @@ namespace SmartRoom.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var v = inflater.Inflate(Resource.Layout.popup_value, container, false);
-            var editText = v.FindViewById<EditText>(Resource.Id.popup_value);
+            var editText = v.FindViewById<EditText>(Resource.Id.popup_value_value);
             if (_model != null)
             {
-                v.FindViewById<TextView>(Resource.Id.popup_title).Text = _model.Title;
-                v.FindViewById<TextView>(Resource.Id.popup_subtitle).Text = _model.Description;
+                v.FindViewById<TextView>(Resource.Id.popup_value_title).Text = _model.Title;
+                v.FindViewById<TextView>(Resource.Id.popup_value_subtitle).Text = _model.Description;
                 editText.Text = _model.Value;
                 editText.InputType = _model.InputType;
                 editText.ShowSoftInputOnFocus = true;
             }
-            v.FindViewById<Button>(Resource.Id.popup_cancel).Click += ButtonCancelClick;
-            v.FindViewById<Button>(Resource.Id.popup_ok).Click += ButtonOkClick;
+            v.FindViewById<Button>(Resource.Id.popup_value_cancel).Click += ButtonCancelClick;
+            v.FindViewById<Button>(Resource.Id.popup_value_ok).Click += ButtonOkClick;
             editText.EditorAction += EditTextConfirm;
             editText.RequestFocus();
 
@@ -60,12 +60,12 @@ namespace SmartRoom.Fragments
 
         private void EditTextConfirm(object sender, TextView.EditorActionEventArgs e)
         {
-            ((EditText)sender).RootView.FindViewById<Button>(Resource.Id.popup_ok).PerformClick();
+            ((EditText)sender).RootView.FindViewById<Button>(Resource.Id.popup_value_ok).PerformClick();
         }
 
         private void ButtonOkClick(object sender, EventArgs e)
         {
-            var val = ((Button)sender).RootView.FindViewById<EditText>(Resource.Id.popup_value);
+            var val = ((Button)sender).RootView.FindViewById<EditText>(Resource.Id.popup_value_value);
             if (ValidateEditText(val))
             {
                 _model.Value = val.Text;

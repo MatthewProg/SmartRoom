@@ -16,7 +16,7 @@ namespace SmartRoom.Fragments
     public class FragmentSettings : Fragment
     {
         private ObservableCollection<Models.ListCellModel> _settings;
-        private FragmentValuePopup _popup;
+        private FragmentPopupValue _popup;
 
         public FragmentSettings(ObservableCollection<Models.ListCellModel> settings)
         {
@@ -41,7 +41,7 @@ namespace SmartRoom.Fragments
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             var element = _settings[e.Position];
-            _popup = new FragmentValuePopup(element);
+            _popup = new FragmentPopupValue(element);
             _popup.Show(Activity.SupportFragmentManager, "PopupSettings");
         }
     }
