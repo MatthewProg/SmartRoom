@@ -17,27 +17,36 @@ namespace SmartRoom.Fragments
 {
     public class FragmentSwitches : Fragment
     {
+        private DialogFragment _popup;
+
+        public FragmentSwitches()
+        {
+            _popup = null;
+        }
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-        }
-
-        private void Fab_Click(object sender, EventArgs e)
-        {
-            View view = (View)sender;
-            Snackbar.Make(view, "Add switches", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.content_switches, container, false);
 
-            var fab = view.FindViewById<FloatingActionButton>(Resource.Id.fab_switches);
-            if (fab != null)
-                fab.Click += Fab_Click;
+            var fabMenu = new Fragments.FragmentSwitchesFabMenu();
+            fabMenu.ShowDialog += FabMenu_ShowDialog;
+
+            var transaction = Activity.SupportFragmentManager.BeginTransaction();
+            transaction.Add(Resource.Id.frame_switches_fab, fabMenu, "FabMenu");
+            transaction.Commit();
 
             return view;
+        }
+
+        private void FabMenu_ShowDialog(object sender, EventArgs e)
+        {
+            _popup = sender as DialogFragment;
+            _popup?.Show(Activity.SupportFragmentManager, "PopupAddSwitch");
         }
     }
 }

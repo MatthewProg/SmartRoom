@@ -1,0 +1,110 @@
+﻿<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/layout_fab_switch"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_menu_margin"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="4dp"
+            android:textStyle="bold"
+            android:text="@string/fab_switch"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_switch"
+            app:fabSize="mini"
+            app:borderWidth="0dp"
+            app:elevation="3dp"
+            android:layout_margin="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tint="@color/foreground_material_dark" 
+            app:srcCompat="@drawable/ic_electric_switch" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_fab_slider"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_menu_margin"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="4dp"
+            android:textStyle="bold"
+            android:text="@string/fab_slider"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_slider"
+            app:fabSize="mini"
+            app:borderWidth="0dp"
+            app:elevation="3dp"
+            android:layout_margin="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tint="@color/foreground_material_dark"
+            app:srcCompat="@drawable/ic_slider" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_fab_rgb"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_menu_margin"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="4dp"
+            android:textStyle="bold"
+            android:text="@string/fab_rgb"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add_rgb"
+            app:fabSize="mini"
+            app:borderWidth="0dp"
+            app:elevation="3dp"
+            android:layout_margin="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tint="@color/foreground_material_dark"
+            app:srcCompat="@drawable/ic_led" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_switches"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:tint="@color/foreground_material_dark"
+        app:srcCompat="@drawable/ic_add" />
+
+</RelativeLayout>
