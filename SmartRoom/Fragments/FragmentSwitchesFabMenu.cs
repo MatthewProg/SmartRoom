@@ -101,8 +101,8 @@ namespace SmartRoom.Fragments
 
             DialogFragment popup = null;
             if (s.Id == Resource.Id.fab_add_switch) popup = new FragmentPopupSwitch();
-            //else if (s.Id == Resource.Id.fab_add_slider) popup = new FragmentSliderPopup();
-            //else if (s.Id == Resource.Id.fab_add_rgb) popup = new FragmentRgbPopup();
+            else if (s.Id == Resource.Id.fab_add_slider) popup = new FragmentPopupSlider();
+            else if (s.Id == Resource.Id.fab_add_rgb) popup = new FragmentPopupRgb();
 
             if (popup != null)
             {

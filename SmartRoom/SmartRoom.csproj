@@ -73,6 +73,8 @@
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
+    <Compile Include="Fragments\FragmentPopupRgb.cs" />
+    <Compile Include="Fragments\FragmentPopupSlider.cs" />
     <Compile Include="Fragments\FragmentPopupSwitch.cs" />
     <Compile Include="Fragments\FragmentSensors.cs" />
     <Compile Include="Fragments\FragmentSettings.cs" />
@@ -216,6 +218,18 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\popup_toggle.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_slider.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_rgb.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

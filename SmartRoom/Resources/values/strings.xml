@@ -23,5 +23,9 @@
     <string name="button_cancel">Cancel</string>
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
-    <string name="text_toggle_pin">Toggle pin</string>
+    <string name="text_output_pin">Output pin</string>
+    <string name="text_input_pin">Input pin</string>
+    <string name="text_rgb_r_pin">Red pin</string>
+    <string name="text_rgb_g_pin">Green pin</string>
+    <string name="text_rgb_b_pin">Blue pin</string>
 </resources>

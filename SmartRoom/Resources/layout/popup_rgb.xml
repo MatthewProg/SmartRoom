@@ -6,17 +6,17 @@
     android:paddingVertical="15dip">
 
     <TextView
-        android:id="@+id/popup_toggle_name"
+        android:id="@+id/popup_rgb_name"
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/popup_title_switch"
+        android:text="@string/popup_title_rgb"
         android:textStyle="bold"
         android:textSize="22dp"
         android:padding="2dp"/>
     <EditText
-        android:id="@+id/popup_toggle_title"
-        android:layout_below="@id/popup_toggle_name"
+        android:id="@+id/popup_rgb_title"
+        android:layout_below="@id/popup_rgb_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"     
         android:inputType="textAutoCorrect" 
@@ -24,23 +24,68 @@
         android:textSize="18dp"
         android:imeOptions="actionDone"/>
     <LinearLayout
-        android:id="@+id/popup_toggle_layout_settings"
+        android:id="@+id/popup_rgb_layout_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginLeft="3dp"
-        android:layout_below="@id/popup_toggle_title">
+        android:layout_below="@id/popup_rgb_title">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_output_pin"
+                android:text="@string/text_rgb_r_pin"
                 android:textSize="16dp"/>
             <EditText
-                android:id="@+id/popup_toggle_pin"
+                android:id="@+id/popup_rgb_r_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:minEms="2"
+                android:layout_marginLeft="3dp"
+                android:inputType="textCapCharacters"
+                android:paddingLeft="5dp"
+                android:textSize="16dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_rgb_g_pin"
+                android:textSize="16dp"/>
+            <EditText
+                android:id="@+id/popup_rgb_g_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:minEms="2"
+                android:layout_marginLeft="3dp"
+                android:inputType="textCapCharacters"
+                android:paddingLeft="5dp"
+                android:textSize="16dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_rgb_b_pin"
+                android:textSize="16dp"/>
+            <EditText
+                android:id="@+id/popup_rgb_b_pin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -56,9 +101,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/popup_toggle_layout_settings">
+        android:layout_below="@id/popup_rgb_layout_settings">
         <Button
-            android:id="@+id/popup_toggle_cancel"
+            android:id="@+id/popup_rgb_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
@@ -66,7 +111,7 @@
             android:layout_marginHorizontal="2dip"
             android:text="@string/button_cancel"/>
         <Button
-            android:id="@+id/popup_toggle_save"
+            android:id="@+id/popup_rgb_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
