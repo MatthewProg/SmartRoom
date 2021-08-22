@@ -15,18 +15,17 @@ using System.Text.RegularExpressions;
 
 namespace SmartRoom.Fragments
 {
-    public class FragmentPopupSwitch : DialogFragment
+    public class FragmentPopupSwitch : Extensions.Popup
     {
         private ToggleSwitchModel _model;
+        private Events.PopupEventArgs _args;
 
-        public FragmentPopupSwitch()
-        {
-            _model = new ToggleSwitchModel();
-        }
+        public FragmentPopupSwitch() : this(new ToggleSwitchModel()) { ; }
 
         public FragmentPopupSwitch(ToggleSwitchModel model)
         {
             _model = model;
+            _args = new Events.PopupEventArgs();
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -47,6 +46,11 @@ namespace SmartRoom.Fragments
             return view;
         }
 
+        public override void OnDismiss(IDialogInterface dialog)
+        {
+            base.OnPopupClose(this, _args);
+        }
+
         private void CancelClick(object sender, EventArgs e)
         {
             Dialog.Dismiss();
@@ -60,6 +64,7 @@ namespace SmartRoom.Fragments
             {
                 _model.Pin = val.FindViewById<EditText>(Resource.Id.popup_toggle_pin).Text.Trim().ToUpper();
                 _model.Title = val.FindViewById<EditText>(Resource.Id.popup_toggle_title).Text;
+                _args = new Events.PopupEventArgs(true, _model);
                 Dialog.Dismiss();
                 Dialog.Hide();
             }

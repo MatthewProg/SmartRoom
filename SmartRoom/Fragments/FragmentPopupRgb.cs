@@ -15,18 +15,17 @@ using System.Text.RegularExpressions;
 
 namespace SmartRoom.Fragments
 {
-    public class FragmentPopupRgb : DialogFragment
+    public class FragmentPopupRgb : Extensions.Popup
     {
         private ColorSwitchModel _model;
+        private Events.PopupEventArgs _args;
 
-        public FragmentPopupRgb()
-        {
-            _model = new ColorSwitchModel();
-        }
+        public FragmentPopupRgb() : this(new ColorSwitchModel()) { ; }
 
         public FragmentPopupRgb(ColorSwitchModel model)
         {
             _model = model;
+            _args = new Events.PopupEventArgs();
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -49,6 +48,11 @@ namespace SmartRoom.Fragments
             return view;
         }
 
+        public override void OnDismiss(IDialogInterface dialog)
+        {
+            base.OnPopupClose(this, _args);
+        }
+
         private void CancelClick(object sender, EventArgs e)
         {
             Dialog.Dismiss();
@@ -64,6 +68,7 @@ namespace SmartRoom.Fragments
                 _model.GreenPin = val.FindViewById<EditText>(Resource.Id.popup_rgb_g_pin).Text.Trim().ToUpper();
                 _model.BluePin = val.FindViewById<EditText>(Resource.Id.popup_rgb_b_pin).Text.Trim().ToUpper();
                 _model.Title = val.FindViewById<EditText>(Resource.Id.popup_rgb_title).Text;
+                _args = new Events.PopupEventArgs(true, _model);
                 Dialog.Dismiss();
                 Dialog.Hide();
             }

@@ -15,14 +15,16 @@ using System.Text.RegularExpressions;
 
 namespace SmartRoom.Fragments
 {
-    public class FragmentPopupValue : DialogFragment
+    public class FragmentPopupValue : Extensions.Popup
     {
         private Models.ListCellModel _model;
+        private Events.PopupEventArgs _args;
         private InputMethodManager _imm;
 
         public FragmentPopupValue(ListCellModel model)
         {
             _model = model;
+            _args = new Events.PopupEventArgs();
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -33,6 +35,7 @@ namespace SmartRoom.Fragments
         public override void OnDismiss(IDialogInterface dialog)
         {
             _imm.ToggleSoftInput(ShowFlags.Implicit, HideSoftInputFlags.None);
+            base.OnPopupClose(this, _args);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -69,6 +72,7 @@ namespace SmartRoom.Fragments
             if (ValidateEditText(val))
             {
                 _model.Value = val.Text;
+                _args = new Events.PopupEventArgs(true, _model);
                 Dialog.Dismiss();
                 Dialog.Hide();
             }
