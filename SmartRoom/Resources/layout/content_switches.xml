@@ -8,10 +8,16 @@
     tools:showIn="@layout/app_bar_main">
 
     <TextView
+        android:id="@+id/switches_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/navigation_switches" />
+
+    <ListView
+        android:id="@+id/switches_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/frame_switches_fab"

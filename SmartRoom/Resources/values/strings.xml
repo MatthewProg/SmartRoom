@@ -28,4 +28,6 @@
     <string name="text_rgb_r_pin">Red pin</string>
     <string name="text_rgb_g_pin">Green pin</string>
     <string name="text_rgb_b_pin">Blue pin</string>
+    <string name="accessibility_delete">Delete</string>
+    <string name="accessibility_edit">Edit</string>
 </resources>

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/list_item_switches_toggle_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="clip_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@android:string/untitled"
+            android:textStyle="bold"
+            android:autoSizeMaxTextSize="24dp"
+            android:autoSizeMinTextSize="14dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="2dp"
+            android:textSize="24dp"
+            android:maxLines="1"/>
+        <ImageButton
+            android:id="@+id/list_item_switches_toggle_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_weight="1"
+            android:contentDescription="@string/accessibility_edit"
+            android:src="@drawable/ic_edit"
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="4dp"
+            android:background="@android:color/transparent"
+            android:tint="@color/button_material_dark" />
+        <ImageButton
+            android:id="@+id/list_item_switches_toggle_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_weight="1"
+            android:contentDescription="@string/accessibility_delete"
+            android:src="@drawable/ic_trash"
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="4dp"
+            android:background="@android:color/transparent"
+            android:tint="@color/button_material_dark" />
+    </LinearLayout>
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/list_item_switches_toggle_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+</LinearLayout>

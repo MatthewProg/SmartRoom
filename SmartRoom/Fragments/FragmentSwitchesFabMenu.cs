@@ -33,7 +33,7 @@ namespace SmartRoom.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.switches_fab_menu, container, false);
-            view.Click += View_Click;
+            //view.Click += View_Click; //UNUSED, EVENT BLOCKS CLICKS PASSING
 
             var fab = view.FindViewById<FloatingActionButton>(Resource.Id.fab_switches);
             var fabAddSwitch = view.FindViewById<FloatingActionButton>(Resource.Id.fab_add_switch);
@@ -99,7 +99,7 @@ namespace SmartRoom.Fragments
         {
             var s = sender as FloatingActionButton;
 
-            DialogFragment popup = null;
+            Extensions.Popup popup = null;
             if (s.Id == Resource.Id.fab_add_switch) popup = new FragmentPopupSwitch();
             else if (s.Id == Resource.Id.fab_add_slider) popup = new FragmentPopupSlider();
             else if (s.Id == Resource.Id.fab_add_rgb) popup = new FragmentPopupRgb();
