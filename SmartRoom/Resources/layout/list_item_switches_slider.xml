@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/list_item_switches_toggle_title"
+            android:id="@+id/list_item_switches_slider_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="clip_horizontal|center_vertical"
@@ -25,7 +25,7 @@
             android:textSize="24dp"
             android:maxLines="1"/>
         <ImageButton
-            android:id="@+id/list_item_switches_toggle_edit"
+            android:id="@+id/list_item_switches_slider_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
@@ -37,7 +37,7 @@
             android:background="@android:color/transparent"
             android:tint="@color/button_material_dark" />
         <ImageButton
-            android:id="@+id/list_item_switches_toggle_delete"
+            android:id="@+id/list_item_switches_slider_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
@@ -49,9 +49,34 @@
             android:background="@android:color/transparent"
             android:tint="@color/button_material_dark" />
     </LinearLayout>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/list_item_switches_toggle_switch"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0%"
+            android:textSize="14dp"
+            android:layout_gravity="center_vertical|left"/>
+        <SeekBar
+            android:id="@+id/list_item_switches_slider_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:min="0"
+            android:max="100"
+            android:progress="0"
+            android:layout_weight="1"
+            android:layout_gravity="fill_horizontal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="100%"
+            android:textSize="14dp"
+            android:layout_gravity="center_vertical|right"/>
+    </LinearLayout>
 </LinearLayout>

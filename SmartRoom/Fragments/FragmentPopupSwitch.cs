@@ -63,7 +63,7 @@ namespace SmartRoom.Fragments
             if (ValidateView(val))
             {
                 _model.Pin = val.FindViewById<EditText>(Resource.Id.popup_toggle_pin).Text.Trim().ToUpper();
-                _model.Title = val.FindViewById<EditText>(Resource.Id.popup_toggle_title).Text;
+                _model.Title = val.FindViewById<EditText>(Resource.Id.popup_toggle_title).Text.Trim();
                 _args = new Events.PopupEventArgs(true, _model);
                 Dialog.Dismiss();
                 Dialog.Hide();

@@ -28,9 +28,23 @@ namespace SmartRoom.Fragments
             {
                 new Models.ToggleSwitchModel()
                 {
-                    Title = "Test1",
+                    Title = "Test toggle",
                     Pin = "D10",
                     Toggle = false
+                },
+                new Models.SliderSwitchModel()
+                {
+                    Title = "Test slider",
+                    Pin = "D6",
+                    Value = 0.5f
+                },
+                new Models.ColorSwitchModel()
+                {
+                    Title = "Test RGB",
+                    RedPin = "D1",
+                    GreenPin = "D2",
+                    BluePin = "D3",
+                    Color = new Models.ColorModel(255,0,0)
                 }
             };
         }

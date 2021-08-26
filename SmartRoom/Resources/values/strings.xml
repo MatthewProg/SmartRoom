@@ -21,6 +21,7 @@
     <string name="button_save">Save</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="text_untitled">&lt;Untitled&gt;</string>
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
     <string name="text_output_pin">Output pin</string>

@@ -67,7 +67,7 @@ namespace SmartRoom.Fragments
                 _model.RedPin = val.FindViewById<EditText>(Resource.Id.popup_rgb_r_pin).Text.Trim().ToUpper();
                 _model.GreenPin = val.FindViewById<EditText>(Resource.Id.popup_rgb_g_pin).Text.Trim().ToUpper();
                 _model.BluePin = val.FindViewById<EditText>(Resource.Id.popup_rgb_b_pin).Text.Trim().ToUpper();
-                _model.Title = val.FindViewById<EditText>(Resource.Id.popup_rgb_title).Text;
+                _model.Title = val.FindViewById<EditText>(Resource.Id.popup_rgb_title).Text.Trim();
                 _args = new Events.PopupEventArgs(true, _model);
                 Dialog.Dismiss();
                 Dialog.Hide();

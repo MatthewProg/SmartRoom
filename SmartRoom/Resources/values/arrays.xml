@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <array name="hueColors">
+    <item>#ff0000</item>
+    <item>#ffff00</item>
+    <item>#00ff00</item>
+    <item>#00ffff</item>
+    <item>#0000ff</item>
+    <item>#ff00ff</item>
+    <item>#ff0000</item>
+  </array>
+</resources>

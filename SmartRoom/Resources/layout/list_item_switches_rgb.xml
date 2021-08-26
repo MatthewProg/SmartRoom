@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/list_item_switches_toggle_title"
+            android:id="@+id/list_item_switches_rgb_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="clip_horizontal|center_vertical"
@@ -25,7 +26,7 @@
             android:textSize="24dp"
             android:maxLines="1"/>
         <ImageButton
-            android:id="@+id/list_item_switches_toggle_edit"
+            android:id="@+id/list_item_switches_rgb_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
@@ -37,7 +38,7 @@
             android:background="@android:color/transparent"
             android:tint="@color/button_material_dark" />
         <ImageButton
-            android:id="@+id/list_item_switches_toggle_delete"
+            android:id="@+id/list_item_switches_rgb_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
@@ -49,9 +50,13 @@
             android:background="@android:color/transparent"
             android:tint="@color/button_material_dark" />
     </LinearLayout>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/list_item_switches_toggle_switch"
-        android:layout_width="wrap_content"
+    <com.rtugeek.android.colorseekbar.ColorSeekBar
+        android:id="@+id/list_item_switches_rgb_slider"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        app:barHeight="5dp"
+        app:thumbHeight="25dp"
+        app:maxPosition="360"
+        android:paddingHorizontal="2dp"
+        app:showAlphaBar="true"/>
 </LinearLayout>
