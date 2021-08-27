@@ -20,33 +20,19 @@ namespace SmartRoom.Fragments
     {
         private Extensions.Popup _popup;
         private ObservableCollection<Models.SwitchModel> _switches;
+        private View _view;
 
-        public FragmentSwitches()
+        public FragmentSwitches(ObservableCollection<Models.SwitchModel> switches)
         {
             _popup = null;
-            _switches = new ObservableCollection<Models.SwitchModel>() //TMP, ONLY FOR TESTS
-            {
-                new Models.ToggleSwitchModel()
-                {
-                    Title = "Test toggle",
-                    Pin = "D10",
-                    Toggle = false
-                },
-                new Models.SliderSwitchModel()
-                {
-                    Title = "Test slider",
-                    Pin = "D6",
-                    Value = 0.5f
-                },
-                new Models.ColorSwitchModel()
-                {
-                    Title = "Test RGB",
-                    RedPin = "D1",
-                    GreenPin = "D2",
-                    BluePin = "D3",
-                    Color = new Models.ColorModel(255,0,0)
-                }
-            };
+            _view = null;
+            _switches = switches;
+            _switches.CollectionChanged += SwitchesChanged;
+        }
+
+        private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateTitleVisibility(_view);
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -56,13 +42,13 @@ namespace SmartRoom.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.content_switches, container, false);
+            _view = inflater.Inflate(Resource.Layout.content_switches, container, false);
 
-            UpdateTitleVisibility(view);
+            UpdateTitleVisibility(_view);
 
             var adapter = new Adapters.SwitchesAdapter(Activity, _switches);
             adapter.EditClickEvent += ListViewItemEdit;
-            view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
+            _view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
 
             var fabMenu = new Fragments.FragmentSwitchesFabMenu();
             fabMenu.ShowDialog += FabMenu_ShowDialog;
@@ -71,7 +57,7 @@ namespace SmartRoom.Fragments
             transaction.Add(Resource.Id.frame_switches_fab, fabMenu, "FabMenu");
             transaction.Commit();
 
-            return view;
+            return _view;
         }
 
         private void ListViewItemEdit(object sender, EventArgs e)

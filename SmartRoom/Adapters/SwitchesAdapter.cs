@@ -44,18 +44,25 @@ namespace SmartRoom.Adapters
             if (item is Models.ToggleSwitchModel)
             {
                 var e = item as Models.ToggleSwitchModel;
+
                 view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_toggle, null);
+                var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
+                
                 view.FindViewById<TextView>(Resource.Id.list_item_switches_toggle_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch).Checked = e.Toggle;
+                toggle.Checked = e.Toggle;
+                toggle.CheckedChange += delegate { Toggle_CheckedChange(e, new CompoundButton.CheckedChangeEventArgs(toggle.Checked)); };
                 view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_edit).Click += delegate { EditClick(e, null); };
                 view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_delete).Click += delegate { DeleteClick(e, null); };
             }
             else if(item is Models.SliderSwitchModel)
             {
                 var e = item as Models.SliderSwitchModel;
+
                 view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_slider, null);
+                var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
                 view.FindViewById<TextView>(Resource.Id.list_item_switches_slider_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value).Progress = (int)Math.Round(e.Value * 100f);
+                slider.Progress = (int)Math.Round(e.Value * 100f);
+                slider.ProgressChanged += delegate { Slider_ProgressChanged(e, new SeekBar.ProgressChangedEventArgs(slider, slider.Progress, true)); };
                 view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_edit).Click += delegate { EditClick(e, null); };
                 view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_delete).Click += delegate { DeleteClick(e, null); };
             }
@@ -70,7 +77,7 @@ namespace SmartRoom.Adapters
                 slider.SetColorSeeds(Resource.Array.hueColors);
                 slider.ColorBarPosition = (int)Math.Round(hsv.H);
                 slider.AlphaMaxPosition = 100;
-                slider.AlphaBarPosition = 100 -(int)Math.Round(hsv.V * 100f);
+                slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
                 slider.ColorChange += delegate { SliderColorChange(e, slider); };
                 view.FindViewById<TextView>(Resource.Id.list_item_switches_rgb_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
                 view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_edit).Click += delegate { EditClick(e, null); };
@@ -79,6 +86,17 @@ namespace SmartRoom.Adapters
             }
             return view;
         }
+
+        private void Toggle_CheckedChange(Models.ToggleSwitchModel model, CompoundButton.CheckedChangeEventArgs e)
+        {
+            model.Toggle = e.IsChecked;
+        }
+
+        private void Slider_ProgressChanged(Models.SliderSwitchModel model, SeekBar.ProgressChangedEventArgs e)
+        {
+            model.Value = (float)e.Progress / 100f;
+        }
+
 
         private void SliderColorChange(Models.ColorSwitchModel model, Rtugeek.ColorSeekBarLib.ColorSeekBar slider)
         {

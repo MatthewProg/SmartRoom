@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,7 @@ namespace SmartRoom.Models
         private bool _toggle;
         private string _pin;
 
+        [JsonIgnore]
         public bool Toggle
         {
             get => _toggle;

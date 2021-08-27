@@ -19,6 +19,7 @@ namespace SmartRoom
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private ViewModels.SettingsViewModel _settings;
+        private ViewModels.SwitchesViewModel _switches;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -40,7 +41,9 @@ namespace SmartRoom
             mainTransaction.Commit();
 
             _settings = new ViewModels.SettingsViewModel();
+            _switches = new ViewModels.SwitchesViewModel();
             Task.Run(async () => await _settings.LoadSettingsAsync());
+            Task.Run(async () => await _switches.LoadSwitchesAsync());
         }
 
         public override void OnBackPressed()
@@ -86,7 +89,7 @@ namespace SmartRoom
             if (id == Resource.Id.nav_switches)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(), "Switches");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_switches.SwitchesCollection), "Switches");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)
