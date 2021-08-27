@@ -78,11 +78,17 @@ namespace SmartRoom.Fragments
                 pin.Error = Resources.GetString(Resource.String.input_empty);
                 return false;
             }
-            if (Regex.IsMatch(pin.Text, @"^(([ADad]\d+)|(\d+))$") == false)
+            else if (Regex.IsMatch(pin.Text, @"^(([ADad]\d+)|(\d+))$") == false)
             {
                 pin.Error = Resources.GetString(Resource.String.input_wrong);
                 return false;
             }
+            else if (ViewModels.SettingsViewModel.Settings.Pins.Split(',').Contains(pin.Text))
+            {
+                pin.Error = Resources.GetString(Resource.String.input_pin_restricted);
+                return false;
+            }
+
             return true;
         }
     }

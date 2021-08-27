@@ -44,8 +44,8 @@ namespace SmartRoom.Fragments
             var editText = v.FindViewById<EditText>(Resource.Id.popup_value_value);
             if (_model != null)
             {
-                v.FindViewById<TextView>(Resource.Id.popup_value_title).Text = _model.Title;
-                v.FindViewById<TextView>(Resource.Id.popup_value_subtitle).Text = _model.Description;
+                v.FindViewById<TextView>(Resource.Id.popup_value_title).Text = Context.GetString(_model.Title);
+                v.FindViewById<TextView>(Resource.Id.popup_value_subtitle).Text = Context.GetString(_model.Description);
                 editText.Text = _model.Value;
                 editText.InputType = _model.InputType;
                 editText.ShowSoftInputOnFocus = true;

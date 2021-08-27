@@ -20,20 +20,20 @@ namespace SmartRoom.ViewModels
     public class SettingsViewModel
     {
         public ObservableCollection<Models.ListCellModel> SettingsCollection { get; private set; }
-        public Models.SettingsModel Settings { get; set; }
+        public static Models.SettingsModel Settings { get; private set; }
 
         public SettingsViewModel()
         {
             Settings = new Models.SettingsModel();
             SettingsCollection = new ObservableCollection<Models.ListCellModel>()
             {
-                new Models.ListCellModel("Address", "IP Address", "Server address", "192.168.4.1", Android.Text.InputTypes.TextVariationUri,
+                new Models.ListCellModel("Address", Resource.String.settings_ip, Resource.String.settings_ip_desc, "192.168.4.1", Android.Text.InputTypes.TextVariationUri,
                                         @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b|[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?",
                                         Resource.String.input_address),
-                new Models.ListCellModel("Port", "Port", "Listener port", "23", Android.Text.InputTypes.ClassNumber,
+                new Models.ListCellModel("Port", Resource.String.settings_port, Resource.String.settings_port_desc, "23", Android.Text.InputTypes.ClassNumber,
                                         @"^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$",
                                         Resource.String.input_port),
-                new Models.ListCellModel("Pins", "Restricted pins", "Pins used by hardware", "A0,A1,D13", Android.Text.InputTypes.TextFlagCapCharacters,
+                new Models.ListCellModel("Pins", Resource.String.settings_pins, Resource.String.settings_pins_desc, "D13,D11,D10,D9,D3,A4,A5", Android.Text.InputTypes.TextFlagCapCharacters,
                                         @"(^$)|(^(([ADad]\d+)|(\d+))((\s*,\s*[ADad]\d+)|(\s*,\s*\d+))*$)",
                                         Resource.String.input_pins)
             };

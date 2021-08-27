@@ -90,6 +90,11 @@ namespace SmartRoom.Fragments
                     e.Error = Resources.GetString(Resource.String.input_wrong);
                     return false;
                 }
+                else if(ViewModels.SettingsViewModel.Settings.Pins.Split(',').Contains(e.Text))
+                {
+                    e.Error = Resources.GetString(Resource.String.input_pin_restricted);
+                    return false;
+                }
                 return true;
             }
 

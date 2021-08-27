@@ -31,12 +31,12 @@ namespace SmartRoom.Models
             set
             {
                 _color = value;
-                _color.PropertyChanged += _color_PropertyChanged;
+                _color.PropertyChanged += Color_PropertyChanged;
                 OnPropertyChanged("Color");
             }
         }
 
-        private void _color_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Color_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             OnPropertyChanged("Color");
         }

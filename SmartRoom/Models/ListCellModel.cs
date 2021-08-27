@@ -15,14 +15,14 @@ namespace SmartRoom.Models
     public class ListCellModel : INotifyPropertyChanged
     {
         private string _id;
-        private string _title;
-        private string _description;
+        private int _title;
+        private int _description;
         private string _value;
         private Android.Text.InputTypes _inputType;
         private string _regex;
         private int _errorMessageId;
 
-        public ListCellModel(string id, string title, string description, string value, Android.Text.InputTypes inputType, string regex, int errorMessageId)
+        public ListCellModel(string id, int title, int description, string value, Android.Text.InputTypes inputType, string regex, int errorMessageId)
         {
             ID = id;
             Title = title;
@@ -38,7 +38,7 @@ namespace SmartRoom.Models
             get => _id; 
             private set => _id = value; 
         }
-        public string Title 
+        public int Title 
         { 
             get => _title;
             set
@@ -49,7 +49,7 @@ namespace SmartRoom.Models
                 OnPropertyChanged("Title");
             }
         }
-        public string Description 
+        public int Description 
         { 
             get => _description;
             set

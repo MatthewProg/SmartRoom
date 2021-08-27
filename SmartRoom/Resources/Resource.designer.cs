@@ -4929,86 +4929,107 @@ namespace SmartRoom
 			// aapt resource value: 0x7F0F0032
 			public const int input_empty = 2131689522;
 			
-			// aapt resource value: 0x7F0F0033
-			public const int input_pins = 2131689523;
-			
 			// aapt resource value: 0x7F0F0034
-			public const int input_port = 2131689524;
+			public const int input_pins = 2131689524;
+			
+			// aapt resource value: 0x7F0F0033
+			public const int input_pin_restricted = 2131689523;
 			
 			// aapt resource value: 0x7F0F0035
-			public const int input_wrong = 2131689525;
+			public const int input_port = 2131689525;
 			
 			// aapt resource value: 0x7F0F0036
-			public const int mtrl_chip_close_icon_content_description = 2131689526;
+			public const int input_wrong = 2131689526;
 			
 			// aapt resource value: 0x7F0F0037
-			public const int navigation_drawer_close = 2131689527;
+			public const int mtrl_chip_close_icon_content_description = 2131689527;
 			
 			// aapt resource value: 0x7F0F0038
-			public const int navigation_drawer_open = 2131689528;
+			public const int navigation_drawer_close = 2131689528;
 			
 			// aapt resource value: 0x7F0F0039
-			public const int navigation_sensors = 2131689529;
+			public const int navigation_drawer_open = 2131689529;
 			
 			// aapt resource value: 0x7F0F003A
-			public const int navigation_settings = 2131689530;
+			public const int navigation_sensors = 2131689530;
 			
 			// aapt resource value: 0x7F0F003B
-			public const int navigation_switches = 2131689531;
+			public const int navigation_settings = 2131689531;
 			
 			// aapt resource value: 0x7F0F003C
-			public const int password_toggle_content_description = 2131689532;
+			public const int navigation_switches = 2131689532;
 			
 			// aapt resource value: 0x7F0F003D
-			public const int path_password_eye = 2131689533;
+			public const int password_toggle_content_description = 2131689533;
 			
 			// aapt resource value: 0x7F0F003E
-			public const int path_password_eye_mask_strike_through = 2131689534;
+			public const int path_password_eye = 2131689534;
 			
 			// aapt resource value: 0x7F0F003F
-			public const int path_password_eye_mask_visible = 2131689535;
+			public const int path_password_eye_mask_strike_through = 2131689535;
 			
 			// aapt resource value: 0x7F0F0040
-			public const int path_password_strike_through = 2131689536;
+			public const int path_password_eye_mask_visible = 2131689536;
 			
 			// aapt resource value: 0x7F0F0041
-			public const int popup_title_rgb = 2131689537;
+			public const int path_password_strike_through = 2131689537;
 			
 			// aapt resource value: 0x7F0F0042
-			public const int popup_title_slider = 2131689538;
+			public const int popup_title_rgb = 2131689538;
 			
 			// aapt resource value: 0x7F0F0043
-			public const int popup_title_switch = 2131689539;
+			public const int popup_title_slider = 2131689539;
 			
 			// aapt resource value: 0x7F0F0044
-			public const int search_menu_title = 2131689540;
+			public const int popup_title_switch = 2131689540;
 			
 			// aapt resource value: 0x7F0F0045
-			public const int status_bar_notification_info_overflow = 2131689541;
+			public const int search_menu_title = 2131689541;
 			
 			// aapt resource value: 0x7F0F0046
-			public const int text_input_pin = 2131689542;
+			public const int settings_ip = 2131689542;
 			
 			// aapt resource value: 0x7F0F0047
-			public const int text_output_pin = 2131689543;
+			public const int settings_ip_desc = 2131689543;
 			
 			// aapt resource value: 0x7F0F0048
-			public const int text_rgb_b_pin = 2131689544;
+			public const int settings_pins = 2131689544;
 			
 			// aapt resource value: 0x7F0F0049
-			public const int text_rgb_g_pin = 2131689545;
+			public const int settings_pins_desc = 2131689545;
 			
 			// aapt resource value: 0x7F0F004A
-			public const int text_rgb_r_pin = 2131689546;
+			public const int settings_port = 2131689546;
 			
 			// aapt resource value: 0x7F0F004B
-			public const int text_title = 2131689547;
+			public const int settings_port_desc = 2131689547;
 			
 			// aapt resource value: 0x7F0F004C
-			public const int text_untitled = 2131689548;
+			public const int status_bar_notification_info_overflow = 2131689548;
 			
 			// aapt resource value: 0x7F0F004D
-			public const int text_value = 2131689549;
+			public const int text_input_pin = 2131689549;
+			
+			// aapt resource value: 0x7F0F004E
+			public const int text_output_pin = 2131689550;
+			
+			// aapt resource value: 0x7F0F004F
+			public const int text_rgb_b_pin = 2131689551;
+			
+			// aapt resource value: 0x7F0F0050
+			public const int text_rgb_g_pin = 2131689552;
+			
+			// aapt resource value: 0x7F0F0051
+			public const int text_rgb_r_pin = 2131689553;
+			
+			// aapt resource value: 0x7F0F0052
+			public const int text_title = 2131689554;
+			
+			// aapt resource value: 0x7F0F0053
+			public const int text_untitled = 2131689555;
+			
+			// aapt resource value: 0x7F0F0054
+			public const int text_value = 2131689556;
 			
 			static String()
 			{

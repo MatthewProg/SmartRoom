@@ -40,7 +40,7 @@ namespace SmartRoom.Models
         {
             _address = "192.168.4.1";
             _port = 23;
-            _pins = "D13,D12";
+            _pins = "D13,D11,D10,D9,D3,A4,A5";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
