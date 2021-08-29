@@ -13,6 +13,8 @@ using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using AndroidX.SwipeRefreshLayout.Widget;
 
 namespace SmartRoom.Fragments
 {
@@ -21,13 +23,14 @@ namespace SmartRoom.Fragments
         private Extensions.Popup _popup;
         private ObservableCollection<Models.SwitchModel> _switches;
         private View _view;
+        private Task _switchesLoad;
 
-        public FragmentSwitches(ObservableCollection<Models.SwitchModel> switches)
+        public FragmentSwitches(Task switchesLoad, ObservableCollection<Models.SwitchModel> switches)
         {
             _popup = null;
             _view = null;
             _switches = switches;
-            _switches.CollectionChanged += SwitchesChanged;
+            _switchesLoad = switchesLoad;
         }
 
         private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -38,17 +41,25 @@ namespace SmartRoom.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            if (_switchesLoad.IsCompleted == false)
+                _switchesLoad.ContinueWith(delegate { 
+                    Activity.RunOnUiThread(() => { 
+                        _switches.CollectionChanged += SwitchesChanged;
+                        if (_view != null)
+                            PopulateList(_view);
+                    }); 
+                });
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _view = inflater.Inflate(Resource.Layout.content_switches, container, false);
 
-            UpdateTitleVisibility(_view);
+            if(_switchesLoad.IsCompleted)
+                PopulateList(_view);
 
-            var adapter = new Adapters.SwitchesAdapter(Activity, _switches);
-            adapter.EditClickEvent += ListViewItemEdit;
-            _view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
+            _view.FindViewById<SwipeRefreshLayout>(Resource.Id.switches_refresh).Refresh += SwitchesRefresh;
 
             var fabMenu = new Fragments.FragmentSwitchesFabMenu();
             fabMenu.ShowDialog += FabMenu_ShowDialog;
@@ -58,6 +69,24 @@ namespace SmartRoom.Fragments
             transaction.Commit();
 
             return _view;
+        }
+
+        private void SwitchesRefresh(object sender, EventArgs e)
+        {
+            var srl = sender as SwipeRefreshLayout;
+            srl.Refreshing = false;
+            //Implement refreshing values from hardware
+        }
+
+        private void PopulateList(View view)
+        {
+            view.FindViewById<RelativeLayout>(Resource.Id.switches_loading).Visibility = ViewStates.Gone;
+
+            var adapter = new Adapters.SwitchesAdapter(Activity, _switches);
+            adapter.EditClickEvent += ListViewItemEdit;
+            _view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
+
+            UpdateTitleVisibility(_view);
         }
 
         private void ListViewItemEdit(object sender, EventArgs e)
