@@ -29,6 +29,8 @@ namespace SmartRoom.Models
                 OnPropertyChanged("Value");
             }
         }
+
+        [JsonProperty(propertyName: "P")]
         public string Pin
         {
             get => _pin;

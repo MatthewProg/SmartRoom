@@ -41,6 +41,7 @@ namespace SmartRoom.Models
             OnPropertyChanged("Color");
         }
 
+        [JsonProperty(propertyName: "R")]
         public string RedPin
         {
             get => _redPin;
@@ -52,6 +53,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonProperty(propertyName: "G")]
         public string GreenPin
         {
             get => _greenPin;
@@ -63,6 +65,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonProperty(propertyName: "B")]
         public string BluePin
         {
             get => _bluePin;

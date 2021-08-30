@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,9 @@ namespace SmartRoom.Models
     public class SwitchModel : INotifyPropertyChanged
     {
         private string _title;
+        private bool _fade;
 
+        [JsonProperty(propertyName: "T")]
         public string Title
         {
             get => _title;
@@ -25,6 +28,19 @@ namespace SmartRoom.Models
 
                 _title = value;
                 OnPropertyChanged("Title");
+            }
+        }
+
+        [JsonIgnore]
+        public bool Fade
+        {
+            get => _fade;
+            set
+            {
+                if (_fade == value) return;
+
+                _fade = value;
+                OnPropertyChanged("Fade");
             }
         }
 

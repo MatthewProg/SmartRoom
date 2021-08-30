@@ -61,7 +61,7 @@ namespace SmartRoom.ViewModels
 
         private void SwitchesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Toggle" && e.PropertyName != "Value" && e.PropertyName != "Color")
+            if (e.PropertyName != "Toggle" && e.PropertyName != "Value" && e.PropertyName != "Color" && e.PropertyName != "Fade")
                 Task.Run(async () => await SaveSwitchesAsync());
         }
 

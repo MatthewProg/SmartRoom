@@ -25,6 +25,7 @@
     <string name="text_untitled">&lt;Untitled&gt;</string>
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
+    <string name="text_fade">Fade</string>
     <string name="text_output_pin">Output pin</string>
     <string name="text_input_pin">Input pin</string>
     <string name="text_rgb_r_pin">Red pin</string>
