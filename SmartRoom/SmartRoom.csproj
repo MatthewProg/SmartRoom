@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
+    <Compile Include="Adapters\PackageAdapter.cs" />
     <Compile Include="Events\PopupEventArgs.cs" />
     <Compile Include="Adapters\SwitchesAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />

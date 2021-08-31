@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="ColorModelTests.cs" />
     <Compile Include="AppInitializer.cs" />
+    <Compile Include="PackageAdapterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartRoom\SmartRoom.csproj">
