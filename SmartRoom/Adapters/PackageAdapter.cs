@@ -90,5 +90,51 @@ namespace SmartRoom.Adapters
 
             return header;
         }
+
+        public static List<Models.PackageModel> DeserializePackages(byte[] data)
+        {
+            var output = new List<Models.PackageModel>();
+
+            for (int index = 0; index < data.Length; index++)
+            {
+                //Identify Pin/ID
+                string pinId = null;
+                bool isId = false;
+
+                byte source = (byte)((data[index] & 0b01100000) >> 5);
+                byte pin = (byte)(data[index] & 0b00011111);
+                if (source == 0) //Arduino Pin
+                {
+                    if (pin >= AnalogPinsOffset) pinId = "A" + (pin - AnalogPinsOffset).ToString();
+                    else pinId = "D" + pin.ToString();
+                    isId = false;
+                }
+                else //TLC or ID
+                {
+                    pinId = pin.ToString();
+                    isId = (pin == 3);
+                }
+
+                //Get value & add to list
+                if((data[index] & 0b10000000) >> 7  == 0) //Value
+                {
+                    index++;
+                    output.Add(new Models.PackageValueModel(pinId, isId, data[index]));
+                }
+                else //Text
+                {
+                    index++;
+                    string text = "";
+                    while(data[index] != 0b00000011)
+                    {
+                        text += (char)data[index];
+                        index++;
+                    }
+                    output.Add(new Models.PackageTextModel(pinId, isId, text));
+                }
+            }
+
+            return output;
+        }
     }
 }
