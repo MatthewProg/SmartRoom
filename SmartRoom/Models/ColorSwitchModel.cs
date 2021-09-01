@@ -21,7 +21,7 @@ namespace SmartRoom.Models
 
         public ColorSwitchModel()
         {
-            _color = new ColorModel();
+            Color = new ColorModel();
         }
 
         [JsonIgnore]

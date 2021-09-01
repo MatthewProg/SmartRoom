@@ -48,7 +48,7 @@ namespace SmartRoom.Connectors
             Task.Run(async () => await _client.ConnectAsync(address, port));
         }
 
-        public bool IsConnected => _client?.Connected ?? false;
+        public bool IsConnected => _client?.Client?.Connected ?? false;
         public bool IsReady => (_processTask == null || _processTask.IsCompleted == true);
 
         public void Send(byte[] data)
@@ -80,7 +80,7 @@ namespace SmartRoom.Connectors
                         try
                         {
                             int lastRead = stream.ReadByte();
-                            if (lastRead == -1) break;
+                            if (lastRead == -1 || lastRead == 0b01100000) break;
 
                             _receiveBuffer.Add((byte)lastRead);
                         }

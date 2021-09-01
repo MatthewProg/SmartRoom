@@ -97,7 +97,8 @@ namespace SmartRoom.Managers
                 return;
 
             var data = new List<byte>();
-            foreach (var p in _pinValue)
+            var items = _pinValue.ToArray();
+            foreach (var p in items)
             {
                 data.AddRange(Adapters.PackageAdapter.CreateSetPackage(p.Key, p.Value.Item1, p.Value.Item2));
                 _pinValue.Remove(p.Key);

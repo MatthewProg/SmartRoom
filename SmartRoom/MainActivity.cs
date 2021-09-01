@@ -18,6 +18,7 @@ namespace SmartRoom
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private Managers.PackagesManager _packagesManager;
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
         private Task _taskLoadSettings;
@@ -45,8 +46,20 @@ namespace SmartRoom
 
             _settings = new ViewModels.SettingsViewModel();
             _switches = new ViewModels.SwitchesViewModel();
+            _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
             _taskLoadSettings = Task.Run(async () => await _settings.LoadSettingsAsync());
             _taskLoadSwitches = Task.Run(async () => await _switches.LoadSwitchesAsync());
+            Task.Run(() =>
+            {
+                while(_taskLoadSettings.IsCompleted == false ||
+                      _taskLoadSwitches.IsCompleted == false)
+                {
+                    ; //Idle
+                }
+                _packagesManager.Connection.Connect(
+                    ViewModels.SettingsViewModel.Settings.Address, 
+                    ViewModels.SettingsViewModel.Settings.Port);
+            });
         }
 
         public override void OnBackPressed()
@@ -73,6 +86,11 @@ namespace SmartRoom
             int id = item.ItemId;
             if (id == Resource.Id.action_reconnect)
             {
+                if(_packagesManager != null)
+                {
+                    _packagesManager.Connection.Close();
+                    _packagesManager.Connection.Connect(ViewModels.SettingsViewModel.Settings.Address, ViewModels.SettingsViewModel.Settings.Port);
+                }
                 return true;
             }
             else if(id == Resource.Id.action_exit)
@@ -92,19 +110,19 @@ namespace SmartRoom
             if (id == Resource.Id.nav_switches)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches.SwitchesCollection), "Switches");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches.SwitchesCollection), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSensors(), "Switches");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSensors(), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_settings)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(_taskLoadSettings, _settings.SettingsCollection), "Switches");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(_taskLoadSettings, _settings.SettingsCollection), "MainContent");
                 transaction.Commit();
             }
 
