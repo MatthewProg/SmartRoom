@@ -73,6 +73,7 @@
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
     <Compile Include="Adapters\PackageAdapter.cs" />
+    <Compile Include="Connectors\TcpConnector.cs" />
     <Compile Include="Events\PopupEventArgs.cs" />
     <Compile Include="Adapters\SwitchesAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Fragments\FragmentPopupValue.cs" />
     <Compile Include="Extensions\Popup.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Managers\PackagesManager.cs" />
     <Compile Include="Models\ColorModel.cs" />
     <Compile Include="Models\ColorSwitchModel.cs" />
     <Compile Include="Models\ColorTypes.cs" />
