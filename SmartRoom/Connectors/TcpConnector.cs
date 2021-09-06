@@ -45,6 +45,9 @@ namespace SmartRoom.Connectors
             if (IsConnected)
                 Close();
 
+            _address = address;
+            _port = port;
+
             Task.Run(async () => await _client.ConnectAsync(address, port));
         }
 
@@ -97,6 +100,8 @@ namespace SmartRoom.Connectors
                 if (_processTask != null)
                     _processTask.Dispose();
                 _client.Close();
+                _sendBuffer.Clear();
+                _receiveBuffer.Clear();
             }
         }
 

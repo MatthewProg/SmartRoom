@@ -5,7 +5,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Java.Interop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,59 +39,93 @@ namespace SmartRoom.Adapters
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var item = _switches[position];
-            View view = convertView; //Can't re-use old view, buttons hold wrong events, maybe fix in future
-            if (item is Models.ToggleSwitchModel)
+            View view = null;
+            if (convertView?.Tag?.JavaCast<Java.Lang.Integer>().IntValue() == item.GetHashCode()) //If same, reuse
+                view = convertView;
+            if (view == null)
             {
-                var e = item as Models.ToggleSwitchModel;
+                if (item is Models.ToggleSwitchModel)
+                {
+                    var e = item as Models.ToggleSwitchModel;
 
-                view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_toggle, null);
-                var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
-                var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_toggle_fade);
-                
-                view.FindViewById<TextView>(Resource.Id.list_item_switches_toggle_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                toggle.Checked = e.Toggle;
-                toggle.CheckedChange += delegate { Toggle_CheckedChange(e, new CompoundButton.CheckedChangeEventArgs(toggle.Checked)); };
-                fade.Checked = e.Fade;
-                fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_edit).Click += delegate { EditClick(e, null); };
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_delete).Click += delegate { DeleteClick(e, null); };
+                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_toggle, null);
+                    var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
+                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_toggle_fade);
+
+                    view.FindViewById<TextView>(Resource.Id.list_item_switches_toggle_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
+                    toggle.Checked = e.Toggle;
+                    toggle.Enabled = e.Enabled;
+                    toggle.CheckedChange += delegate { Toggle_CheckedChange(e, new CompoundButton.CheckedChangeEventArgs(toggle.Checked)); };
+                    fade.Checked = e.Fade;
+                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_edit).Click += delegate { EditClick(e, null); };
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_delete).Click += delegate { DeleteClick(e, null); };
+                }
+                else if (item is Models.SliderSwitchModel)
+                {
+                    var e = item as Models.SliderSwitchModel;
+
+                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_slider, null);
+                    var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
+                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_slider_fade);
+
+                    view.FindViewById<TextView>(Resource.Id.list_item_switches_slider_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
+                    slider.Enabled = e.Enabled;
+                    slider.Progress = (int)Math.Round(e.Value * 100f);
+                    slider.ProgressChanged += delegate { Slider_ProgressChanged(e, new SeekBar.ProgressChangedEventArgs(slider, slider.Progress, true)); };
+                    fade.Checked = e.Fade;
+                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_edit).Click += delegate { EditClick(e, null); };
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_delete).Click += delegate { DeleteClick(e, null); };
+                }
+                else if (item is Models.ColorSwitchModel)
+                {
+                    var e = item as Models.ColorSwitchModel;
+                    var hsv = e.Color.GetHSV();
+
+                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_rgb, null);
+                    var slider = view.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
+                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_rgb_fade);
+
+                    slider.Enabled = e.Enabled;
+                    slider.SetColorSeeds(Resource.Array.hueColors);
+                    slider.ColorBarPosition = (int)Math.Round(hsv.H);
+                    slider.AlphaMaxPosition = 100;
+                    slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
+                    slider.ColorChange += delegate { SliderColorChange(e, slider); };
+                    fade.Checked = e.Fade;
+                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
+                    view.FindViewById<TextView>(Resource.Id.list_item_switches_rgb_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_edit).Click += delegate { EditClick(e, null); };
+                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_delete).Click += delegate { DeleteClick(e, null); };
+                }
+                view.Tag = new Java.Lang.Integer(item.GetHashCode());
             }
-            else if(item is Models.SliderSwitchModel)
+            else //Only update values
             {
-                var e = item as Models.SliderSwitchModel;
-
-                view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_slider, null);
-                var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
-                var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_slider_fade);
-
-                view.FindViewById<TextView>(Resource.Id.list_item_switches_slider_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                slider.Progress = (int)Math.Round(e.Value * 100f);
-                slider.ProgressChanged += delegate { Slider_ProgressChanged(e, new SeekBar.ProgressChangedEventArgs(slider, slider.Progress, true)); };
-                fade.Checked = e.Fade;
-                fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_edit).Click += delegate { EditClick(e, null); };
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_delete).Click += delegate { DeleteClick(e, null); };
-            }
-            else if(item is Models.ColorSwitchModel)
-            {
-                var e = item as Models.ColorSwitchModel;
-                var hsv = e.Color.GetHSV();
-
-                view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_rgb, null);
-                var slider = view.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
-                var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_rgb_fade);
-
-                slider.SetColorSeeds(Resource.Array.hueColors);
-                slider.ColorBarPosition = (int)Math.Round(hsv.H);
-                slider.AlphaMaxPosition = 100;
-                slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
-                slider.ColorChange += delegate { SliderColorChange(e, slider); };
-                fade.Checked = e.Fade;
-                fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                view.FindViewById<TextView>(Resource.Id.list_item_switches_rgb_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_edit).Click += delegate { EditClick(e, null); };
-                view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_delete).Click += delegate { DeleteClick(e, null); };
-
+                if (item is Models.ToggleSwitchModel)
+                {
+                    var e = item as Models.ToggleSwitchModel;
+                    var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
+                    toggle.Checked = e.Toggle;
+                    toggle.Enabled = e.Enabled;
+                }
+                else if (item is Models.SliderSwitchModel)
+                {
+                    var e = item as Models.SliderSwitchModel;
+                    var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
+                    slider.Enabled = e.Enabled;
+                    slider.Progress = (int)Math.Round(e.Value * 100f);
+                }
+                else if (item is Models.ColorSwitchModel)
+                {
+                    var e = item as Models.ColorSwitchModel;
+                    var hsv = e.Color.GetHSV();
+                    var slider = view.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
+                    slider.Enabled = e.Enabled;
+                    slider.ColorBarPosition = (int)Math.Round(hsv.H);
+                    slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
+                }
             }
             return view;
         }

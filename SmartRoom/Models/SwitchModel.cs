@@ -17,6 +17,7 @@ namespace SmartRoom.Models
     {
         private string _title;
         private bool _fade;
+        private bool _enabled;
 
         [JsonProperty(propertyName: "T")]
         public string Title
@@ -41,6 +42,19 @@ namespace SmartRoom.Models
 
                 _fade = value;
                 OnPropertyChanged("Fade");
+            }
+        }
+
+        [JsonIgnore]
+        public bool Enabled
+        {
+            get => _enabled;
+            set
+            {
+                if (_enabled == value) return;
+
+                _enabled = value;
+                OnPropertyChanged("Enabled");
             }
         }
 

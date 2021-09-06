@@ -49,15 +49,10 @@ namespace SmartRoom
             _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
             _taskLoadSettings = Task.Run(async () => await _settings.LoadSettingsAsync());
             _taskLoadSwitches = Task.Run(async () => await _switches.LoadSwitchesAsync());
-            Task.Run(() =>
+            Task.WhenAll(_taskLoadSwitches, _taskLoadSettings).ContinueWith(delegate
             {
-                while(_taskLoadSettings.IsCompleted == false ||
-                      _taskLoadSwitches.IsCompleted == false)
-                {
-                    ; //Idle
-                }
                 _packagesManager.Connection.Connect(
-                    ViewModels.SettingsViewModel.Settings.Address, 
+                    ViewModels.SettingsViewModel.Settings.Address,
                     ViewModels.SettingsViewModel.Settings.Port);
             });
         }
@@ -110,7 +105,7 @@ namespace SmartRoom
             if (id == Resource.Id.nav_switches)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches.SwitchesCollection), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches, _packagesManager), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)

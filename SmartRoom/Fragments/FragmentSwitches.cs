@@ -21,16 +21,18 @@ namespace SmartRoom.Fragments
     public class FragmentSwitches : Fragment
     {
         private Extensions.Popup _popup;
-        private ObservableCollection<Models.SwitchModel> _switches;
+        private Managers.PackagesManager _pkgManager;
+        private ViewModels.SwitchesViewModel _switches;
         private View _view;
         private Task _switchesLoad;
 
-        public FragmentSwitches(Task switchesLoad, ObservableCollection<Models.SwitchModel> switches)
+        public FragmentSwitches(Task switchesLoad, ViewModels.SwitchesViewModel switches, Managers.PackagesManager pkgManager)
         {
             _popup = null;
             _view = null;
             _switches = switches;
             _switchesLoad = switchesLoad;
+            _pkgManager = pkgManager;
         }
 
         private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -45,9 +47,12 @@ namespace SmartRoom.Fragments
             if (_switchesLoad.IsCompleted == false)
                 _switchesLoad.ContinueWith(delegate { 
                     Activity.RunOnUiThread(() => { 
-                        _switches.CollectionChanged += SwitchesChanged;
+                        _switches.SwitchesCollection.CollectionChanged += SwitchesChanged;
                         if (_view != null)
+                        {
                             PopulateList(_view);
+                            SwitchesRefresh(_view.FindViewById<SwipeRefreshLayout>(Resource.Id.switches_refresh), null);
+                        }
                     }); 
                 });
         }
@@ -55,11 +60,16 @@ namespace SmartRoom.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             _view = inflater.Inflate(Resource.Layout.content_switches, container, false);
+            var srl = _view.FindViewById<SwipeRefreshLayout>(Resource.Id.switches_refresh);
 
             if(_switchesLoad.IsCompleted)
+            {
                 PopulateList(_view);
+                SwitchesRefresh(srl, null);
+            }
 
-            _view.FindViewById<SwipeRefreshLayout>(Resource.Id.switches_refresh).Refresh += SwitchesRefresh;
+            srl.Refreshing = true;
+            srl.Refresh += SwitchesRefresh;
 
             var fabMenu = new Fragments.FragmentSwitchesFabMenu();
             fabMenu.ShowDialog += FabMenu_ShowDialog;
@@ -74,15 +84,21 @@ namespace SmartRoom.Fragments
         private void SwitchesRefresh(object sender, EventArgs e)
         {
             var srl = sender as SwipeRefreshLayout;
-            srl.Refreshing = false;
-            //Implement refreshing values from hardware
+            Task.Run(async () => await _pkgManager.UpdateAllPins().ContinueWith(delegate
+            {
+                Activity.RunOnUiThread(() =>
+                {
+                    srl.Refreshing = false;
+                    (srl.RootView.FindViewById<ListView>(Resource.Id.switches_list).Adapter as Adapters.SwitchesAdapter).NotifyDataSetChanged();
+                });
+            }));    
         }
 
         private void PopulateList(View view)
         {
             view.FindViewById<RelativeLayout>(Resource.Id.switches_loading).Visibility = ViewStates.Gone;
 
-            var adapter = new Adapters.SwitchesAdapter(Activity, _switches);
+            var adapter = new Adapters.SwitchesAdapter(Activity, _switches.SwitchesCollection);
             adapter.EditClickEvent += ListViewItemEdit;
             _view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
 
@@ -103,7 +119,7 @@ namespace SmartRoom.Fragments
 
         private void UpdateTitleVisibility(View view)
         {
-            if (_switches.Count > 0) 
+            if (_switches.SwitchesCollection.Count > 0) 
                 view.FindViewById<TextView>(Resource.Id.switches_title).Visibility = ViewStates.Gone;
             else
                 view.FindViewById<TextView>(Resource.Id.switches_title).Visibility = ViewStates.Visible;
@@ -120,7 +136,7 @@ namespace SmartRoom.Fragments
         {
             if(e.HasResult)
             {
-                _switches.Add(e.Result as Models.SwitchModel);
+                _switches.SwitchesCollection.Add(e.Result as Models.SwitchModel);
             }
         }
     }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SmartRoom.Managers
 {
@@ -32,6 +33,44 @@ namespace SmartRoom.Managers
 
             Connection = new TcpConnector(_settings.Address, _settings.Port);
             Connection.DataReceivedEvent += DataReceived;
+        }
+
+        public async Task UpdateAllPins()
+        {
+            if (Connection.IsConnected == false)
+                return;
+
+            //Enabled = false & get all pins
+            var pins = new HashSet<string>();
+            foreach (var s in _switches)
+            {
+                s.Enabled = false;
+                if (s is Models.ToggleSwitchModel)
+                    pins.Add((s as Models.ToggleSwitchModel).Pin);
+                else if (s is Models.SliderSwitchModel)
+                    pins.Add((s as Models.SliderSwitchModel).Pin);
+                else if (s is Models.ColorSwitchModel)
+                {
+                    var model = s as Models.ColorSwitchModel;
+                    pins.Add(model.RedPin);
+                    pins.Add(model.GreenPin);
+                    pins.Add(model.BluePin);
+                }
+            }
+
+            //Create pkg data
+            var data = new List<byte>();
+            foreach (var p in pins)
+                data.Add(Adapters.PackageAdapter.CreateGetPackage(p));
+
+            Connection.Send(data.ToArray());
+
+            bool wait = true;
+            void Received(object sender, EventArgs e) => wait = false;
+            Connection.DataReceivedEvent += Received;
+            while (wait)
+                await Task.Delay(10);
+            Connection.DataReceivedEvent -= Received;
         }
 
         private void SwitchesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -106,7 +145,7 @@ namespace SmartRoom.Managers
             Connection.Send(data.ToArray());
         }
           
-        private void ProcessPackages(List<Models.PackageModel> packages) //Very intense process, try to optimize in future
+        private void ProcessPackages(List<Models.PackageModel> packages) //Very intense process, try to optimize in future, updates only first with pin, not all
         {
             foreach (var s in _switches)
             {
@@ -119,6 +158,7 @@ namespace SmartRoom.Managers
                                       .FirstOrDefault();
                     if (pkg == null) continue;
                     model.Toggle = (pkg.Value != 0);
+                    model.Enabled = true;
                 }
                 else if (s is Models.SliderSwitchModel)
                 {
@@ -130,6 +170,7 @@ namespace SmartRoom.Managers
 
                     if (pkg == null) continue;
                     model.Value = (float)pkg.Value / 255f;
+                    model.Enabled = true;
                 }
                 else if(s is Models.ColorSwitchModel)
                 {
@@ -146,6 +187,7 @@ namespace SmartRoom.Managers
                         else if (p.PinId == model.GreenPin) color.G = p.Value;
                         else if (p.PinId == model.BluePin) color.B = p.Value;
                     model.Color.FromRGB(color);
+                    model.Enabled = true;
                 }
             }
         }
