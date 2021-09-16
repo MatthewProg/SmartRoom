@@ -9,6 +9,10 @@
           android:icon="@drawable/ic_light_bulb"
           android:title="@string/navigation_switches" />
       <item
+          android:id="@+id/nav_macros"
+          android:icon="@drawable/ic_macro"
+          android:title="@string/navigation_macros" />
+      <item
           android:id="@+id/nav_sensors"
           android:icon="@drawable/ic_wireless"
           android:title="@string/navigation_sensors" />

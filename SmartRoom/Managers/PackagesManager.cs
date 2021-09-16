@@ -35,6 +35,32 @@ namespace SmartRoom.Managers
             Connection.DataReceivedEvent += DataReceived;
         }
 
+        public void QueueSetValues(SwitchModel value)
+        {
+            if (value is Models.ToggleSwitchModel)
+            {
+                var model = value as Models.ToggleSwitchModel;
+                _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)(model.Toggle ? 255 : 0));
+            }
+            else if (value is Models.SliderSwitchModel)
+            {
+                var model = value as Models.SliderSwitchModel;
+                _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)Math.Round(model.Value * 255));
+            }
+            else if (value is Models.ColorSwitchModel)
+            {
+                var model = value as Models.ColorSwitchModel;
+                var col = model.Color.GetRGB();
+
+                _pinValue[model.RedPin] = new Tuple<bool, byte>(model.Fade, col.R);
+                _pinValue[model.GreenPin] = new Tuple<bool, byte>(model.Fade, col.G);
+                _pinValue[model.BluePin] = new Tuple<bool, byte>(model.Fade, col.B);
+            }
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
         public async Task UpdateAllPins()
         {
             if (Connection.IsConnected == false)
@@ -118,28 +144,7 @@ namespace SmartRoom.Managers
         {
             if (e.PropertyName == "Toggle" || e.PropertyName == "Value" || e.PropertyName == "Color")
             {
-                if (sender is Models.ToggleSwitchModel)
-                {
-                    var model = sender as Models.ToggleSwitchModel;
-                    _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)(model.Toggle ? 255 : 0));
-                }
-                else if (sender is Models.SliderSwitchModel)
-                {
-                    var model = sender as Models.SliderSwitchModel;
-                    _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)Math.Round(model.Value * 255));
-                }
-                else if (sender is Models.ColorSwitchModel)
-                {
-                    var model = sender as Models.ColorSwitchModel;
-                    var col = model.Color.GetRGB();
-
-                    _pinValue[model.RedPin] =   new Tuple<bool, byte>(model.Fade, col.R);
-                    _pinValue[model.GreenPin] = new Tuple<bool, byte>(model.Fade, col.G);
-                    _pinValue[model.BluePin] =  new Tuple<bool, byte>(model.Fade, col.B);
-                }
-
-                if (Connection.IsReady)
-                    SendWaiting();
+                QueueSetValues(sender as SwitchModel);
             }
         }
 

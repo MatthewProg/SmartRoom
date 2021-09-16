@@ -5,6 +5,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Text;
 namespace SmartRoom.Models
 {
     public class ColorSwitchModel : SwitchModel
-    { 
+    {
         private ColorModel _color;
         private string _redPin;
         private string _greenPin;

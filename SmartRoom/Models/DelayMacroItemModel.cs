@@ -4,8 +4,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Newtonsoft.Json;
-using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,13 +12,12 @@ using System.Text;
 
 namespace SmartRoom.Models
 {
-    public abstract class SwitchModel : IMacroItemModel, IEquatable<SwitchModel>
+    public class DelayMacroItemModel : Interfaces.IMacroItemModel
     {
         private string _title;
-        private bool _fade;
         private bool _enabled;
+        private int _delay;
 
-        [JsonProperty(propertyName: "T")]
         public string Title
         {
             get => _title;
@@ -32,21 +29,6 @@ namespace SmartRoom.Models
                 OnPropertyChanged("Title");
             }
         }
-
-        [JsonIgnore]
-        public bool Fade
-        {
-            get => _fade;
-            set
-            {
-                if (_fade == value) return;
-
-                _fade = value;
-                OnPropertyChanged("Fade");
-            }
-        }
-
-        [JsonIgnore]
         public bool Enabled
         {
             get => _enabled;
@@ -59,15 +41,19 @@ namespace SmartRoom.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public virtual bool Equals(SwitchModel other)
+        public int Delay
         {
-            return (this.Fade == other.Fade &&
-                    this.Enabled == other.Enabled &&
-                    this.Title == other.Title);
+            get => _delay;
+            set
+            {
+                if (_delay == value) return;
+
+                _delay = value;
+                OnPropertyChanged("Delay");
+            }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(String info)
         {
             if (PropertyChanged != null)

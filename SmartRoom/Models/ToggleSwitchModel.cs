@@ -5,6 +5,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

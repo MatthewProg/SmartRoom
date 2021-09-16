@@ -19,6 +19,7 @@ namespace SmartRoom
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private Managers.PackagesManager _packagesManager;
+        private Managers.MacrosManager _macrosManager;
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
         private Task _taskLoadSettings;
@@ -47,6 +48,7 @@ namespace SmartRoom
             _settings = new ViewModels.SettingsViewModel();
             _switches = new ViewModels.SwitchesViewModel();
             _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
+            _macrosManager = new Managers.MacrosManager(_packagesManager);
             _taskLoadSettings = Task.Run(async () => await _settings.LoadSettingsAsync());
             _taskLoadSwitches = Task.Run(async () => await _switches.LoadSwitchesAsync());
             Task.WhenAll(_taskLoadSwitches, _taskLoadSettings).ContinueWith(delegate
@@ -106,6 +108,12 @@ namespace SmartRoom
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
                 transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches, _packagesManager), "MainContent");
+                transaction.Commit();
+            }
+            else if (id == Resource.Id.nav_macros)
+            {
+                var transaction = SupportFragmentManager.BeginTransaction();
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentMacros(_macrosManager), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)
