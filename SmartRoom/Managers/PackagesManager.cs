@@ -40,9 +40,22 @@ namespace SmartRoom.Managers
             if (Connection.IsConnected == false)
                 return;
 
+            var data = GetPinsGetPackages(_switches);
+            Connection.Send(data.ToArray());
+
+            bool wait = true;
+            void Received(object sender, EventArgs e) => wait = false;
+            Connection.DataReceivedEvent += Received;
+            while (wait)
+                await Task.Delay(10);
+            Connection.DataReceivedEvent -= Received;
+        }
+
+        private List<byte> GetPinsGetPackages(IEnumerable<Models.SwitchModel> switches)
+        {
             //Enabled = false & get all pins
             var pins = new HashSet<string>();
-            foreach (var s in _switches)
+            foreach (var s in switches)
             {
                 s.Enabled = false;
                 if (s is Models.ToggleSwitchModel)
@@ -63,14 +76,7 @@ namespace SmartRoom.Managers
             foreach (var p in pins)
                 data.Add(Adapters.PackageAdapter.CreateGetPackage(p));
 
-            Connection.Send(data.ToArray());
-
-            bool wait = true;
-            void Received(object sender, EventArgs e) => wait = false;
-            Connection.DataReceivedEvent += Received;
-            while (wait)
-                await Task.Delay(10);
-            Connection.DataReceivedEvent -= Received;
+            return data;
         }
 
         private void SwitchesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -84,6 +90,16 @@ namespace SmartRoom.Managers
             {
                 foreach (Models.SwitchModel m in e.NewItems)
                     m.PropertyChanged += SwitchPropertyChanged;
+            }
+
+            //When new switch is created, get values from hardware
+            if (Connection.IsConnected == false)
+                return;
+
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
+            {
+                var data = GetPinsGetPackages(e.NewItems.Cast<Models.SwitchModel>());
+                Connection.Send(data.ToArray());
             }
         }
 

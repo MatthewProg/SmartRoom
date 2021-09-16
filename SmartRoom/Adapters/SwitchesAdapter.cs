@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,152 +14,147 @@ using System.Text;
 
 namespace SmartRoom.Adapters
 {
-    class SwitchesAdapter : BaseAdapter<Models.SwitchModel>
+    public class SwitchesAdapter : RecyclerView.Adapter
     {
         private ObservableCollection<Models.SwitchModel> _switches;
-        private Activity _context;
 
         public event EventHandler EditClickEvent;
 
-        public SwitchesAdapter(Activity context, ObservableCollection<Models.SwitchModel> items)
+        public SwitchesAdapter(ObservableCollection<Models.SwitchModel> items)
         {
-            _context = context;
             _switches = items;
             _switches.CollectionChanged += SwitchesChanged;
         }
 
         private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            NotifyDataSetChanged();
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+               e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                NotifyDataSetChanged();
         }
 
-        public override Models.SwitchModel this[int position] => _switches[position];
-        public override int Count => _switches.Count;
-        public override long GetItemId(int position) => position;
+        public override int ItemCount => _switches.Count;
 
-        public override View GetView(int position, View convertView, ViewGroup parent)
+        public override int GetItemViewType(int position)
         {
-            var item = _switches[position];
+            var obj = _switches[position];
+            if (obj is Models.ToggleSwitchModel) return 0;
+            else if (obj is Models.SliderSwitchModel) return 1;
+            else if (obj is Models.ColorSwitchModel) return 2;
+
+            return -1;
+        }
+
+        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+        {
+            var obj = _switches[position];
+            if (obj is Models.ToggleSwitchModel)
+            {
+                var e = obj as Models.ToggleSwitchModel;
+                var v = holder as ViewHolders.ToggleSwitchViewHolder;
+
+                v.Model = e;
+                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Toggle.Checked = e.Toggle;
+                v.Toggle.Enabled = e.Enabled;
+                v.Fade.Checked = e.Fade;             
+            }
+            else if (obj is Models.SliderSwitchModel) 
+            {
+                var e = obj as Models.SliderSwitchModel;
+                var v = holder as ViewHolders.SliderSwitchViewHolder;
+
+                v.Model = e;
+                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Slider.Enabled = e.Enabled;
+                v.Slider.Progress = (int)Math.Round(e.Value * 100f);         
+                v.Fade.Checked = e.Fade;
+            }
+            else if (obj is Models.ColorSwitchModel)
+            {
+                var e = obj as Models.ColorSwitchModel;
+                var v = holder as ViewHolders.ColorSwitchViewHolder;
+                var hsv = e.Color.GetHSV();
+
+                v.Model = e;
+                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Slider.Enabled = e.Enabled;
+                v.Slider.ColorBarPosition = (int)Math.Round(hsv.H);
+                v.Slider.AlphaMaxPosition = 100;
+                v.Slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
+                v.Fade.Checked = e.Fade;
+            }
+        }
+
+        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
+        {
             View view = null;
-            if (convertView?.Tag?.JavaCast<Java.Lang.Integer>().IntValue() == item.GetHashCode()) //If same, reuse
-                view = convertView;
-            if (view == null)
+            if (viewType == 0)
             {
-                if (item is Models.ToggleSwitchModel)
-                {
-                    var e = item as Models.ToggleSwitchModel;
-
-                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_toggle, null);
-                    var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
-                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_toggle_fade);
-
-                    view.FindViewById<TextView>(Resource.Id.list_item_switches_toggle_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                    toggle.Checked = e.Toggle;
-                    toggle.Enabled = e.Enabled;
-                    toggle.CheckedChange += delegate { Toggle_CheckedChange(e, new CompoundButton.CheckedChangeEventArgs(toggle.Checked)); };
-                    fade.Checked = e.Fade;
-                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_edit).Click += delegate { EditClick(e, null); };
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_toggle_delete).Click += delegate { DeleteClick(e, null); };
-                }
-                else if (item is Models.SliderSwitchModel)
-                {
-                    var e = item as Models.SliderSwitchModel;
-
-                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_slider, null);
-                    var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
-                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_slider_fade);
-
-                    view.FindViewById<TextView>(Resource.Id.list_item_switches_slider_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                    slider.Enabled = e.Enabled;
-                    slider.Progress = (int)Math.Round(e.Value * 100f);
-                    slider.ProgressChanged += delegate { Slider_ProgressChanged(e, new SeekBar.ProgressChangedEventArgs(slider, slider.Progress, true)); };
-                    fade.Checked = e.Fade;
-                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_edit).Click += delegate { EditClick(e, null); };
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_slider_delete).Click += delegate { DeleteClick(e, null); };
-                }
-                else if (item is Models.ColorSwitchModel)
-                {
-                    var e = item as Models.ColorSwitchModel;
-                    var hsv = e.Color.GetHSV();
-
-                    view = _context.LayoutInflater.Inflate(Resource.Layout.list_item_switches_rgb, null);
-                    var slider = view.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
-                    var fade = view.FindViewById<CheckBox>(Resource.Id.list_item_switches_rgb_fade);
-
-                    slider.Enabled = e.Enabled;
-                    slider.SetColorSeeds(Resource.Array.hueColors);
-                    slider.ColorBarPosition = (int)Math.Round(hsv.H);
-                    slider.AlphaMaxPosition = 100;
-                    slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
-                    slider.ColorChange += delegate { SliderColorChange(e, slider); };
-                    fade.Checked = e.Fade;
-                    fade.CheckedChange += delegate { FadeChanged(item, new CompoundButton.CheckedChangeEventArgs(fade.Checked)); };
-                    view.FindViewById<TextView>(Resource.Id.list_item_switches_rgb_title).Text = (e.Title != string.Empty ? e.Title : view.Resources.GetString(Resource.String.text_untitled));
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_edit).Click += delegate { EditClick(e, null); };
-                    view.FindViewById<ImageButton>(Resource.Id.list_item_switches_rgb_delete).Click += delegate { DeleteClick(e, null); };
-                }
-                view.Tag = new Java.Lang.Integer(item.GetHashCode());
+                view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_toggle, parent, false);
+                var v = new ViewHolders.ToggleSwitchViewHolder(view);
+                v.Toggle.CheckedChange += delegate { Toggle_CheckedChange(v, new CompoundButton.CheckedChangeEventArgs(v.Toggle.Checked)); };
+                v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
+                v.Edit.Click += delegate { EditClick(v, null); };
+                v.Delete.Click += delegate { DeleteClick(v, null); };
+                return v;
             }
-            else //Only update values
+            else if (viewType == 1)
             {
-                if (item is Models.ToggleSwitchModel)
-                {
-                    var e = item as Models.ToggleSwitchModel;
-                    var toggle = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
-                    toggle.Checked = e.Toggle;
-                    toggle.Enabled = e.Enabled;
-                }
-                else if (item is Models.SliderSwitchModel)
-                {
-                    var e = item as Models.SliderSwitchModel;
-                    var slider = view.FindViewById<SeekBar>(Resource.Id.list_item_switches_slider_value);
-                    slider.Enabled = e.Enabled;
-                    slider.Progress = (int)Math.Round(e.Value * 100f);
-                }
-                else if (item is Models.ColorSwitchModel)
-                {
-                    var e = item as Models.ColorSwitchModel;
-                    var hsv = e.Color.GetHSV();
-                    var slider = view.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
-                    slider.Enabled = e.Enabled;
-                    slider.ColorBarPosition = (int)Math.Round(hsv.H);
-                    slider.AlphaBarPosition = 100 - (int)Math.Round(hsv.V * 100f);
-                }
+                view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_slider, parent, false);
+                var v = new ViewHolders.SliderSwitchViewHolder(view);
+                v.Slider.ProgressChanged += delegate { Slider_ProgressChanged(v, new SeekBar.ProgressChangedEventArgs(v.Slider, v.Slider.Progress, true)); };
+                v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
+                v.Edit.Click += delegate { EditClick(v, null); };
+                v.Delete.Click += delegate { DeleteClick(v, null); };
+                return v;
             }
-            return view;
+            else if (viewType == 2)
+            {
+                view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_rgb, parent, false);
+                var v = new ViewHolders.ColorSwitchViewHolder(view);
+                v.Slider.SetColorSeeds(Resource.Array.hueColors);
+                v.Slider.ColorChange += delegate { SliderColorChange(v, v.Slider); };
+                v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
+                v.Edit.Click += delegate { EditClick(v, null); };
+                v.Delete.Click += delegate { DeleteClick(v, null); };
+                return v;
+            }
+            else
+                throw new ArgumentException("Unable to find correct switch view");
         }
 
-        private void FadeChanged(Models.SwitchModel model, CompoundButton.CheckedChangeEventArgs e)
+        private void FadeChanged(Interfaces.ISwitchViewHolder model, CompoundButton.CheckedChangeEventArgs e)
         {
-            model.Fade = e.IsChecked;
+            model.Model.Fade = e.IsChecked;
         }
 
-        private void Toggle_CheckedChange(Models.ToggleSwitchModel model, CompoundButton.CheckedChangeEventArgs e)
+        private void Toggle_CheckedChange(Interfaces.ISwitchViewHolder model, CompoundButton.CheckedChangeEventArgs e)
         {
-            model.Toggle = e.IsChecked;
+            var m = model.Model as Models.ToggleSwitchModel;
+            m.Toggle = e.IsChecked;
         }
 
-        private void Slider_ProgressChanged(Models.SliderSwitchModel model, SeekBar.ProgressChangedEventArgs e)
+        private void Slider_ProgressChanged(Interfaces.ISwitchViewHolder model, SeekBar.ProgressChangedEventArgs e)
         {
-            model.Value = (float)e.Progress / 100f;
+            var m = model.Model as Models.SliderSwitchModel;
+            m.Value = (float)e.Progress / 100f;
         }
 
-
-        private void SliderColorChange(Models.ColorSwitchModel model, Rtugeek.ColorSeekBarLib.ColorSeekBar slider)
+        private void SliderColorChange(Interfaces.ISwitchViewHolder model, Rtugeek.ColorSeekBarLib.ColorSeekBar slider)
         {
-            model.Color.FromHSV(slider.ColorBarPosition, 1f, ((float)Math.Abs(slider.AlphaBarPosition - 100)) / 100f);
+            var m = model.Model as Models.ColorSwitchModel;
+            m.Color.FromHSV(slider.ColorBarPosition, 1f, ((float)Math.Abs(slider.AlphaBarPosition - 100)) / 100f);
         }
 
-        private void DeleteClick(object sender, EventArgs e)
+        private void DeleteClick(Interfaces.ISwitchViewHolder sender, EventArgs e)
         {
-            _switches.Remove(sender as Models.SwitchModel);
+            _switches.Remove(sender.Model);
         }
 
-        private void EditClick(object sender, EventArgs e)
+        private void EditClick(Interfaces.ISwitchViewHolder sender, EventArgs e)
         {
-            EditClickEvent?.Invoke(sender, null);
+            EditClickEvent?.Invoke(sender.Model, null);
         }
     }
 }

@@ -89,7 +89,7 @@ namespace SmartRoom.Fragments
                 Activity.RunOnUiThread(() =>
                 {
                     srl.Refreshing = false;
-                    (srl.RootView.FindViewById<ListView>(Resource.Id.switches_list).Adapter as Adapters.SwitchesAdapter).NotifyDataSetChanged();
+                    srl.RootView.FindViewById<AndroidX.RecyclerView.Widget.RecyclerView>(Resource.Id.switches_list).GetAdapter().NotifyDataSetChanged();
                 });
             }));    
         }
@@ -98,9 +98,16 @@ namespace SmartRoom.Fragments
         {
             view.FindViewById<RelativeLayout>(Resource.Id.switches_loading).Visibility = ViewStates.Gone;
 
-            var adapter = new Adapters.SwitchesAdapter(Activity, _switches.SwitchesCollection);
+            var adapter = new Adapters.SwitchesAdapter(_switches.SwitchesCollection);
             adapter.EditClickEvent += ListViewItemEdit;
-            _view.FindViewById<ListView>(Resource.Id.switches_list).Adapter = adapter;
+
+            var rec = _view.FindViewById<AndroidX.RecyclerView.Widget.RecyclerView>(Resource.Id.switches_list);
+            rec.SetAdapter(adapter);
+            rec.SetLayoutManager(new AndroidX.RecyclerView.Widget.LinearLayoutManager(Context));
+            rec.AddItemDecoration(new AndroidX.RecyclerView.Widget.DividerItemDecoration(Context, AndroidX.RecyclerView.Widget.DividerItemDecoration.Vertical));
+
+            var touchHelper = new AndroidX.RecyclerView.Widget.ItemTouchHelper(new Callbacks.SwitchesCallback(_switches.SwitchesCollection));
+            touchHelper.AttachToRecyclerView(rec);
 
             UpdateTitleVisibility(_view);
         }
