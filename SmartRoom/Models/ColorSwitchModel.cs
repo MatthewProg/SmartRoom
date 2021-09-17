@@ -77,6 +77,19 @@ namespace SmartRoom.Models
             }
         }
 
+        public override bool Equals(SwitchModel other)
+        {
+            if (other is ColorSwitchModel == false)
+                return false;
+
+            var obj = other as ColorSwitchModel;
+            return (this.RedPin == obj.RedPin &&
+                    this.GreenPin == obj.GreenPin &&
+                    this.BluePin == obj.BluePin &&
+                    this.Color.GetRGB().Equals(obj.Color.GetRGB()) == true &&
+                    base.Equals(other) == true);
+        }
+
         protected override void OnPropertyChanged(String info)
         {
             base.OnPropertyChanged(info);

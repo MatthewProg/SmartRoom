@@ -42,6 +42,17 @@ namespace SmartRoom.Models
             }
         }
 
+        public override bool Equals(SwitchModel other)
+        {
+            if (other is ToggleSwitchModel == false)
+                return false;
+
+            var obj = other as ToggleSwitchModel;
+            return (this.Toggle == obj.Toggle &&
+                    this.Pin == obj.Pin &&      
+                    base.Equals(other) == true);
+        }
+
         protected override void OnPropertyChanged(String info)
         {
             base.OnPropertyChanged(info);

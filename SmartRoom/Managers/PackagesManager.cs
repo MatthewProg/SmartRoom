@@ -41,14 +41,25 @@ namespace SmartRoom.Managers
                 return;
 
             var data = GetPinsGetPackages(_switches);
+            Connection.DataReceivedEvent -= DataReceived;
+            Connection.DataReceivedEvent += Received;
             Connection.Send(data.ToArray());
 
             bool wait = true;
-            void Received(object sender, EventArgs e) => wait = false;
-            Connection.DataReceivedEvent += Received;
+            List<byte> rec = null;
+            void Received(object sender, EventArgs e)
+            {
+                wait = false;
+                rec = sender as List<byte>;
+            }
+
             while (wait)
                 await Task.Delay(10);
+
             Connection.DataReceivedEvent -= Received;
+            Connection.DataReceivedEvent += DataReceived;
+
+            DataReceived(rec, null);
         }
 
         private List<byte> GetPinsGetPackages(IEnumerable<Models.SwitchModel> switches)

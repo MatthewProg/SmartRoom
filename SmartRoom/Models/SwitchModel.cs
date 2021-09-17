@@ -13,7 +13,7 @@ using System.Text;
 
 namespace SmartRoom.Models
 {
-    public class SwitchModel : INotifyPropertyChanged
+    public abstract class SwitchModel : INotifyPropertyChanged, IEquatable<SwitchModel>
     {
         private string _title;
         private bool _fade;
@@ -59,6 +59,14 @@ namespace SmartRoom.Models
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public virtual bool Equals(SwitchModel other)
+        {
+            return (this.Fade == other.Fade &&
+                    this.Enabled == other.Enabled &&
+                    this.Title == other.Title);
+        }
+
         protected virtual void OnPropertyChanged(String info)
         {
             if (PropertyChanged != null)

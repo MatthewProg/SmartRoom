@@ -112,7 +112,7 @@ namespace SmartRoom.Adapters
                 else //TLC or ID
                 {
                     pinId = pin.ToString();
-                    isId = (source == 3);
+                    isId = (source == 2);
                 }
 
                 //Get value & add to list

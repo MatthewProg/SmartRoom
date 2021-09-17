@@ -75,6 +75,7 @@
     <Compile Include="Adapters\PackageAdapter.cs" />
     <Compile Include="Callbacks\SwitchesCallback.cs" />
     <Compile Include="Connectors\TcpConnector.cs" />
+    <Compile Include="Converters\SwitchesJsonConverter.cs" />
     <Compile Include="Events\PopupEventArgs.cs" />
     <Compile Include="Adapters\SwitchesAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />

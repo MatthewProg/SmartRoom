@@ -17,20 +17,47 @@ namespace SmartRoom.Adapters
     public class SwitchesAdapter : RecyclerView.Adapter
     {
         private ObservableCollection<Models.SwitchModel> _switches;
+        private readonly Activity _activity;
 
         public event EventHandler EditClickEvent;
 
-        public SwitchesAdapter(ObservableCollection<Models.SwitchModel> items)
+        public SwitchesAdapter(Activity activity, ObservableCollection<Models.SwitchModel> items)
         {
+            _activity = activity;
             _switches = items;
             _switches.CollectionChanged += SwitchesChanged;
+            foreach (Models.SwitchModel m in _switches)
+                m.PropertyChanged += SwitchPropChanged;
         }
 
         private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
                e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-                NotifyDataSetChanged();
+            {
+                if (e.OldItems != null)
+                {
+                    foreach (Models.SwitchModel m in e.OldItems)
+                        m.PropertyChanged -= SwitchPropChanged;
+                    _activity.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
+                }
+                if (e.NewItems != null)
+                {
+                    foreach (Models.SwitchModel m in e.NewItems)
+                        m.PropertyChanged += SwitchPropChanged;
+                    _activity.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
+                }
+            }
+        }
+
+        private void SwitchPropChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Enabled") //So as not to break animation
+            {
+                var index = _switches.IndexOf(sender as Models.SwitchModel);
+                _activity.RunOnUiThread(() => NotifyItemChanged(index));
+            }
         }
 
         public override int ItemCount => _switches.Count;

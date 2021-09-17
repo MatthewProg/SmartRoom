@@ -25,6 +25,7 @@ namespace SmartRoom.Fragments
         private ViewModels.SwitchesViewModel _switches;
         private View _view;
         private Task _switchesLoad;
+        private Task _refreshTask;
 
         public FragmentSwitches(Task switchesLoad, ViewModels.SwitchesViewModel switches, Managers.PackagesManager pkgManager)
         {
@@ -45,6 +46,7 @@ namespace SmartRoom.Fragments
             base.OnCreate(savedInstanceState);
 
             if (_switchesLoad.IsCompleted == false)
+            {
                 _switchesLoad.ContinueWith(delegate { 
                     Activity.RunOnUiThread(() => { 
                         _switches.SwitchesCollection.CollectionChanged += SwitchesChanged;
@@ -55,6 +57,9 @@ namespace SmartRoom.Fragments
                         }
                     }); 
                 });
+            }
+            else
+                _switches.SwitchesCollection.CollectionChanged += SwitchesChanged;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -84,27 +89,36 @@ namespace SmartRoom.Fragments
         private void SwitchesRefresh(object sender, EventArgs e)
         {
             var srl = sender as SwipeRefreshLayout;
-            Task.Run(async () => await _pkgManager.UpdateAllPins().ContinueWith(delegate
+
+            if (_refreshTask != null && _refreshTask.IsCompleted == false)
+                return;
+
+            _refreshTask = Task.Run(async () => 
+            {
+                do { await Task.Delay(10); } 
+                while (_pkgManager.Connection.IsConnected == false);
+                await _pkgManager.UpdateAllPins();
+            }).ContinueWith(delegate
             {
                 Activity.RunOnUiThread(() =>
                 {
                     srl.Refreshing = false;
-                    srl.RootView.FindViewById<AndroidX.RecyclerView.Widget.RecyclerView>(Resource.Id.switches_list).GetAdapter().NotifyDataSetChanged();
                 });
-            }));    
+            });
         }
 
         private void PopulateList(View view)
         {
             view.FindViewById<RelativeLayout>(Resource.Id.switches_loading).Visibility = ViewStates.Gone;
 
-            var adapter = new Adapters.SwitchesAdapter(_switches.SwitchesCollection);
+            var adapter = new Adapters.SwitchesAdapter(Activity, _switches.SwitchesCollection);
             adapter.EditClickEvent += ListViewItemEdit;
 
             var rec = _view.FindViewById<AndroidX.RecyclerView.Widget.RecyclerView>(Resource.Id.switches_list);
-            rec.SetAdapter(adapter);
             rec.SetLayoutManager(new AndroidX.RecyclerView.Widget.LinearLayoutManager(Context));
             rec.AddItemDecoration(new AndroidX.RecyclerView.Widget.DividerItemDecoration(Context, AndroidX.RecyclerView.Widget.DividerItemDecoration.Vertical));
+            rec.SetAdapter(adapter);
+
 
             var touchHelper = new AndroidX.RecyclerView.Widget.ItemTouchHelper(new Callbacks.SwitchesCallback(_switches.SwitchesCollection));
             touchHelper.AttachToRecyclerView(rec);

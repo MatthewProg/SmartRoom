@@ -17,26 +17,6 @@ namespace SmartRoom.ViewModels
 {
     public class SwitchesViewModel
     {
-        private class AllSwitches
-        {
-            public AllSwitches(IEnumerable<Models.SwitchModel> switches) : this()
-            {
-                foreach (var s in switches)
-                    if      (s is Models.ToggleSwitchModel) Toggles.Add(s as Models.ToggleSwitchModel);
-                    else if (s is Models.SliderSwitchModel) Sliders.Add(s as Models.SliderSwitchModel);
-                    else if (s is Models.ColorSwitchModel)  Colors.Add(s as Models.ColorSwitchModel);
-            }
-            public AllSwitches()
-            {
-                Toggles = new List<Models.ToggleSwitchModel>();
-                Sliders = new List<Models.SliderSwitchModel>();
-                Colors = new List<Models.ColorSwitchModel>();
-            }
-            public List<Models.ToggleSwitchModel> Toggles { get; set; }
-            public List<Models.SliderSwitchModel> Sliders { get; set; }
-            public List<Models.ColorSwitchModel> Colors { get; set; }
-        }
-
         public ObservableCollection<Models.SwitchModel> SwitchesCollection { get; private set; }
         public SwitchesViewModel()
         {
@@ -70,7 +50,7 @@ namespace SmartRoom.ViewModels
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             using (var writer = File.CreateText(path))
-                await writer.WriteLineAsync(JsonConvert.SerializeObject(new AllSwitches(SwitchesCollection)));
+                await writer.WriteLineAsync(JsonConvert.SerializeObject(SwitchesCollection, new Converters.SwitchesJsonConverter()));
         }
 
         public async Task LoadSwitchesAsync(string filename = "switches.json")
@@ -80,14 +60,13 @@ namespace SmartRoom.ViewModels
             {
                 using (var reader = new StreamReader(path))
                 {
-                    var ds = JsonConvert.DeserializeObject<AllSwitches>(await reader.ReadToEndAsync());
+                    var ds = JsonConvert.DeserializeObject<List<Models.SwitchModel>>(await reader.ReadToEndAsync(), new Converters.SwitchesJsonConverter());
                     SwitchesCollection.CollectionChanged -= SwitchesChanged;
                     foreach (var e in SwitchesCollection)
                         e.PropertyChanged -= SwitchesPropertyChanged;
                     SwitchesCollection.Clear();
-                    foreach (var e in ds.Toggles) SwitchesCollection.Add(e as Models.SwitchModel);
-                    foreach (var e in ds.Sliders) SwitchesCollection.Add(e as Models.SwitchModel);
-                    foreach (var e in ds.Colors) SwitchesCollection.Add(e as Models.SwitchModel);
+                    foreach (var e in ds)
+                        SwitchesCollection.Add(e);
                 }
                 foreach (var e in SwitchesCollection)
                     e.PropertyChanged += SwitchesPropertyChanged;
