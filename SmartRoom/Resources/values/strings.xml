@@ -27,6 +27,8 @@
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
     <string name="text_fade">Fade</string>
+    <string name="text_delay">Delay</string>
+    <string name="text_milisec">ms</string>
     <string name="text_output_pin">Output pin</string>
     <string name="text_input_pin">Input pin</string>
     <string name="text_rgb_r_pin">Red pin</string>
@@ -46,4 +48,5 @@
     <string name="accessibility_repeat">Repeat</string>
     <string name="accessibility_more">Show more</string>
     <string name="accessibility_less">Show less</string>
+    <string name="accessibility_macro_current">Current</string>
 </resources>

@@ -93,6 +93,24 @@ namespace SmartRoom.Tests
                 expected.R, expected.G, expected.B, result.R, result.G, result.B);
         }
 
+        [TestCase(-1644826, 230, 230, 230)]
+        [TestCase(-16777216, 0, 0, 0)]
+        [TestCase(-1, 255, 255, 255)]
+        [TestCase(-65281, 255, 0, 255)]
+        [TestCase(-16776961, 0, 0, 255)]
+        [TestCase(-1410847, 234, 120, 225)]
+        public void FromAndroid(int color, byte r, byte g, byte b)
+        {
+            var expected = new Models.ColorTypes.RGB(r, g, b);
+            ColorModel model = new ColorModel();
+
+            model.FromAndroid(color);
+
+            var result = model.GetRGB();
+            Assert.AreEqual(expected, result, "E: r={0} g={1} b={2}\n  R: r={3} g={4} b={5}",
+                expected.R, expected.G, expected.B, result.R, result.G, result.B);
+        }
+
         [TestCase("#fff", 255, 255, 255)]
         [TestCase("#000", 0, 0, 0)]
         [TestCase("#4C9173", 76, 145, 115)]
@@ -176,6 +194,23 @@ namespace SmartRoom.Tests
             var result = model.GetHSV();
             Assert.AreEqual(expected, result, "E: h={0} s={1} v={2}\n  R: h={3} s={4} v={5}",
                 expected.H, expected.S, expected.V, result.H, result.S, result.V);
+        }
+
+        [TestCase(-1644826, 230, 230, 230)]
+        [TestCase(-16777216, 0, 0, 0)]
+        [TestCase(-1, 255, 255, 255)]
+        [TestCase(-65281, 255, 0, 255)]
+        [TestCase(-16776961, 0, 0, 255)]
+        [TestCase(-1410847, 234, 120, 225)]
+        public void GetAndroid(int color, byte r, byte g, byte b)
+        {
+            var expected = color;
+            ColorModel model = new ColorModel();
+
+            model.FromRGB(r, g, b);
+
+            var result = model.GetAndroid();
+            Assert.AreEqual(expected, result);
         }
 
         [TestCase("#FFFFFF", 255, 255, 255)]

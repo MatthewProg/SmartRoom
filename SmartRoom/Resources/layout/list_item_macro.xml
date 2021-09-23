@@ -13,27 +13,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <ImageButton
+            <CheckBox
                 android:id="@+id/list_item_macro_expand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:contentDescription="@string/accessibility_more" 
-                android:src="@drawable/ic_arrow_more"
-                android:paddingHorizontal="3dp"
+                android:button="@drawable/checkbox_expand"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:paddingHorizontal="1dp"
                 android:paddingVertical="4dp"
-                android:background="@android:color/transparent"
                 android:tint="@color/button_material_dark"/>
             <TextView
                 android:id="@+id/list_item_macro_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left|center_vertical"
-                android:textSize="24dp"
-                android:textStyle="bold"
                 android:layout_toRightOf="@id/list_item_macro_expand"
                 android:layout_toLeftOf="@id/list_item_macro_playpause"
-                android:text="@string/text_untitled"/>
+                android:gravity="left|center_vertical"
+                android:textStyle="bold"
+                android:text="@string/text_untitled"
+                android:autoSizeMaxTextSize="24dp"
+                android:autoSizeMinTextSize="14dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="2dp"
+                android:textSize="24dp"
+                android:maxLines="1"/>
             <ImageButton
                 android:id="@+id/list_item_macro_delete"
                 android:layout_width="wrap_content"

@@ -8,6 +8,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/list_item_macro_delay"/>
     <TextView
         android:id="@+id/macros_title"
         android:layout_width="wrap_content"

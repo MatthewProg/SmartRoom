@@ -27,6 +27,11 @@ namespace SmartRoom.Models
         }
         public string GetHex() => string.Format("#{0:X2}{1:X2}{2:X2}", _rgb.R, _rgb.G, _rgb.B);
         public ColorTypes.RGB GetRGB() => _rgb;
+        public int GetAndroid()
+        {
+            UInt32 col = (255U << 24) + (uint)(_rgb.R << 16) + (uint)(_rgb.G << 8) + (uint)_rgb.B;
+            return unchecked((int)col);
+        }
         public ColorTypes.HSL GetHSL()
         {
             var col = System.Drawing.Color.FromArgb(_rgb.R, _rgb.G, _rgb.B);
@@ -66,6 +71,14 @@ namespace SmartRoom.Models
             _rgb.R = rgb.R;
             _rgb.G = rgb.G;
             _rgb.B = rgb.B;
+            OnPropertyChanged("");
+        }
+        public void FromAndroid(int color)
+        {
+            UInt32 col = unchecked((uint)color);
+            _rgb.R = (byte)((col >> 16) & 255);
+            _rgb.G = (byte)((col >> 8) & 255);
+            _rgb.B = (byte)(col & 255);
             OnPropertyChanged("");
         }
         public void FromHSL(float h, float s, float l) => FromHSL(new ColorTypes.HSL(h, s, l));
