@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
+    <Compile Include="Adapters\MacrosAdapter.cs" />
     <Compile Include="Adapters\PackageAdapter.cs" />
     <Compile Include="Callbacks\SwitchesCallback.cs" />
     <Compile Include="Connectors\TcpConnector.cs" />
@@ -354,6 +355,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\list_item_macro_delay.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\play_pause_control.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

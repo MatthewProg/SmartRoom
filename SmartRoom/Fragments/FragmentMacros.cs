@@ -48,6 +48,13 @@ namespace SmartRoom.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var v = inflater.Inflate(Resource.Layout.content_macros, container, false);
+
+            var list = v.FindViewById<ListView>(Resource.Id.macros_list);
+            var text = v.FindViewById<TextView>(Resource.Id.macros_title);
+
+            list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager);
+            text.Visibility = (_macrosManager.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
+
             return v;
         }
     }

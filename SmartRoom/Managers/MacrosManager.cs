@@ -46,7 +46,7 @@ namespace SmartRoom.Managers
             }
 
             var cts = new CancellationTokenSource();
-            var task = Task.Run(async () => await RunMacro(macro, cts.Token), cts.Token);
+            var task = Task.Run(() => RunMacro(macro, cts.Token), cts.Token);
             _tasks[macro] = new Tuple<Task, CancellationTokenSource>(task, cts);
         }
 
@@ -54,12 +54,12 @@ namespace SmartRoom.Managers
 
         public void StopMacro(Models.MacroModel macro)
         {
-            macro.Running = false;
             if (_tasks.ContainsKey(macro) == false) return;
 
             if (_tasks[macro]?.Item1.IsCompleted == false)
             {
                 _tasks[macro].Item2.Cancel();
+                macro.Running = false;
                 _tasks[macro].Item1.Wait();
             }
 
@@ -79,7 +79,7 @@ namespace SmartRoom.Managers
         public bool IsMacroStopped(Models.MacroModel macro) => (_tasks.ContainsKey(macro) == false ||
                                                                 _tasks[macro]?.Item1.IsCompleted == true);
 
-        private async Task RunMacro(Models.MacroModel macro, CancellationToken token)
+        private void RunMacro(Models.MacroModel macro, CancellationToken token)
         {
             var pause = new CancellationTokenSource();
             void PropChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -87,8 +87,8 @@ namespace SmartRoom.Managers
                 if (e.PropertyName == "Running")
                 {
                     var obj = sender as Models.MacroModel;
-                    if (obj.Running == false) pause = new CancellationTokenSource();
-                    else pause.Cancel();
+                    if (obj.Running == true || token.IsCancellationRequested)
+                        pause.Cancel();
                 }
             }
 
@@ -96,7 +96,10 @@ namespace SmartRoom.Managers
             do
             {
                 if (macro.Items.Count == 0)
-                    await Delay(-1, pause.Token);
+                {
+                    Delay(-1, pause.Token);
+                    pause = new CancellationTokenSource();
+                }
 
                 foreach (var item in macro.Items)
                 {
@@ -106,21 +109,28 @@ namespace SmartRoom.Managers
                     if (item is Models.SwitchModel)
                         _packagesManager.QueueSetValues(item as Models.SwitchModel);
                     else if(item is Models.DelayMacroItemModel)
-                        await Delay((item as Models.DelayMacroItemModel).Delay, pause.Token);
+                        Delay((item as Models.DelayMacroItemModel).Delay, pause.Token);
 
                     if (token.IsCancellationRequested)
+                    {
+                        macro.Running = false;
                         return;
+                    }
 
                     if (macro.Running == false)
-                        await Delay(-1, pause.Token);
+                    {
+                        Delay(-1, pause.Token);
+                        pause = new CancellationTokenSource();
+                    }
                 }
             } while (macro.Repeat);
+            macro.Running = false;
         }
-        private async Task Delay(int mili, CancellationToken token)
+        private void Delay(int mili, CancellationToken token)
         {
             try
             {
-                await Task.Delay(mili, token);
+                Task.Delay(mili, token).Wait(token);
             }
             catch (System.OperationCanceledException) when (token.IsCancellationRequested)
             {
