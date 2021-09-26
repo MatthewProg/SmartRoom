@@ -23,6 +23,8 @@
     <string name="button_save">Save</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_pick">Pick</string>
+    <string name="button_select">Select</string>
     <string name="text_untitled">&lt;Untitled&gt;</string>
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
@@ -34,6 +36,7 @@
     <string name="text_rgb_r_pin">Red pin</string>
     <string name="text_rgb_g_pin">Green pin</string>
     <string name="text_rgb_b_pin">Blue pin</string>
+    <string name="text_select_color">Select a new color</string>
     <string name="settings_ip">IP Address</string>
     <string name="settings_ip_desc">Server address</string>
     <string name="settings_port">Port</string>
@@ -49,4 +52,6 @@
     <string name="accessibility_more">Show more</string>
     <string name="accessibility_less">Show less</string>
     <string name="accessibility_macro_current">Current</string>
+    <string name="accessibility_macro_add">Add new macro</string>
+    <string name="accessibility_macro_add_switch">Add new macro switch</string>
 </resources>

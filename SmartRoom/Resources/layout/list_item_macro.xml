@@ -1,112 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    android:id="@+id/list_item_macro_card"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/list_item_macro_card"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <RelativeLayout
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/list_item_macro_expand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:contentDescription="@string/accessibility_more" 
+                android:button="@drawable/checkbox_expand"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:paddingHorizontal="1dp"
+                android:paddingVertical="4dp"
+                android:buttonTint="@color/button_material_dark"/>
+            <TextView
+                android:id="@+id/list_item_macro_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <CheckBox
-                    android:id="@+id/list_item_macro_expand"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:contentDescription="@string/accessibility_more" 
-                    android:button="@drawable/checkbox_expand"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:paddingHorizontal="1dp"
-                    android:paddingVertical="4dp"
-                    android:buttonTint="@color/button_material_dark"/>
-                <TextView
-                    android:id="@+id/list_item_macro_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/list_item_macro_expand"
-                    android:layout_toLeftOf="@id/list_item_macro_playpause"
-                    android:gravity="left|center_vertical"
-                    android:textStyle="bold"
-                    android:text="@string/text_untitled"
-                    android:autoSizeMaxTextSize="24dp"
-                    android:autoSizeMinTextSize="14dp"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeStepGranularity="2dp"
-                    android:textSize="24dp"
-                    android:maxLines="1"/>
-                <ImageButton
-                    android:id="@+id/list_item_macro_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:contentDescription="@string/accessibility_delete" 
-                    android:src="@drawable/ic_trash"
-                    android:paddingHorizontal="3dp"
-                    android:paddingVertical="4dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/button_material_dark"/>
-                <ImageButton
-                    android:id="@+id/list_item_macro_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/list_item_macro_delete"
-                    android:contentDescription="@string/accessibility_edit"
-                    android:src="@drawable/ic_edit"
-                    android:paddingHorizontal="3dp"
-                    android:paddingVertical="4dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/button_material_dark" />
-                <ImageButton
-                    android:id="@+id/list_item_macro_repeat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/list_item_macro_edit"
-                    android:contentDescription="@string/accessibility_repeat" 
-                    android:src="@drawable/ic_repeat"
-                    android:paddingHorizontal="3dp"
-                    android:paddingVertical="4dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/button_material_dark"/>
-                <ImageButton
-                    android:id="@+id/list_item_macro_stop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/list_item_macro_repeat"
-                    android:contentDescription="@string/accessibility_stop" 
-                    android:src="@drawable/ic_stop"
-                    android:paddingHorizontal="3dp"
-                    android:paddingVertical="4dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/button_material_dark"/>
-                <CheckBox
-                    android:id="@+id/list_item_macro_playpause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/list_item_macro_stop"
-                    android:contentDescription="@string/accessibility_play" 
-                    android:button="@drawable/play_pause_control"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:paddingHorizontal="1dp"
-                    android:paddingVertical="4dp"
-                    android:buttonTint="@color/button_material_dark"/>
-            </RelativeLayout>
+                android:layout_toRightOf="@id/list_item_macro_expand"
+                android:layout_toLeftOf="@id/list_item_macro_playpause"
+                android:gravity="left|center_vertical"
+                android:textStyle="bold"
+                android:text="@string/text_untitled"
+                android:autoSizeMaxTextSize="24dp"
+                android:autoSizeMinTextSize="14dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="2dp"
+                android:textSize="24dp"
+                android:maxLines="1"/>
+            <ImageButton
+                android:id="@+id/list_item_macro_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/accessibility_delete" 
+                android:src="@drawable/ic_trash"
+                android:paddingHorizontal="3dp"
+                android:paddingVertical="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/button_material_dark"/>
+            <ImageButton
+                android:id="@+id/list_item_macro_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/list_item_macro_delete"
+                android:contentDescription="@string/accessibility_edit"
+                android:src="@drawable/ic_edit"
+                android:paddingHorizontal="3dp"
+                android:paddingVertical="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/button_material_dark" />
+            <ImageButton
+                android:id="@+id/list_item_macro_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/list_item_macro_edit"
+                android:contentDescription="@string/accessibility_repeat" 
+                android:src="@drawable/ic_repeat"
+                android:paddingHorizontal="3dp"
+                android:paddingVertical="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/button_material_dark"/>
+            <ImageButton
+                android:id="@+id/list_item_macro_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/list_item_macro_repeat"
+                android:contentDescription="@string/accessibility_stop" 
+                android:src="@drawable/ic_stop"
+                android:paddingHorizontal="3dp"
+                android:paddingVertical="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/button_material_dark"/>
+            <CheckBox
+                android:id="@+id/list_item_macro_playpause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/list_item_macro_stop"
+                android:contentDescription="@string/accessibility_play" 
+                android:button="@drawable/play_pause_control"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:paddingHorizontal="1dp"
+                android:paddingVertical="4dp"
+                android:buttonTint="@color/button_material_dark"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/list_item_macro_expand_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list_item_macro_items"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/list_item_macro_add"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                android:contentDescription="@string/accessibility_macro_add_switch"
+                android:src="@drawable/ic_add"
+                android:background="@android:color/transparent"
+                android:tint="@color/button_material_dark"/>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -13,19 +13,21 @@ using System.Text;
 
 namespace SmartRoom.Callbacks
 {
-    public class SwitchesCallback : ItemTouchHelper.SimpleCallback
+    public class ObservableCollectionCallback<T> : ItemTouchHelper.SimpleCallback
     {
-        private ObservableCollection<Models.SwitchModel> _switches;
-        public SwitchesCallback(ObservableCollection<Models.SwitchModel> switches) : base(ItemTouchHelper.Up | ItemTouchHelper.Down | ItemTouchHelper.Start | ItemTouchHelper.End, 0)
+        private ObservableCollection<T> _items;
+        public event EventHandler<Events.CallbackMoveEventArgs> Move;
+        public ObservableCollectionCallback(ObservableCollection<T> items) : base(ItemTouchHelper.Up | ItemTouchHelper.Down | ItemTouchHelper.Start | ItemTouchHelper.End, 0)
         {
-            _switches = switches;
+            _items = items;
         }
         public override bool OnMove(RecyclerView p0, RecyclerView.ViewHolder p1, RecyclerView.ViewHolder p2)
         {
             int from = p1.AdapterPosition;
             int to = p2.AdapterPosition;
-            _switches.Move(from, to);
+            _items.Move(from, to);
             p0.GetAdapter().NotifyItemMoved(from, to);
+            Move?.Invoke(this, new Events.CallbackMoveEventArgs(p0, p1, p2));
             return false;
         }
 

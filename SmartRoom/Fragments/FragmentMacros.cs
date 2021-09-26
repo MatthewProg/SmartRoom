@@ -27,13 +27,15 @@ namespace SmartRoom.Fragments
                 Running = false,
                 Items = new System.Collections.ObjectModel.ObservableCollection<Interfaces.IMacroItemModel>()
                 {
-                    new Models.SliderSwitchModel() { Enabled=true, Fade=true, Pin="10", Value=0F },
+                    new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=1F },
                     new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.SliderSwitchModel() { Enabled=true, Fade=true, Pin="10", Value=0.5F },
+                    new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=true, Pin="D2", Toggle=true },
+                    new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=0F },
                     new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.SliderSwitchModel() { Enabled = true,  Fade=true, Pin="10", Value=0F },
+                    new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(255,128,192) },
                     new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.SliderSwitchModel() { Enabled = true,  Fade=true, Pin="10", Value=1F },
+                    new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(0,0,0) },
+                    new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=false, Pin="D2", Toggle=false },
                     new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 }
                 }
             });

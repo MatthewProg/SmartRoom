@@ -13,7 +13,7 @@ using System.Text;
 
 namespace SmartRoom.ViewHolders
 {
-    public class ToggleSwitchViewHolder : RecyclerView.ViewHolder, ISwitchViewHolder
+    public class SwitchToggleViewHolder : RecyclerView.ViewHolder, IViewHolder<Models.SwitchModel>
     {
         public AndroidX.AppCompat.Widget.SwitchCompat Toggle { get; set; }
         public CheckBox Fade { get; set; }
@@ -22,7 +22,7 @@ namespace SmartRoom.ViewHolders
         public ImageButton Delete { get; set; }
         public Models.SwitchModel Model { get; set; }
 
-        public ToggleSwitchViewHolder(View itemView) : base(itemView)
+        public SwitchToggleViewHolder(View itemView) : base(itemView)
         {
             Toggle = itemView.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.list_item_switches_toggle_switch);
             Fade = itemView.FindViewById<CheckBox>(Resource.Id.list_item_switches_toggle_fade);

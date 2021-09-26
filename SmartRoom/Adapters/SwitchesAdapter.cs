@@ -78,7 +78,7 @@ namespace SmartRoom.Adapters
             if (obj is Models.ToggleSwitchModel)
             {
                 var e = obj as Models.ToggleSwitchModel;
-                var v = holder as ViewHolders.ToggleSwitchViewHolder;
+                var v = holder as ViewHolders.SwitchToggleViewHolder;
 
                 v.Model = e;
                 v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
@@ -89,7 +89,7 @@ namespace SmartRoom.Adapters
             else if (obj is Models.SliderSwitchModel) 
             {
                 var e = obj as Models.SliderSwitchModel;
-                var v = holder as ViewHolders.SliderSwitchViewHolder;
+                var v = holder as ViewHolders.SwitchSliderViewHolder;
 
                 v.Model = e;
                 v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
@@ -100,7 +100,7 @@ namespace SmartRoom.Adapters
             else if (obj is Models.ColorSwitchModel)
             {
                 var e = obj as Models.ColorSwitchModel;
-                var v = holder as ViewHolders.ColorSwitchViewHolder;
+                var v = holder as ViewHolders.SwitchColorViewHolder;
                 var hsv = e.Color.GetHSV();
 
                 v.Model = e;
@@ -119,7 +119,7 @@ namespace SmartRoom.Adapters
             if (viewType == 0)
             {
                 view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_toggle, parent, false);
-                var v = new ViewHolders.ToggleSwitchViewHolder(view);
+                var v = new ViewHolders.SwitchToggleViewHolder(view);
                 v.Toggle.CheckedChange += delegate { Toggle_CheckedChange(v, new CompoundButton.CheckedChangeEventArgs(v.Toggle.Checked)); };
                 v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
                 v.Edit.Click += delegate { EditClick(v, null); };
@@ -129,7 +129,7 @@ namespace SmartRoom.Adapters
             else if (viewType == 1)
             {
                 view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_slider, parent, false);
-                var v = new ViewHolders.SliderSwitchViewHolder(view);
+                var v = new ViewHolders.SwitchSliderViewHolder(view);
                 v.Slider.ProgressChanged += delegate { Slider_ProgressChanged(v, new SeekBar.ProgressChangedEventArgs(v.Slider, v.Slider.Progress, true)); };
                 v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
                 v.Edit.Click += delegate { EditClick(v, null); };
@@ -139,7 +139,7 @@ namespace SmartRoom.Adapters
             else if (viewType == 2)
             {
                 view = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.list_item_switches_rgb, parent, false);
-                var v = new ViewHolders.ColorSwitchViewHolder(view);
+                var v = new ViewHolders.SwitchColorViewHolder(view);
                 v.Slider.SetColorSeeds(Resource.Array.hueColors);
                 v.Slider.ColorChange += delegate { SliderColorChange(v, v.Slider); };
                 v.Fade.CheckedChange += delegate { FadeChanged(v, new CompoundButton.CheckedChangeEventArgs(v.Fade.Checked)); };
@@ -151,35 +151,35 @@ namespace SmartRoom.Adapters
                 throw new ArgumentException("Unable to find correct switch view");
         }
 
-        private void FadeChanged(Interfaces.ISwitchViewHolder model, CompoundButton.CheckedChangeEventArgs e)
+        private void FadeChanged(Interfaces.IViewHolder<Models.SwitchModel> model, CompoundButton.CheckedChangeEventArgs e)
         {
             model.Model.Fade = e.IsChecked;
         }
 
-        private void Toggle_CheckedChange(Interfaces.ISwitchViewHolder model, CompoundButton.CheckedChangeEventArgs e)
+        private void Toggle_CheckedChange(Interfaces.IViewHolder<Models.SwitchModel> model, CompoundButton.CheckedChangeEventArgs e)
         {
             var m = model.Model as Models.ToggleSwitchModel;
             m.Toggle = e.IsChecked;
         }
 
-        private void Slider_ProgressChanged(Interfaces.ISwitchViewHolder model, SeekBar.ProgressChangedEventArgs e)
+        private void Slider_ProgressChanged(Interfaces.IViewHolder<Models.SwitchModel> model, SeekBar.ProgressChangedEventArgs e)
         {
             var m = model.Model as Models.SliderSwitchModel;
             m.Value = (float)e.Progress / 100f;
         }
 
-        private void SliderColorChange(Interfaces.ISwitchViewHolder model, Rtugeek.ColorSeekBarLib.ColorSeekBar slider)
+        private void SliderColorChange(Interfaces.IViewHolder<Models.SwitchModel> model, Rtugeek.ColorSeekBarLib.ColorSeekBar slider)
         {
             var m = model.Model as Models.ColorSwitchModel;
             m.Color.FromHSV(slider.ColorBarPosition, 1f, ((float)Math.Abs(slider.AlphaBarPosition - 100)) / 100f);
         }
 
-        private void DeleteClick(Interfaces.ISwitchViewHolder sender, EventArgs e)
+        private void DeleteClick(Interfaces.IViewHolder<Models.SwitchModel> sender, EventArgs e)
         {
             _switches.Remove(sender.Model);
         }
 
-        private void EditClick(Interfaces.ISwitchViewHolder sender, EventArgs e)
+        private void EditClick(Interfaces.IViewHolder<Models.SwitchModel> sender, EventArgs e)
         {
             EditClickEvent?.Invoke(sender.Model, null);
         }

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using AndroidX.RecyclerView.Widget;
 using SmartRoom.Models;
 using System;
@@ -17,8 +18,8 @@ namespace SmartRoom.Adapters
     public class MacrosAdapter : BaseAdapter<Models.MacroModel>
     {
         private readonly Managers.MacrosManager _macrosManager;
-        private readonly Activity _activity;
-        public MacrosAdapter(Activity activity, Managers.MacrosManager macrosManager)
+        private readonly FragmentActivity _activity;
+        public MacrosAdapter(FragmentActivity activity, Managers.MacrosManager macrosManager)
         {
             _activity = activity;
             _macrosManager = macrosManager;
@@ -91,8 +92,9 @@ namespace SmartRoom.Adapters
             var stop = view.FindViewById<ImageButton>(Resource.Id.list_item_macro_stop);
             var playpause = view.FindViewById<CheckBox>(Resource.Id.list_item_macro_playpause);
             var items = view.FindViewById<RecyclerView>(Resource.Id.list_item_macro_items);
+            var add = view.FindViewById<ImageButton>(Resource.Id.list_item_macro_add);
 
-            if(isNew)
+            if (isNew)
             {
                 expand.Checked = false;
                 expand.CheckedChange += delegate { Expand_CheckedChange(expand); };
@@ -101,7 +103,14 @@ namespace SmartRoom.Adapters
                 repeat.Click += delegate { Repeat_Click(item, repeat); };
                 stop.Click += delegate { Stop_Click(item, stop); };
                 playpause.CheckedChange += delegate { Playpause_CheckedChange(item, playpause.Checked); };
-                //items.SetAdapter() When ready, add adapter
+                add.Click += delegate { Add_Click(item); };
+                var decor = new DividerItemDecoration(_activity, DividerItemDecoration.Vertical);
+                var callback = new Callbacks.ObservableCollectionCallback<Interfaces.IMacroItemModel>(item.Items);
+                var ith = new ItemTouchHelper(callback);
+                items.SetAdapter(new MacroItemsAdapter(_activity, _macrosManager, item));
+                items.SetLayoutManager(new LinearLayoutManager(_activity));
+                items.AddItemDecoration(decor);
+                ith.AttachToRecyclerView(items);
             }
 
             title.Text = (item.Name != string.Empty ? item.Name : view.Resources.GetString(Resource.String.text_untitled));
@@ -109,6 +118,11 @@ namespace SmartRoom.Adapters
             playpause.Checked = item.Running;
 
             return view;
+        }
+
+        private void Add_Click(Models.MacroModel model)
+        {
+            //throw new NotImplementedException();
         }
 
         private void Playpause_CheckedChange(Models.MacroModel model, bool play)
@@ -143,7 +157,7 @@ namespace SmartRoom.Adapters
 
         private void Expand_CheckedChange(CheckBox sender)
         {
-            var expand = sender.RootView.FindViewById<RecyclerView>(Resource.Id.list_item_macro_items);
+            var expand = sender.RootView.FindViewById<LinearLayout>(Resource.Id.list_item_macro_expand_list);
             var cardView = sender.RootView.FindViewById<AndroidX.CardView.Widget.CardView>(Resource.Id.list_item_macro_card);
             if(sender.Checked == true)
             {

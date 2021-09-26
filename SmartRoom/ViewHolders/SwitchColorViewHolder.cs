@@ -13,7 +13,7 @@ using System.Text;
 
 namespace SmartRoom.ViewHolders
 {
-    public class ColorSwitchViewHolder : RecyclerView.ViewHolder, ISwitchViewHolder
+    public class SwitchColorViewHolder : RecyclerView.ViewHolder, IViewHolder<Models.SwitchModel>
     {
         public Rtugeek.ColorSeekBarLib.ColorSeekBar Slider { get; set; }
         public CheckBox Fade { get; set; }
@@ -22,7 +22,7 @@ namespace SmartRoom.ViewHolders
         public ImageButton Delete { get; set; }
         public Models.SwitchModel Model { get; set; }
 
-        public ColorSwitchViewHolder(View itemView) : base(itemView)
+        public SwitchColorViewHolder(View itemView) : base(itemView)
         {
             Slider = itemView.FindViewById<Rtugeek.ColorSeekBarLib.ColorSeekBar>(Resource.Id.list_item_switches_rgb_slider);
             Fade = itemView.FindViewById<CheckBox>(Resource.Id.list_item_switches_rgb_fade);

@@ -11,8 +11,8 @@ using System.Text;
 
 namespace SmartRoom.Interfaces
 {
-    public interface ISwitchViewHolder
+    public interface IViewHolder<T>
     {
-        public Models.SwitchModel Model { get; set; }
+        public T Model { get; set; }
     }
 }

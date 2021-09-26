@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="14dip"
+    android:paddingVertical="15dip">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_select_color"
+        android:textStyle="bold"
+        android:layout_marginLeft="4dp"
+        android:textSize="24dp"/>
+    <com.jaredrummler.android.colorpicker.ColorPickerView
+        android:id="@+id/popup_color_picker_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/popup_color_picker_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="@string/button_cancel"/>
+        <Button
+            android:id="@+id/popup_color_picker_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="@string/button_select"/>
+    </RelativeLayout>
+</LinearLayout>

@@ -119,8 +119,7 @@ namespace SmartRoom.Fragments
             rec.AddItemDecoration(new AndroidX.RecyclerView.Widget.DividerItemDecoration(Context, AndroidX.RecyclerView.Widget.DividerItemDecoration.Vertical));
             rec.SetAdapter(adapter);
 
-
-            var touchHelper = new AndroidX.RecyclerView.Widget.ItemTouchHelper(new Callbacks.SwitchesCallback(_switches.SwitchesCollection));
+            var touchHelper = new AndroidX.RecyclerView.Widget.ItemTouchHelper(new Callbacks.ObservableCollectionCallback<Models.SwitchModel>(_switches.SwitchesCollection));
             touchHelper.AttachToRecyclerView(rec);
 
             UpdateTitleVisibility(_view);
