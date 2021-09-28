@@ -19,6 +19,16 @@
         android:id="@+id/macros_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"/>
-
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/macros_add"/>
+    <Button
+        android:id="@+id/macros_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/accessibility_macro_add"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="@string/accessibility_macro_add"
+        android:background="@android:color/transparent"
+        android:tint="@color/button_material_dark"/>
 </RelativeLayout>

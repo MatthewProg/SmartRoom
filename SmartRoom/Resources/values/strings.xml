@@ -20,6 +20,8 @@
     <string name="popup_title_switch">Edit switch</string>
     <string name="popup_title_slider">Edit slider</string>
     <string name="popup_title_rgb">Edit RGB</string>
+    <string name="popup_title_title">Set title</string>
+    <string name="popup_description_title">Set new macro title</string>
     <string name="button_save">Save</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>

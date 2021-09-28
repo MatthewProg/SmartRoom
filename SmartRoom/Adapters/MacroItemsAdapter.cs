@@ -152,7 +152,6 @@ namespace SmartRoom.Adapters
             {
                 var e = obj as Models.ColorSwitchModel;
                 var v = holder as ViewHolders.MacroColorViewHolder;
-                var hsv = e.Color.GetHSV();
 
                 v.Model = e;
                 v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));

@@ -19,6 +19,8 @@ namespace SmartRoom.Adapters
     {
         private readonly Managers.MacrosManager _macrosManager;
         private readonly FragmentActivity _activity;
+        private Fragments.FragmentPopupValue _macroPopup;
+
         public MacrosAdapter(FragmentActivity activity, Managers.MacrosManager macrosManager)
         {
             _activity = activity;
@@ -43,6 +45,7 @@ namespace SmartRoom.Adapters
                     foreach (Models.MacroModel m in e.NewItems)
                         m.PropertyChanged += MacroPropChanged;
                 }
+                _activity.RunOnUiThread(NotifyDataSetChanged); //Change to notify item
             }
         }
 
@@ -85,6 +88,8 @@ namespace SmartRoom.Adapters
             }
 
             var expand = view.FindViewById<CheckBox>(Resource.Id.list_item_macro_expand);
+            var expandLayout = view.FindViewById<LinearLayout>(Resource.Id.list_item_macro_expand_list);
+            var cardView = view.FindViewById<AndroidX.CardView.Widget.CardView>(Resource.Id.list_item_macro_card);
             var title = view.FindViewById<TextView>(Resource.Id.list_item_macro_title);
             var delete = view.FindViewById<ImageButton>(Resource.Id.list_item_macro_delete);
             var edit = view.FindViewById<ImageButton>(Resource.Id.list_item_macro_edit);
@@ -97,7 +102,7 @@ namespace SmartRoom.Adapters
             if (isNew)
             {
                 expand.Checked = false;
-                expand.CheckedChange += delegate { Expand_CheckedChange(expand); };
+                expand.CheckedChange += delegate { Expand_CheckedChange(expandLayout, cardView, expand.Checked); };
                 delete.Click += delegate { Delete_Click(item); };
                 edit.Click += delegate { Edit_Click(item); };
                 repeat.Click += delegate { Repeat_Click(item, repeat); };
@@ -122,7 +127,7 @@ namespace SmartRoom.Adapters
 
         private void Add_Click(Models.MacroModel model)
         {
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private void Playpause_CheckedChange(Models.MacroModel model, bool play)
@@ -146,7 +151,17 @@ namespace SmartRoom.Adapters
 
         private void Edit_Click(Models.MacroModel model)
         {
-            throw new NotImplementedException();
+            _macroPopup = new Fragments.FragmentPopupValue(new Models.ListCellModel(null,
+                                                Resource.String.popup_title_title,
+                                                Resource.String.popup_description_title,
+                                                model.Name, 
+                                                Android.Text.InputTypes.TextFlagAutoCorrect, "", 0));
+            _macroPopup.PopupClose += (o, e) =>
+            {
+                if (e.HasResult == true)
+                    model.Name = (e.Result as ListCellModel).Value;
+            };
+            _macroPopup.Show(_activity.SupportFragmentManager, "PopupEditMacro");
         }
 
         private void Delete_Click(Models.MacroModel model)
@@ -155,11 +170,9 @@ namespace SmartRoom.Adapters
             _macrosManager.Macros.Remove(model);
         }
 
-        private void Expand_CheckedChange(CheckBox sender)
+        private void Expand_CheckedChange(LinearLayout expand, AndroidX.CardView.Widget.CardView cardView, bool check)
         {
-            var expand = sender.RootView.FindViewById<LinearLayout>(Resource.Id.list_item_macro_expand_list);
-            var cardView = sender.RootView.FindViewById<AndroidX.CardView.Widget.CardView>(Resource.Id.list_item_macro_card);
-            if(sender.Checked == true)
+            if(check == true)
             {
                 AndroidX.Transitions.TransitionManager.BeginDelayedTransition(cardView, new AndroidX.Transitions.AutoTransition());
                 expand.Visibility = ViewStates.Visible;
