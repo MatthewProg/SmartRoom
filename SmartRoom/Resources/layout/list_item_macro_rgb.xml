@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:paddingBottom="4dp"
     android:background="@color/background_material_light">
     <ImageView
         android:id="@+id/list_item_macro_rgb_current"
@@ -89,8 +90,8 @@
                         android:text="@string/text_fade"/>
                     <CheckBox
                         android:id="@+id/list_item_macro_rgb_fade"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="32dp"
+                        android:layout_height="25dp"
                         android:scaleX="0.75"
                         android:scaleY="0.75"
                         android:layout_gravity="center_vertical"/>

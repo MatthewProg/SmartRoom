@@ -64,6 +64,8 @@
             android:layout_gravity="fill_horizontal"
             android:layout_weight="1"
             android:layout_marginHorizontal="2dip"
+            android:backgroundTint="?android:attr/colorAccent"
+            android:textColor="@color/foreground_material_dark"
             android:text="@string/button_cancel"/>
         <Button
             android:id="@+id/popup_slider_save"
@@ -72,6 +74,8 @@
             android:layout_gravity="fill_horizontal"
             android:layout_weight="1"
             android:layout_marginHorizontal="2dip"
+            android:backgroundTint="?android:attr/colorAccent"
+            android:textColor="@color/foreground_material_dark"
             android:text="@string/button_save"/>
     </LinearLayout>
 </RelativeLayout>

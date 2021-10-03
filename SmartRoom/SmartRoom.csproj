@@ -72,6 +72,8 @@
   <ItemGroup>
     <Compile Include="Adapters\JavaRunnableAdapter.cs" />
     <Compile Include="Adapters\ListCellAdapter.cs" />
+    <Compile Include="Adapters\ListItemIconAdapter.cs" />
+    <Compile Include="Adapters\MacroAddPagerAdapter.cs" />
     <Compile Include="Adapters\MacroItemsAdapter.cs" />
     <Compile Include="Adapters\MacrosAdapter.cs" />
     <Compile Include="Adapters\PackageAdapter.cs" />
@@ -83,10 +85,13 @@
     <Compile Include="Adapters\SwitchesAdapter.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
     <Compile Include="Fragments\FragmentPopupColorPicker.cs" />
+    <Compile Include="Fragments\FragmentPopupMacroAddSelector.cs" />
     <Compile Include="Fragments\FragmentPopupRgb.cs" />
     <Compile Include="Fragments\FragmentPopupSlider.cs" />
     <Compile Include="Fragments\FragmentPopupSwitch.cs" />
     <Compile Include="Fragments\FragmentMacros.cs" />
+    <Compile Include="Fragments\FragmentSelectOld.cs" />
+    <Compile Include="Fragments\FragmentSelectNew.cs" />
     <Compile Include="Fragments\FragmentSensors.cs" />
     <Compile Include="Fragments\FragmentSettings.cs" />
     <Compile Include="Fragments\FragmentSwitches.cs" />
@@ -94,6 +99,7 @@
     <Compile Include="Fragments\FragmentPopupValue.cs" />
     <Compile Include="Extensions\Popup.cs" />
     <Compile Include="Interfaces\IMacroItemModel.cs" />
+    <Compile Include="Interfaces\ISelectFragment.cs" />
     <Compile Include="Interfaces\IViewHolder.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Managers\MacrosManager.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="Models\ColorTypes.cs" />
     <Compile Include="Models\DelayMacroItemModel.cs" />
     <Compile Include="Models\ListCellModel.cs" />
+    <Compile Include="Models\ListItemIconModel.cs" />
     <Compile Include="Models\MacroModel.cs" />
     <Compile Include="Models\PackageModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
@@ -176,12 +183,18 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.2.0.5" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.3.1.3" />
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
-      <Version>2.1.0</Version>
+      <Version>2.1.1.2</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0.1" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Xamarin.AndroidX.SwipeRefreshLayout">
+      <Version>1.1.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.ViewPager2">
+      <Version>1.0.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\content_switches.xml">
@@ -373,6 +386,27 @@
   <ItemGroup>
     <AndroidResource Include="Resources\layout\popup_color_picker.xml">
       <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_macro_add_selector.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\macro_add_selector_tab.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\list_item_icon.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_hourglass.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

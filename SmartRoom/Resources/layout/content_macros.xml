@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
-
-
     <TextView
         android:id="@+id/macros_title"
         android:layout_width="wrap_content"
@@ -30,5 +28,5 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:text="@string/accessibility_macro_add"
         android:background="@android:color/transparent"
-        android:tint="@color/button_material_dark"/>
+        android:textColor="@color/colorAccent"/>
 </RelativeLayout>

@@ -20,7 +20,7 @@ namespace SmartRoom.Models
         private string _greenPin;
         private string _bluePin;
 
-        public ColorSwitchModel()
+        public ColorSwitchModel() : base()
         {
             Color = new ColorModel();
         }
@@ -76,6 +76,19 @@ namespace SmartRoom.Models
                 _bluePin = value;
                 OnPropertyChanged("BluePin");
             }
+        }
+
+        protected ColorSwitchModel(ColorSwitchModel m) : base(m)
+        {
+            this.RedPin = m.RedPin;
+            this.GreenPin = m.GreenPin;
+            this.BluePin = m.BluePin;
+            this.Color = (ColorModel)m.Color.Clone();
+        }
+
+        public override object Clone()
+        {
+            return new ColorSwitchModel(this);
         }
 
         public override bool Equals(SwitchModel other)

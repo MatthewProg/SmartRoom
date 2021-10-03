@@ -17,4 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
+  <style name="AppTheme.ImageViewRounded">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">50%</item>
+  </style>
+
 </resources>

@@ -43,6 +43,22 @@ namespace SmartRoom.Models
             }
         }
 
+        public SliderSwitchModel()
+        {
+            ;
+        }
+
+        protected SliderSwitchModel(SliderSwitchModel m) : base(m)
+        {
+            this.Pin = m.Pin;
+            this.Value = m.Value;
+        }
+
+        public override object Clone()
+        {
+            return new SliderSwitchModel(this);
+        }
+
         public override bool Equals(SwitchModel other)
         {
             if (other is SliderSwitchModel == false)

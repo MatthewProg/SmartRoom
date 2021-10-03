@@ -17,13 +17,15 @@ namespace SmartRoom.Adapters
 {
     public class MacrosAdapter : BaseAdapter<Models.MacroModel>
     {
+        private readonly ObservableCollection<Models.SwitchModel> _switches;
         private readonly Managers.MacrosManager _macrosManager;
         private readonly FragmentActivity _activity;
-        private Fragments.FragmentPopupValue _macroPopup;
+        private Extensions.Popup _popup;
 
-        public MacrosAdapter(FragmentActivity activity, Managers.MacrosManager macrosManager)
+        public MacrosAdapter(FragmentActivity activity, Managers.MacrosManager macrosManager, ObservableCollection<Models.SwitchModel> switches)
         {
             _activity = activity;
+            _switches = switches;
             _macrosManager = macrosManager;
             _macrosManager.Macros.CollectionChanged += Macros_CollectionChanged;
             foreach (Models.MacroModel m in _macrosManager.Macros)
@@ -127,7 +129,13 @@ namespace SmartRoom.Adapters
 
         private void Add_Click(Models.MacroModel model)
         {
-            throw new NotImplementedException();
+            _popup = new Fragments.FragmentPopupMacroAddSelector(_macrosManager.Macros, _switches);
+            _popup.PopupClose += (o, e) =>
+            {
+                if (e.HasResult)
+                    model.Items.Add(e.Result as Interfaces.IMacroItemModel);
+            };
+            _popup?.Show(_activity.SupportFragmentManager, "PopupAddMacro");
         }
 
         private void Playpause_CheckedChange(Models.MacroModel model, bool play)
@@ -151,17 +159,17 @@ namespace SmartRoom.Adapters
 
         private void Edit_Click(Models.MacroModel model)
         {
-            _macroPopup = new Fragments.FragmentPopupValue(new Models.ListCellModel(null,
+            _popup = new Fragments.FragmentPopupValue(new Models.ListCellModel(null,
                                                 Resource.String.popup_title_title,
                                                 Resource.String.popup_description_title,
                                                 model.Name, 
                                                 Android.Text.InputTypes.TextFlagAutoCorrect, "", 0));
-            _macroPopup.PopupClose += (o, e) =>
+            _popup.PopupClose += (o, e) =>
             {
                 if (e.HasResult == true)
                     model.Name = (e.Result as ListCellModel).Value;
             };
-            _macroPopup.Show(_activity.SupportFragmentManager, "PopupEditMacro");
+            _popup.Show(_activity.SupportFragmentManager, "PopupEditMacro");
         }
 
         private void Delete_Click(Models.MacroModel model)

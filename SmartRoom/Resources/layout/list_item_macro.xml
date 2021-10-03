@@ -16,8 +16,8 @@
             android:orientation="horizontal">
             <CheckBox
                 android:id="@+id/list_item_macro_expand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
                 android:contentDescription="@string/accessibility_more" 
                 android:button="@drawable/checkbox_expand"
@@ -87,8 +87,8 @@
                 android:tint="@color/button_material_dark"/>
             <CheckBox
                 android:id="@+id/list_item_macro_playpause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="25dp"
+                android:layout_height="30dp"
                 android:layout_toLeftOf="@id/list_item_macro_stop"
                 android:contentDescription="@string/accessibility_play" 
                 android:button="@drawable/play_pause_control"

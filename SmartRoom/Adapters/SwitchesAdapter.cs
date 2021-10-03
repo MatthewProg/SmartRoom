@@ -53,7 +53,7 @@ namespace SmartRoom.Adapters
 
         private void SwitchPropChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Enabled") //So as not to break animation
+            if (e.PropertyName == "Enabled" || e.PropertyName == "Title") //So as not to break animation
             {
                 var index = _switches.IndexOf(sender as Models.SwitchModel);
                 _activity.RunOnUiThread(() => NotifyItemChanged(index));

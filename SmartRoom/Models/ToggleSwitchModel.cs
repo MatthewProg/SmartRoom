@@ -43,6 +43,22 @@ namespace SmartRoom.Models
             }
         }
 
+        public ToggleSwitchModel()
+        {
+            ;
+        }
+
+        protected ToggleSwitchModel(ToggleSwitchModel m) : base(m)
+        {
+            this.Pin = m.Pin;
+            this.Toggle = m.Toggle;
+        }
+
+        public override object Clone()
+        {
+            return new ToggleSwitchModel(this);
+        }
+
         public override bool Equals(SwitchModel other)
         {
             if (other is ToggleSwitchModel == false)

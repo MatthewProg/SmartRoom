@@ -7,6 +7,7 @@ using AndroidX.Fragment.App;
 using SmartRoom.Managers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -15,10 +16,12 @@ namespace SmartRoom.Fragments
     public class FragmentMacros : Fragment
     {
         private readonly MacrosManager _macrosManager;
+        private readonly ObservableCollection<Models.SwitchModel> _switches;
         private Fragments.FragmentPopupValue _popup;
 
-        public FragmentMacros(Managers.MacrosManager macrosManager)
+        public FragmentMacros(Managers.MacrosManager macrosManager, ObservableCollection<Models.SwitchModel> switches)
         {
+            _switches = switches;
             _macrosManager = macrosManager;
             _macrosManager.Macros.Add(new Models.MacroModel()
             { 
@@ -56,7 +59,7 @@ namespace SmartRoom.Fragments
             var text = v.FindViewById<TextView>(Resource.Id.macros_title);
             var add = v.FindViewById<Button>(Resource.Id.macros_add);
 
-            list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager);
+            list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager, _switches);
             text.Visibility = (_macrosManager.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
             add.Click += Add_Click;
 

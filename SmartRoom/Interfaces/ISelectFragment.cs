@@ -6,15 +6,13 @@ using Android.Views;
 using Android.Widget;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace SmartRoom.Interfaces
 {
-    public interface IMacroItemModel : INotifyPropertyChanged, ICloneable
+    public interface ISelectFragment
     {
-        public string Title { get; set; }
-        public bool Enabled { get; set; }
+        public event EventHandler<Events.PopupEventArgs> Selected;
     }
 }

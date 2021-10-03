@@ -61,6 +61,18 @@ namespace SmartRoom.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        protected SwitchModel(SwitchModel model)
+        {
+            this.Fade = model.Fade;
+            this.Enabled = model.Enabled;
+            this.Title = model.Title;
+        }
+
+        protected SwitchModel()
+        {
+            ;
+        }
+
         public virtual bool Equals(SwitchModel other)
         {
             return (this.Fade == other.Fade &&
@@ -73,5 +85,7 @@ namespace SmartRoom.Models
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
         }
+
+        public abstract object Clone();
     }
 }

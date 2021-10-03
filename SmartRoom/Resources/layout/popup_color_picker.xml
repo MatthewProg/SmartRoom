@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textColor="@color/colorAccent"
             android:text="@string/button_cancel"/>
         <Button
             android:id="@+id/popup_color_picker_select"
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textColor="@color/colorAccent"
             android:text="@string/button_select"/>
     </RelativeLayout>
 </LinearLayout>

@@ -12,11 +12,12 @@ using System.Text;
 
 namespace SmartRoom.Models
 {
-    public class DelayMacroItemModel : Interfaces.IMacroItemModel
+    public class ListItemIconModel : INotifyPropertyChanged
     {
         private string _title;
-        private bool _enabled;
-        private int _delay;
+        private string _subtitle;
+        private int _icon;
+        private object _model;
 
         public string Title
         {
@@ -29,48 +30,44 @@ namespace SmartRoom.Models
                 OnPropertyChanged("Title");
             }
         }
-        public bool Enabled
+
+        public string Subtitle
         {
-            get => _enabled;
+            get => _subtitle;
             set
             {
-                if (_enabled == value) return;
+                if (_subtitle == value) return;
 
-                _enabled = value;
-                OnPropertyChanged("Enabled");
+                _subtitle = value;
+                OnPropertyChanged("Subtitle");
             }
         }
 
-        public int Delay
+        public int Icon
         {
-            get => _delay;
+            get => _icon;
             set
             {
-                if (_delay == value) return;
+                if (_icon == value) return;
 
-                _delay = value;
-                OnPropertyChanged("Delay");
+                _icon = value;
+                OnPropertyChanged("Icon");
+            }
+        }
+
+        public object Model
+        {
+            get => _model;
+            set
+            {
+                if (_model == value) return;
+
+                _model = value;
+                OnPropertyChanged("Model");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public DelayMacroItemModel()
-        {
-            ;
-        }
-
-        protected DelayMacroItemModel(DelayMacroItemModel m)
-        {
-            this.Delay = m.Delay;
-            this.Enabled = m.Enabled;
-            this.Title = m.Title;
-        }
-
-        public object Clone()
-        {
-            return new DelayMacroItemModel(this);
-        }
 
         protected virtual void OnPropertyChanged(String info)
         {

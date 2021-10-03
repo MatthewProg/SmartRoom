@@ -31,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:tint="@color/foreground_material_dark" 
+            android:backgroundTint="?android:attr/colorAccent"
+            app:tint="@color/foreground_material_dark"
             app:srcCompat="@drawable/ic_electric_switch" />
     </LinearLayout>
 
@@ -62,7 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:tint="@color/foreground_material_dark"
+            android:backgroundTint="?android:attr/colorAccent"
+            app:tint="@color/foreground_material_dark"
             app:srcCompat="@drawable/ic_slider" />
     </LinearLayout>
 
@@ -93,7 +95,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:tint="@color/foreground_material_dark"
+            android:backgroundTint="?android:attr/colorAccent"
+            app:tint="@color/foreground_material_dark"
             app:srcCompat="@drawable/ic_led" />
     </LinearLayout>
 
@@ -104,7 +107,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
-        android:tint="@color/foreground_material_dark"
+        android:backgroundTint="?android:attr/colorAccent"
+        app:tint="@color/foreground_material_dark"
         app:srcCompat="@drawable/ic_add" />
 
 </RelativeLayout>

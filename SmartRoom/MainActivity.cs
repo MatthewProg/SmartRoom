@@ -113,7 +113,7 @@ namespace SmartRoom
             else if (id == Resource.Id.nav_macros)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentMacros(_macrosManager), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentMacros(_macrosManager, _switches.SwitchesCollection), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)

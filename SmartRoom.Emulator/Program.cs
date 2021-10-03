@@ -9,8 +9,8 @@ namespace SmartRoom.Emulator
         {
             //Vars
             int port = 23;
-            string serverIp = "192.168.2.193";
-            bool autoIp = false;
+            string serverIp = "127.0.0.1";
+            bool autoIp = true;
 
             //Auto get local IP
             if(autoIp)

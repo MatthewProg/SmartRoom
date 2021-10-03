@@ -22,6 +22,9 @@
     <string name="popup_title_rgb">Edit RGB</string>
     <string name="popup_title_title">Set title</string>
     <string name="popup_description_title">Set new macro title</string>
+    <string name="tab_new">New</string>
+    <string name="tab_switches">Switches</string>
+    <string name="tab_macro">Macro</string>
     <string name="button_save">Save</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
@@ -39,12 +42,17 @@
     <string name="text_rgb_g_pin">Green pin</string>
     <string name="text_rgb_b_pin">Blue pin</string>
     <string name="text_select_color">Select a new color</string>
+    <string name="text_alias_pin">P</string>
+    <string name="text_alias_red_pin">R</string>
+    <string name="text_alias_green_pin">G</string>
+    <string name="text_alias_blue_pin">B</string>
     <string name="settings_ip">IP Address</string>
     <string name="settings_ip_desc">Server address</string>
     <string name="settings_port">Port</string>
     <string name="settings_port_desc">Listener port</string>
     <string name="settings_pins">Restricted pins</string>
     <string name="settings_pins_desc">Pins restricted by hardware</string>
+    <string name="accessibility_icon">Icon</string>
     <string name="accessibility_delete">Delete</string>
     <string name="accessibility_edit">Edit</string>
     <string name="accessibility_stop">Stop</string>

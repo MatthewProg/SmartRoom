@@ -12,7 +12,7 @@ using System.Text;
 
 namespace SmartRoom.Models
 {
-    public class ColorModel : INotifyPropertyChanged
+    public class ColorModel : INotifyPropertyChanged, ICloneable
     {
         private ColorTypes.RGB _rgb;
 
@@ -133,6 +133,11 @@ namespace SmartRoom.Models
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
+        }
+
+        public object Clone()
+        {
+            return new ColorModel(_rgb.R, _rgb.G, _rgb.B);
         }
     }
 }
