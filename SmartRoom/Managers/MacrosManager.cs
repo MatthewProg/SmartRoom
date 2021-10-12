@@ -19,13 +19,13 @@ namespace SmartRoom.Managers
         private readonly PackagesManager _packagesManager;
         private Dictionary<Models.MacroModel, Tuple<Task, CancellationTokenSource>> _tasks;
 
-        public ObservableCollection<Models.MacroModel> Macros { get; private set; }
+        public ViewModels.MacrosViewModel MacrosViewModel { get; private set; }
 
-        public MacrosManager(PackagesManager packagesManager)
+        public MacrosManager(PackagesManager packagesManager, ViewModels.MacrosViewModel macros)
         {
             _packagesManager = packagesManager;
             _tasks = new Dictionary<Models.MacroModel, Tuple<Task, CancellationTokenSource>>();
-            Macros = new ObservableCollection<Models.MacroModel>();
+            MacrosViewModel = macros;
         }
 
         public void StartMacro(Models.MacroModel macro)

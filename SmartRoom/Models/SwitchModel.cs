@@ -87,5 +87,9 @@ namespace SmartRoom.Models
         }
 
         public abstract object Clone();
+
+        public abstract string MacroSerialize();
+
+        public abstract IMacroItemModel MacroDeserialize(string json);
     }
 }

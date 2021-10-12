@@ -27,8 +27,8 @@ namespace SmartRoom.Adapters
             _activity = activity;
             _switches = switches;
             _macrosManager = macrosManager;
-            _macrosManager.Macros.CollectionChanged += Macros_CollectionChanged;
-            foreach (Models.MacroModel m in _macrosManager.Macros)
+            _macrosManager.MacrosViewModel.Macros.CollectionChanged += Macros_CollectionChanged;
+            foreach (Models.MacroModel m in _macrosManager.MacrosViewModel.Macros)
                 m.PropertyChanged += MacroPropChanged;
         }
 
@@ -59,9 +59,9 @@ namespace SmartRoom.Adapters
             }
         }
 
-        public override MacroModel this[int position] => _macrosManager.Macros[position];
+        public override MacroModel this[int position] => _macrosManager.MacrosViewModel.Macros[position];
 
-        public override int Count => _macrosManager.Macros.Count;
+        public override int Count => _macrosManager.MacrosViewModel.Macros.Count;
 
         public override long GetItemId(int position) => position;
 
@@ -76,7 +76,7 @@ namespace SmartRoom.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var item = _macrosManager.Macros[position];
+            var item = _macrosManager.MacrosViewModel.Macros[position];
             View view = null;
             if (convertView?.Tag?.JavaCast<Java.Lang.Integer>().IntValue() == item.GetHashCode()) //If same, reuse
                 view = convertView;
@@ -129,7 +129,7 @@ namespace SmartRoom.Adapters
 
         private void Add_Click(Models.MacroModel model)
         {
-            _popup = new Fragments.FragmentPopupMacroAddSelector(_macrosManager.Macros, _switches);
+            _popup = new Fragments.FragmentPopupMacroAddSelector(_macrosManager.MacrosViewModel.Macros, _switches);
             _popup.PopupClose += (o, e) =>
             {
                 if (e.HasResult)
@@ -175,7 +175,7 @@ namespace SmartRoom.Adapters
         private void Delete_Click(Models.MacroModel model)
         {
             _macrosManager.StopMacro(model);
-            _macrosManager.Macros.Remove(model);
+            _macrosManager.MacrosViewModel.Macros.Remove(model);
         }
 
         private void Expand_CheckedChange(LinearLayout expand, AndroidX.CardView.Widget.CardView cardView, bool check)

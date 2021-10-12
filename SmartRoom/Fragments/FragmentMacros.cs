@@ -23,27 +23,6 @@ namespace SmartRoom.Fragments
         {
             _switches = switches;
             _macrosManager = macrosManager;
-            _macrosManager.Macros.Add(new Models.MacroModel()
-            { 
-                Enabled = true,
-                Name = "Test",
-                Repeat = true,
-                Running = false,
-                Items = new System.Collections.ObjectModel.ObservableCollection<Interfaces.IMacroItemModel>()
-                {
-                    new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=1F },
-                    new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=true, Pin="D2", Toggle=true },
-                    new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=0F },
-                    new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(255,128,192) },
-                    new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-                    new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(0,0,0) },
-                    new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=false, Pin="D2", Toggle=false },
-                    new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 }
-                }
-            });
-            _macrosManager.StartMacro(_macrosManager.Macros[0]);
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -60,7 +39,7 @@ namespace SmartRoom.Fragments
             var add = v.FindViewById<Button>(Resource.Id.macros_add);
 
             list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager, _switches);
-            text.Visibility = (_macrosManager.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
+            text.Visibility = (_macrosManager.MacrosViewModel.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
             add.Click += Add_Click;
 
             return v;
@@ -86,7 +65,7 @@ namespace SmartRoom.Fragments
                     Enabled = true,
                     Name = (e.Result as Models.ListCellModel).Value
                 };
-                _macrosManager.Macros.Add(macro);
+                _macrosManager.MacrosViewModel.Macros.Add(macro);
             }
         }
     }

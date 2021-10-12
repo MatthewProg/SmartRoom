@@ -5,6 +5,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,31 @@ namespace SmartRoom.Models
         protected override void OnPropertyChanged(String info)
         {
             base.OnPropertyChanged(info);
+        }
+
+        public override string MacroSerialize()
+        {
+            var obj = JToken.FromObject(this);
+            JObject o = (JObject)obj;
+            JProperty color = new JProperty("C", Color.GetHex());
+            o.AddFirst(color);
+            o.Add("F", Fade);
+            return o.ToString();
+        }
+
+        public override IMacroItemModel MacroDeserialize(string json)
+        {
+            var o = JObject.Parse(json);
+            Color.FromHex(o.Value<string>("C"));
+            this.Fade = o.Value<bool>("F");
+            o.Remove("C");
+            o.Remove("F");
+            var obj = o.ToObject<ColorSwitchModel>();
+            this.RedPin = obj.RedPin;
+            this.GreenPin = obj.GreenPin;
+            this.BluePin = obj.BluePin;
+            this.Title = obj.Title;
+            return this;
         }
     }
 }

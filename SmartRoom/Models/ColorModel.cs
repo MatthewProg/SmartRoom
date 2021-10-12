@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SmartRoom.Models
 {
@@ -59,10 +60,21 @@ namespace SmartRoom.Models
             if (string.IsNullOrWhiteSpace(hex)) throw new ArgumentNullException("hex");
             if (hex[0] != '#') hex = "#" + hex;
             if (hex.Length != 4 && hex.Length != 5 && hex.Length != 7 && hex.Length != 9) throw new ArgumentException("Wrong lenght of arg", "hex");
-            var col = System.Drawing.ColorTranslator.FromHtml(hex);
-            _rgb.R = col.R;
-            _rgb.G = col.G;
-            _rgb.B = col.B;
+
+            //Unify
+            if (hex.Length == 4) hex = "FF" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
+            else if (hex.Length == 5) hex = "" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3] + hex[4] + hex[4];
+            else if (hex.Length == 7) hex = "FF" + hex.Substring(1);
+            else if (hex.Length == 9) hex = hex.Substring(1);
+
+            if (Regex.IsMatch(hex, "^([a-fA-F0-9]{8})$") == false)
+                return;
+
+            //Convert
+            var col = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+            _rgb.B = (byte)(col & 255);
+            _rgb.G = (byte)((col >> 8) & 255);
+            _rgb.R = (byte)((col >> 16) & 255);
             OnPropertyChanged("");
         }
         public void FromRGB(byte r, byte g, byte b) => FromRGB(new ColorTypes.RGB(r, g, b));

@@ -4,6 +4,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +21,7 @@ namespace SmartRoom.Models
         private bool _enabled;
         private int _delay;
 
+        [JsonProperty(PropertyName = "T")]
         public string Title
         {
             get => _title;
@@ -29,6 +33,8 @@ namespace SmartRoom.Models
                 OnPropertyChanged("Title");
             }
         }
+
+        [JsonIgnore]
         public bool Enabled
         {
             get => _enabled;
@@ -41,6 +47,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonProperty(PropertyName = "D")]
         public int Delay
         {
             get => _delay;
@@ -76,6 +83,24 @@ namespace SmartRoom.Models
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
+        }
+
+        public string MacroSerialize()
+        {
+            JObject o = JObject.FromObject(this);
+            o.Add("E", Enabled);
+            return o.ToString();
+        }
+
+        public IMacroItemModel MacroDeserialize(string json)
+        {
+            JObject o = JObject.Parse(json);
+            this.Enabled = o.Value<bool>("E");
+            o.Remove("E");
+            var obj = JsonConvert.DeserializeObject<DelayMacroItemModel>(json);
+            this.Delay = obj.Delay;
+            this.Title = obj.Title;
+            return this;
         }
     }
 }

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace SmartRoom.Models
             Items = new ObservableCollection<IMacroItemModel>();
         }
 
+        [JsonProperty(propertyName: "N")]
         public string Name
         {
             get => _name;
@@ -38,6 +40,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonProperty(propertyName: "R")]
         public bool Repeat
         {
             get => _repeat;
@@ -50,6 +53,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonProperty(propertyName: "E")]
         public bool Enabled
         {
             get => _enabled;
@@ -62,6 +66,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonIgnore]
         public bool Running 
         { 
             get => _running;
@@ -74,6 +79,7 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonIgnore]
         public ObservableCollection<IMacroItemModel> Items { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

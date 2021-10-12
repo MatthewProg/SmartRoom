@@ -22,6 +22,7 @@ namespace SmartRoom
         private Managers.MacrosManager _macrosManager;
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
+        private ViewModels.MacrosViewModel _macros;
         private Task _taskLoadSettings;
         private Task _taskLoadSwitches;
 
@@ -47,8 +48,9 @@ namespace SmartRoom
 
             _settings = new ViewModels.SettingsViewModel();
             _switches = new ViewModels.SwitchesViewModel();
+            _macros = new ViewModels.MacrosViewModel();
             _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
-            _macrosManager = new Managers.MacrosManager(_packagesManager);
+            _macrosManager = new Managers.MacrosManager(_packagesManager, _macros);
             _taskLoadSettings = Task.Run(async () => await _settings.LoadSettingsAsync());
             _taskLoadSwitches = Task.Run(async () => await _switches.LoadSwitchesAsync());
             Task.WhenAll(_taskLoadSwitches, _taskLoadSettings).ContinueWith(delegate

@@ -79,10 +79,14 @@
     <Compile Include="Adapters\PackageAdapter.cs" />
     <Compile Include="Callbacks\ObservableCollectionCallback.cs" />
     <Compile Include="Connectors\TcpConnector.cs" />
+    <Compile Include="Converters\MacroItemTypesJsonConverter.cs" />
+    <Compile Include="Converters\MacroJsonConverter.cs" />
+    <Compile Include="Converters\MacroItemsJsonConverter.cs" />
     <Compile Include="Converters\SwitchesJsonConverter.cs" />
     <Compile Include="Events\CallbackMoveEventArgs.cs" />
     <Compile Include="Events\PopupEventArgs.cs" />
     <Compile Include="Adapters\SwitchesAdapter.cs" />
+    <Compile Include="Extensions\UniqueDictionary.cs" />
     <Compile Include="Fragments\FragmentMain.cs" />
     <Compile Include="Fragments\FragmentPopupColorPicker.cs" />
     <Compile Include="Fragments\FragmentPopupMacroAddSelector.cs" />
@@ -123,6 +127,7 @@
     <Compile Include="ViewHolders\SwitchSliderViewHolder.cs" />
     <Compile Include="ViewHolders\MacroToggleViewHolder.cs" />
     <Compile Include="ViewHolders\SwitchToggleViewHolder.cs" />
+    <Compile Include="ViewModels\MacrosViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
