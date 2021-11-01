@@ -10,16 +10,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SmartRoom.Fragments
 {
     public class FragmentMacros : Fragment
     {
         private readonly MacrosManager _macrosManager;
-        private readonly ObservableCollection<Models.SwitchModel> _switches;
+        private readonly ViewModels.SwitchesViewModel _switches;
         private Fragments.FragmentPopupValue _popup;
 
-        public FragmentMacros(Managers.MacrosManager macrosManager, ObservableCollection<Models.SwitchModel> switches)
+        public FragmentMacros(Managers.MacrosManager macrosManager, ViewModels.SwitchesViewModel switches)
         {
             _switches = switches;
             _macrosManager = macrosManager;
@@ -33,16 +34,32 @@ namespace SmartRoom.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var v = inflater.Inflate(Resource.Layout.content_macros, container, false);
-
-            var list = v.FindViewById<ListView>(Resource.Id.macros_list);
-            var text = v.FindViewById<TextView>(Resource.Id.macros_title);
+            
             var add = v.FindViewById<Button>(Resource.Id.macros_add);
 
-            list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager, _switches);
-            text.Visibility = (_macrosManager.MacrosViewModel.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
+            if (_macrosManager.MacrosViewModel.TaskLoad.IsCompleted == true &&
+                _switches.TaskLoad.IsCompleted == true)
+                ShowLoaded(v);
+            else
+                Task.WhenAll(_macrosManager.MacrosViewModel.TaskLoad, _switches.TaskLoad).ContinueWith(delegate
+                {
+                    Activity.RunOnUiThread(() => ShowLoaded(v));
+                });
+
             add.Click += Add_Click;
 
             return v;
+        }
+
+        private void ShowLoaded(View v)
+        {
+            var list = v.FindViewById<ListView>(Resource.Id.macros_list);
+            var text = v.FindViewById<TextView>(Resource.Id.macros_title);
+            var loading = v.FindViewById<RelativeLayout>(Resource.Id.macros_loading);
+
+            list.Adapter = new Adapters.MacrosAdapter(Activity, _macrosManager, _switches.SwitchesCollection);
+            text.Visibility = (_macrosManager.MacrosViewModel.Macros.Count == 0) ? ViewStates.Visible : ViewStates.Gone;
+            loading.Visibility = ViewStates.Gone;
         }
 
         private void Add_Click(object sender, EventArgs e)

@@ -16,14 +16,12 @@ namespace SmartRoom.Fragments
 {
     public class FragmentSettings : Fragment
     {
-        private ObservableCollection<Models.ListCellModel> _settings;
-        private Task _settingsLoad;
+        private ViewModels.SettingsViewModel _settings;
         private FragmentPopupValue _popup;
 
-        public FragmentSettings(Task settingsLoad, ObservableCollection<Models.ListCellModel> settings)
+        public FragmentSettings(ViewModels.SettingsViewModel settings)
         {
             _settings = settings;
-            _settingsLoad = settingsLoad;
         }
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -35,10 +33,10 @@ namespace SmartRoom.Fragments
         {
             var v = inflater.Inflate(Resource.Layout.content_settings, container, false);
 
-            if (_settingsLoad.IsCompleted)
+            if (_settings.TaskLoad.IsCompleted)
                 PopulateList(v);
             else
-                _settingsLoad.ContinueWith(delegate {
+                _settings.TaskLoad.ContinueWith(delegate {
                     Activity.RunOnUiThread(() =>
                     {
                         PopulateList(v);
@@ -53,13 +51,13 @@ namespace SmartRoom.Fragments
             view.FindViewById<RelativeLayout>(Resource.Id.settings_loading).Visibility = ViewStates.Gone;
 
             var listView = view.FindViewById<ListView>(Resource.Id.list_settings);
-            listView.Adapter = new Adapters.ListCellAdapter(Activity, _settings);
+            listView.Adapter = new Adapters.ListCellAdapter(Activity, _settings.SettingsCollection);
             listView.ItemClick += ListView_ItemClick;
         }
 
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            var element = _settings[e.Position];
+            var element = _settings.SettingsCollection[e.Position];
             _popup = new FragmentPopupValue(element);
             _popup.Show(Activity.SupportFragmentManager, "PopupSettings");
         }

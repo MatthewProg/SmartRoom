@@ -23,8 +23,6 @@ namespace SmartRoom
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
         private ViewModels.MacrosViewModel _macros;
-        private Task _taskLoadSettings;
-        private Task _taskLoadSwitches;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,9 +49,10 @@ namespace SmartRoom
             _macros = new ViewModels.MacrosViewModel();
             _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
             _macrosManager = new Managers.MacrosManager(_packagesManager, _macros);
-            _taskLoadSettings = Task.Run(async () => await _settings.LoadSettingsAsync());
-            _taskLoadSwitches = Task.Run(async () => await _switches.LoadSwitchesAsync());
-            Task.WhenAll(_taskLoadSwitches, _taskLoadSettings).ContinueWith(delegate
+            _settings.LoadModelAsync();
+            _switches.LoadModelAsync();
+            _macros.LoadModelAsync();
+            Task.WhenAll(_switches.TaskLoad, _settings.TaskLoad).ContinueWith(delegate
             {
                 _packagesManager.Connection.Connect(
                     ViewModels.SettingsViewModel.Settings.Address,
@@ -109,13 +108,13 @@ namespace SmartRoom
             if (id == Resource.Id.nav_switches)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_taskLoadSwitches, _switches, _packagesManager), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSwitches(_switches, _packagesManager), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_macros)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentMacros(_macrosManager, _switches.SwitchesCollection), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentMacros(_macrosManager, _switches), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_sensors)
@@ -127,7 +126,7 @@ namespace SmartRoom
             else if (id == Resource.Id.nav_settings)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(_taskLoadSettings, _settings.SettingsCollection), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSettings(_settings), "MainContent");
                 transaction.Commit();
             }
 

@@ -15,15 +15,23 @@ using System.Threading.Tasks;
 
 namespace SmartRoom.ViewModels
 {
-    public class MacrosViewModel
+    public class MacrosViewModel : Interfaces.IViewModel
     {
+        private bool _saveScheduled;
+        private bool _loadScheduled;
+
         public ObservableCollection<Models.MacroModel> Macros { get; private set; }
+
+        public Task TaskSave { get; private set; }
+        public Task TaskLoad { get; private set; }
 
         public MacrosViewModel()
         {
             Macros = new ObservableCollection<Models.MacroModel>();
             Macros.CollectionChanged += MacrosCollectionChanged;
-            Task.Run(async () => await LoadMacro());
+            _saveScheduled = false;
+            _loadScheduled = false;
+            //Task.Run(async () => await LoadMacrosAsync());
             //Macros.Add(new Models.MacroModel() //Just tmp for dev
             //{
             //    Enabled = true,
@@ -57,6 +65,8 @@ namespace SmartRoom.ViewModels
                     {
                         item.PropertyChanged += MacroPropertyChanged;
                         item.Items.CollectionChanged += MacroItemsCollectionChanged;
+                        foreach (var i in item.Items)
+                            i.PropertyChanged += MacroItemPropertyChanged;
                     }
                 }
             }
@@ -68,9 +78,12 @@ namespace SmartRoom.ViewModels
                     {
                         item.PropertyChanged -= MacroPropertyChanged;
                         item.Items.CollectionChanged -= MacroItemsCollectionChanged;
+                        foreach (var i in item.Items)
+                            i.PropertyChanged -= MacroItemPropertyChanged;
                     }
                 }
             }
+            SaveModelAsync();
         }
 
         private void MacroItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -91,20 +104,21 @@ namespace SmartRoom.ViewModels
                         item.PropertyChanged -= MacroItemPropertyChanged;
                 }
             }
+            SaveModelAsync();
         }
 
         private void MacroItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            //if (e.PropertyName == "Name") //Change to saving by button click
-                Task.Run(async () => await SaveMacros());
+            SaveModelAsync();
         }
 
         private void MacroPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (e.PropertyName != "Running")
+                SaveModelAsync();
         }
 
-        public async Task SaveMacros(string filename = "macros.json")
+        private async Task SaveMacrosAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             using (var writer = File.CreateText(path))
@@ -112,7 +126,7 @@ namespace SmartRoom.ViewModels
 
         }
 
-        public async Task LoadMacro(string filename = "macros.json")
+        private async Task LoadMacrosAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             if (File.Exists(path))
@@ -121,11 +135,63 @@ namespace SmartRoom.ViewModels
                 {
                     Macros = JsonConvert.DeserializeObject<ObservableCollection<Models.MacroModel>>(await reader.ReadToEndAsync(), new Converters.MacroJsonConverter());
                     Macros.CollectionChanged += MacrosCollectionChanged;
-                    MacrosCollectionChanged(null, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Add, Macros));
+                    foreach (Models.MacroModel item in Macros)
+                    {
+                        item.PropertyChanged += MacroPropertyChanged;
+                        item.Items.CollectionChanged += MacroItemsCollectionChanged;
+                        foreach (var i in item.Items)
+                            i.PropertyChanged += MacroItemPropertyChanged;
+                    }
                 }
             }
             else
-                await SaveMacros(filename);
+                await SaveModelAsync(filename);
+        }
+
+        public Task SaveModelAsync(string filename = "macros.json")
+        {
+            _saveScheduled = true;
+            
+            async Task Save(string filename) //Save until no updates
+            {
+                do
+                {
+                    _saveScheduled = false;
+                    await SaveMacrosAsync(filename);
+                } while (_saveScheduled);
+            };
+
+            if (TaskSave == null || TaskSave.IsCompleted == true) //Start saving only if prev was saved
+            {
+                if (TaskLoad != null && TaskLoad.IsCompleted == false) //If VM is loading file, wait with saving
+                    TaskSave = TaskLoad.ContinueWith(async delegate { await Save(filename); });
+                else
+                    TaskSave = Task.Run(async() => await Save(filename));
+            }
+            return TaskSave;
+        }
+
+        public Task LoadModelAsync(string filename = "macros.json")
+        {
+            _loadScheduled = true;
+
+            async Task Load(string filename)
+            {
+                do
+                {
+                    _loadScheduled = false;
+                    await LoadMacrosAsync(filename);
+                } while (_loadScheduled);
+            };
+
+            if (TaskLoad == null || TaskLoad.IsCompleted == true)
+            {
+                if (TaskSave != null && TaskSave.IsCompleted == false)
+                    TaskLoad = TaskSave.ContinueWith(async delegate { await Load(filename); });
+                else
+                    TaskLoad = Task.Run(async () => await Load(filename));
+            }
+            return TaskLoad;
         }
     }
 }

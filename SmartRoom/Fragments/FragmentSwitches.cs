@@ -24,15 +24,13 @@ namespace SmartRoom.Fragments
         private Managers.PackagesManager _pkgManager;
         private ViewModels.SwitchesViewModel _switches;
         private View _view;
-        private Task _switchesLoad;
         private Task _refreshTask;
 
-        public FragmentSwitches(Task switchesLoad, ViewModels.SwitchesViewModel switches, Managers.PackagesManager pkgManager)
+        public FragmentSwitches(ViewModels.SwitchesViewModel switches, Managers.PackagesManager pkgManager)
         {
             _popup = null;
             _view = null;
             _switches = switches;
-            _switchesLoad = switchesLoad;
             _pkgManager = pkgManager;
         }
 
@@ -45,9 +43,9 @@ namespace SmartRoom.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            if (_switchesLoad.IsCompleted == false)
+            if (_switches.TaskLoad.IsCompleted == false)
             {
-                _switchesLoad.ContinueWith(delegate { 
+                 _switches.TaskLoad.ContinueWith(delegate { 
                     Activity.RunOnUiThread(() => { 
                         _switches.SwitchesCollection.CollectionChanged += SwitchesChanged;
                         if (_view != null)
@@ -67,7 +65,7 @@ namespace SmartRoom.Fragments
             _view = inflater.Inflate(Resource.Layout.content_switches, container, false);
             var srl = _view.FindViewById<SwipeRefreshLayout>(Resource.Id.switches_refresh);
 
-            if(_switchesLoad.IsCompleted)
+            if(_switches.TaskLoad.IsCompleted)
             {
                 PopulateList(_view);
                 SwitchesRefresh(srl, null);

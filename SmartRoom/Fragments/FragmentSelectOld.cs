@@ -45,6 +45,7 @@ namespace SmartRoom.Fragments
                 {
                     e.Title = m.Title;
                     e.Model = m.Clone();
+                    (e.Model as Models.SwitchModel).Enabled = true;
 
                     if (item is Models.ToggleSwitchModel t)
                     {

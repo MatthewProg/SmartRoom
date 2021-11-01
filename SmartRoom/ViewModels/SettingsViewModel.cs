@@ -17,10 +17,16 @@ using System.ComponentModel;
 
 namespace SmartRoom.ViewModels
 {
-    public class SettingsViewModel
+    public class SettingsViewModel : Interfaces.IViewModel
     {
+        private bool _saveScheduled;
+        private bool _loadScheduled;
+
         public ObservableCollection<Models.ListCellModel> SettingsCollection { get; private set; }
         public static Models.SettingsModel Settings { get; private set; }
+
+        public Task TaskSave { get; private set; }
+        public Task TaskLoad { get; private set; }
 
         public SettingsViewModel()
         {
@@ -38,8 +44,10 @@ namespace SmartRoom.ViewModels
                                         Resource.String.input_pins)
             };
             foreach (var item in SettingsCollection)
-                item.PropertyChanged += Item_PropertyChanged; ;
+                item.PropertyChanged += Item_PropertyChanged;
             Settings.PropertyChanged += Settings_PropertyChanged;
+            _saveScheduled = false;
+            _loadScheduled = false;
         }
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -69,17 +77,17 @@ namespace SmartRoom.ViewModels
             var index = SettingsCollection.IndexOf(SettingsCollection.Where(x => x.ID == e.PropertyName).SingleOrDefault());
             if(index >= 0)
                 SettingsCollection[index].Value = prop.GetValue(Settings).ToString();
-            Task.Run(async () => await SaveSettingsAsync());
+            SaveModelAsync();
         }
 
-        public async Task SaveSettingsAsync(string filename = "settings.json")
+        private async Task SaveSettingsAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             using (var writer = File.CreateText(path))
                 await writer.WriteLineAsync(JsonConvert.SerializeObject(Settings));
         }
 
-        public async Task LoadSettingsAsync(string filename = "settings.json")
+        private async Task LoadSettingsAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             if (File.Exists(path))
@@ -93,7 +101,53 @@ namespace SmartRoom.ViewModels
                 }
             }
             else
-                await SaveSettingsAsync(filename);
+                await SaveModelAsync();
+        }
+
+        public Task SaveModelAsync(string filename = "settings.json")
+        {
+            _saveScheduled = true;
+
+            async Task Save(string filename)
+            {
+                do
+                {
+                    _saveScheduled = false;
+                    await SaveSettingsAsync(filename);
+                } while (_saveScheduled);
+            };
+
+            if (TaskSave == null || TaskSave.IsCompleted == true)
+            {
+                if (TaskLoad != null && TaskLoad.IsCompleted == false)
+                    TaskSave = TaskLoad.ContinueWith(async delegate { await Save(filename); });
+                else
+                    TaskSave = Task.Run(async () => await Save(filename));
+            }
+            return TaskSave;
+        }
+
+        public Task LoadModelAsync(string filename = "settings.json")
+        {
+            _loadScheduled = true;
+
+            async Task Load(string filename)
+            {
+                do
+                {
+                    _loadScheduled = false;
+                    await LoadSettingsAsync(filename);
+                } while (_loadScheduled);
+            };
+
+            if (TaskLoad == null || TaskLoad.IsCompleted == true)
+            {
+                if (TaskSave != null && TaskSave.IsCompleted == false)
+                    TaskLoad = TaskSave.ContinueWith(async delegate { await Load(filename); });
+                else
+                    TaskLoad = Task.Run(async () => await Load(filename));
+            }
+            return TaskLoad;
         }
     }
 }
