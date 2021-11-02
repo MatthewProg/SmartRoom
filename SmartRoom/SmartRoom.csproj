@@ -78,6 +78,11 @@
     <Compile Include="Adapters\MacrosAdapter.cs" />
     <Compile Include="Adapters\PackageAdapter.cs" />
     <Compile Include="Callbacks\ObservableCollectionCallback.cs" />
+    <Compile Include="Events\IdValuesEventArgs.cs" />
+    <Compile Include="Events\ObjectEventArgs.cs" />
+    <Compile Include="Events\PinValueEventArgs.cs" />
+    <Compile Include="Interfaces\IPackagesManager.cs" />
+    <Compile Include="Interfaces\ITcpConnector.cs" />
     <Compile Include="Connectors\TcpConnector.cs" />
     <Compile Include="Converters\MacroItemTypesJsonConverter.cs" />
     <Compile Include="Converters\MacroJsonConverter.cs" />

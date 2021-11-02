@@ -31,28 +31,6 @@ namespace SmartRoom.ViewModels
             Macros.CollectionChanged += MacrosCollectionChanged;
             _saveScheduled = false;
             _loadScheduled = false;
-            //Task.Run(async () => await LoadMacrosAsync());
-            //Macros.Add(new Models.MacroModel() //Just tmp for dev
-            //{
-            //    Enabled = true,
-            //    Name = "Test",
-            //    Repeat = true,
-            //    Running = false,
-            //    Items = new System.Collections.ObjectModel.ObservableCollection<Interfaces.IMacroItemModel>()
-            //    {
-            //        new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=1F },
-            //        new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-            //        new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=true, Pin="D2", Toggle=true },
-            //        new Models.SliderSwitchModel() { Title="First", Enabled=true, Fade=true, Pin="10", Value=0F },
-            //        new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-            //        new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(255,128,192) },
-            //        new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 },
-            //        new Models.ColorSwitchModel() { Title="Color test nice", Enabled = true,  Fade=true, RedPin="1", GreenPin="2", BluePin="3", Color=new Models.ColorModel(0,0,0) },
-            //        new Models.ToggleSwitchModel() { Title="Arduino", Enabled=true, Fade=false, Pin="D2", Toggle=false },
-            //        new Models.DelayMacroItemModel() { Enabled=true, Delay=1000 }
-            //    }
-            //});
-            //MacroItemsCollectionChanged(null, new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Add, Macros[0].Items));
         }
 
         private void MacrosCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

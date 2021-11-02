@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SmartRoom.Events;
 using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace SmartRoom.Models
             get => _value;
             set 
             {
-                var v = Math.Clamp(value, 0f, 100f);
+                var v = Math.Max(0f, Math.Min(value, 1f));
                 if (_value == v) return;
                 _value = v;
                 OnPropertyChanged("Value");
@@ -53,6 +54,12 @@ namespace SmartRoom.Models
         {
             this.Pin = m.Pin;
             this.Value = m.Value;
+        }
+
+        public SliderSwitchModel(string title, string pin, float value, bool fade = false, bool enabled = false) : base(title, fade, enabled)
+        {
+            Value = value;
+            Pin = pin;
         }
 
         public override object Clone()
@@ -98,6 +105,21 @@ namespace SmartRoom.Models
             this.Pin = obj.Pin;
             this.Title = obj.Title;
             return this;
+        }
+
+        public override IEnumerable<Tuple<string, byte>> GetPinsValue()
+            => new List<Tuple<string, byte>>()
+            {
+                new Tuple<string, byte>(this.Pin, (byte)Math.Round(this.Value * 255f))
+            };
+
+        public override void PinUpdateListener(object sender, PinValueEventArgs e)
+        {
+            if(this.Pin == e.Pin)
+            {
+                this.Enabled = true;
+                this.Value = e.Value / 255f;
+            }
         }
     }
 }

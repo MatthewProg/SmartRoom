@@ -44,10 +44,11 @@ namespace SmartRoom
             mainTransaction.Add(Resource.Id.main_view, new Fragments.FragmentMain(), "Main");
             mainTransaction.Commit();
 
+            _packagesManager = new Managers.PackagesManager(new Connectors.TcpConnector());
             _settings = new ViewModels.SettingsViewModel();
-            _switches = new ViewModels.SwitchesViewModel();
+            _switches = new ViewModels.SwitchesViewModel(_packagesManager);
+            //_sensors = new ViewModels.SensorsViewModel();
             _macros = new ViewModels.MacrosViewModel();
-            _packagesManager = new Managers.PackagesManager(_switches.SwitchesCollection, ViewModels.SettingsViewModel.Settings);
             _macrosManager = new Managers.MacrosManager(_packagesManager, _macros);
             _settings.LoadModelAsync();
             _switches.LoadModelAsync();

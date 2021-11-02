@@ -26,12 +26,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentNHibernate, Version=3.1.0.0, Culture=neutral, PublicKeyToken=8aa435e3cb308880" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Moq">
+      <Version>4.16.1</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
@@ -43,9 +47,14 @@
     <Compile Include="ColorModelTests.cs" />
     <Compile Include="AppInitializer.cs" />
     <Compile Include="PackageAdapterTests.cs" />
+    <Compile Include="PackagesManagerTests.cs" />
     <Compile Include="SwitchesJsonConverterTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SmartRoom.Emulator\SmartRoom.Emulator.csproj">
+      <Project>{09990648-74e3-455e-a399-2784dd6ff086}</Project>
+      <Name>SmartRoom.Emulator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmartRoom\SmartRoom.csproj">
       <Project>{249b5f7c-a9ff-429c-a157-204a132bd163}</Project>
       <Name>SmartRoom</Name>

@@ -73,6 +73,13 @@ namespace SmartRoom.Models
             ;
         }
 
+        protected SwitchModel(string title, bool fade = false, bool enabled = false)
+        {
+            _title = title;
+            _fade = fade;
+            _enabled = enabled;
+        }
+
         public virtual bool Equals(SwitchModel other)
         {
             return (this.Fade == other.Fade &&
@@ -87,6 +94,10 @@ namespace SmartRoom.Models
         }
 
         public abstract object Clone();
+
+        public abstract IEnumerable<Tuple<string, byte>> GetPinsValue();
+
+        public abstract void PinUpdateListener(object sender, Events.PinValueEventArgs e);
 
         public abstract string MacroSerialize();
 

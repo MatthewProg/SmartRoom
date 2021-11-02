@@ -17,6 +17,7 @@ namespace SmartRoom.ViewModels
 {
     public class SwitchesViewModel : Interfaces.IViewModel
     {
+        private readonly Interfaces.IPackagesManager _packagesManager;
         private bool _saveScheduled;
         private bool _loadScheduled;
 
@@ -24,13 +25,13 @@ namespace SmartRoom.ViewModels
         public Task TaskLoad { get; private set; }
         public ObservableCollection<Models.SwitchModel> SwitchesCollection { get; private set; }
 
-
-        public SwitchesViewModel()
+        public SwitchesViewModel(Interfaces.IPackagesManager packagesManager)
         {
             SwitchesCollection = new ObservableCollection<Models.SwitchModel>();
             SwitchesCollection.CollectionChanged += SwitchesChanged;
             _saveScheduled = false;
             _loadScheduled = false;
+            _packagesManager = packagesManager;
         }
 
         private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -38,18 +39,27 @@ namespace SmartRoom.ViewModels
             if(e.OldItems != null)
             {
                 foreach (Models.SwitchModel m in e.OldItems)
+                {
                     m.PropertyChanged -= SwitchesPropertyChanged;
+                    _packagesManager.PinValuesUpdated -= m.PinUpdateListener;
+                }
             }
             if (e.NewItems != null)
             {
                 foreach (Models.SwitchModel m in e.NewItems)
+                {
                     m.PropertyChanged += SwitchesPropertyChanged;
+                    _packagesManager.PinValuesUpdated += m.PinUpdateListener;
+                }
             }
             SaveModelAsync();
         }
 
         private void SwitchesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == "Toggle" || e.PropertyName == "Value" || e.PropertyName == "Color")
+                _packagesManager.SetValue(sender as Models.SwitchModel);
+
             if (e.PropertyName != "Toggle" && e.PropertyName != "Value" && e.PropertyName != "Color" &&
                 e.PropertyName != "Fade" && e.PropertyName != "Enabled")
                 SaveModelAsync();
@@ -72,13 +82,19 @@ namespace SmartRoom.ViewModels
                     var ds = JsonConvert.DeserializeObject<List<Models.SwitchModel>>(await reader.ReadToEndAsync(), new Converters.SwitchesJsonConverter());
                     SwitchesCollection.CollectionChanged -= SwitchesChanged;
                     foreach (var e in SwitchesCollection)
+                    {
                         e.PropertyChanged -= SwitchesPropertyChanged;
+                        _packagesManager.PinValuesUpdated -= e.PinUpdateListener;
+                    }
                     SwitchesCollection.Clear();
                     foreach (var e in ds)
                         SwitchesCollection.Add(e);
                 }
                 foreach (var e in SwitchesCollection)
+                {
                     e.PropertyChanged += SwitchesPropertyChanged;
+                    _packagesManager.PinValuesUpdated += e.PinUpdateListener;
+                }
                 SwitchesCollection.CollectionChanged += SwitchesChanged;
             }
         }

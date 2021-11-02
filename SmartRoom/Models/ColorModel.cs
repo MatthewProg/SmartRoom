@@ -33,25 +33,91 @@ namespace SmartRoom.Models
             UInt32 col = (255U << 24) + (uint)(_rgb.R << 16) + (uint)(_rgb.G << 8) + (uint)_rgb.B;
             return unchecked((int)col);
         }
-        public ColorTypes.HSL GetHSL()
+        public ColorTypes.HSL GetHSL() //src: http://csharphelper.com/blog/2016/08/convert-between-rgb-and-hls-color-models-in-c/
         {
-            var col = System.Drawing.Color.FromArgb(_rgb.R, _rgb.G, _rgb.B);
             var output = new ColorTypes.HSL();
-            output.H = (float)Math.Round(col.GetHue());
-            output.S = (float)Math.Round(col.GetSaturation(), 2);
-            output.L = (float)Math.Round(col.GetBrightness(), 2);
+
+            // Convert RGB to a 0.0 to 1.0 range.
+            double double_r = _rgb.R / 255.0;
+            double double_g = _rgb.G / 255.0;
+            double double_b = _rgb.B / 255.0;
+
+            // Get the maximum and minimum RGB components.
+            double max = double_r;
+            if (max < double_g) max = double_g;
+            if (max < double_b) max = double_b;
+
+            double min = double_r;
+            if (min > double_g) min = double_g;
+            if (min > double_b) min = double_b;
+
+            double diff = max - min;
+            double s = 0;
+            double h = 0;
+            double l = (max + min) / 2;
+            if (Math.Abs(diff) < 0.00001)
+            {
+                s = 0;
+                h = 0;  // H is really undefined.
+            }
+            else
+            {
+                if (l <= 0.5) s = diff / (max + min);
+                else s = diff / (2 - max - min);
+
+                double r_dist = (max - double_r) / diff;
+                double g_dist = (max - double_g) / diff;
+                double b_dist = (max - double_b) / diff;
+
+                if (double_r == max) h = b_dist - g_dist;
+                else if (double_g == max) h = 2 + r_dist - b_dist;
+                else h = 4 + g_dist - r_dist;
+
+                h = h * 60;
+                if (h < 0) h += 360;
+            }
+
+            output.H = (float)Math.Round(h);
+            output.S = (float)Math.Round(s, 2);
+            output.L = (float)Math.Round(l, 2);
+
             return output;
         }
-        public ColorTypes.HSV GetHSV()
+        public ColorTypes.HSV GetHSV() //src: https://www.programmingalgorithms.com/algorithm/rgb-to-hsv/
         {
-            var col = System.Drawing.Color.FromArgb(_rgb.R, _rgb.G, _rgb.B);
-            var s = col.GetSaturation();
-            var l = col.GetBrightness();
-
             var output = new ColorTypes.HSV();
-            output.H = (float)Math.Round(col.GetHue());
-            output.V = (float)Math.Round(l + (s * Math.Min(l, 1 - l)), 2);
-            output.S = (float)Math.Round((output.V == 0F) ? 0F : (2F - 2F * l / output.V), 2);
+
+            double delta, min;
+            double h = 0, s, v;
+
+            min = Math.Min(Math.Min(_rgb.R, _rgb.G), _rgb.B);
+            v = Math.Max(Math.Max(_rgb.R, _rgb.G), _rgb.B);
+            delta = v - min;
+
+            if (v == 0.0) s = 0;
+            else s = delta / v;
+
+            if (s == 0) 
+                h = 0.0;
+            else
+            {
+                if (_rgb.R == v)
+                    h = (_rgb.G - _rgb.B) / delta;
+                else if (_rgb.G == v)
+                    h = 2 + (_rgb.B - _rgb.R) / delta;
+                else if (_rgb.B == v)
+                    h = 4 + (_rgb.R - _rgb.G) / delta;
+
+                h *= 60;
+
+                if (h < 0.0)
+                    h = h + 360;
+            }
+
+            output.H = (float)Math.Round(h);
+            output.V = (float)Math.Round(v / 255D, 2);
+            output.S = (float)Math.Round(s, 2);
+
             return output;
         }
 

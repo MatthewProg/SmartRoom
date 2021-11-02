@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SmartRoom.Events;
 using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,12 @@ namespace SmartRoom.Models
             this.Toggle = m.Toggle;
         }
 
+        public ToggleSwitchModel(string title, string pin, bool toggle, bool fade = false, bool enabled = false) : base(title, fade, enabled)
+        {
+            _pin = pin;
+            _toggle = toggle;
+        }
+
         public override object Clone()
         {
             return new ToggleSwitchModel(this);
@@ -98,6 +105,21 @@ namespace SmartRoom.Models
             this.Pin = obj.Pin;
             this.Title = obj.Title;
             return this;
+        }
+
+        public override IEnumerable<Tuple<string, byte>> GetPinsValue()
+            => new List<Tuple<string, byte>>()
+            {
+                new Tuple<string, byte>(this.Pin, (byte)(this.Toggle ? 255 : 0))
+            };
+
+        public override void PinUpdateListener(object sender, PinValueEventArgs e)
+        {
+            if(this.Pin == e.Pin)
+            {
+                this.Enabled = true;
+                this.Toggle = (e.Value == 255);
+            }
         }
     }
 }

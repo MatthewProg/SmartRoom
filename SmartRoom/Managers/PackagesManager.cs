@@ -5,6 +5,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using SmartRoom.Connectors;
+using SmartRoom.Events;
 using SmartRoom.Models;
 using System;
 using System.Collections.Generic;
@@ -15,142 +16,28 @@ using System.Threading.Tasks;
 
 namespace SmartRoom.Managers
 {
-    public class PackagesManager
+    public class PackagesManager : Interfaces.IPackagesManager
     {
-        public TcpConnector Connection { get; private set; }
+        public event EventHandler<PinValueEventArgs> PinValuesUpdated;
+        public event EventHandler<IdValuesEventArgs> IdValuesReceived;
 
-        private ObservableCollection<Models.SwitchModel> _switches;
-        private Dictionary<string, Tuple<bool, byte>> _pinValue;
-        private Models.SettingsModel _settings;
+        public Interfaces.ITcpConnector Connection { get; private set; }
 
-        public PackagesManager(ObservableCollection<SwitchModel> switches, SettingsModel settings)
+        private Dictionary<string, Tuple<bool, byte>> _setQueue;
+        private HashSet<Tuple<string, bool>> _getQueue;
+
+        public PackagesManager(Interfaces.ITcpConnector connector)
         {
-            _switches = switches;
-            _settings = settings;
-            _pinValue = new Dictionary<string, Tuple<bool, byte>>();
+            _setQueue = new Dictionary<string, Tuple<bool, byte>>();
+            _getQueue = new HashSet<Tuple<string, bool>>();
 
-            _switches.CollectionChanged += SwitchesCollectionChanged;
-
-            Connection = new TcpConnector(_settings.Address, _settings.Port);
+            Connection = connector;
             Connection.DataReceivedEvent += DataReceived;
         }
 
-        public void QueueSetValues(SwitchModel value)
+        private void DataReceived(object sender, Events.ObjectEventArgs e)
         {
-            if (value is Models.ToggleSwitchModel)
-            {
-                var model = value as Models.ToggleSwitchModel;
-                _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)(model.Toggle ? 255 : 0));
-            }
-            else if (value is Models.SliderSwitchModel)
-            {
-                var model = value as Models.SliderSwitchModel;
-                _pinValue[model.Pin] = new Tuple<bool, byte>(model.Fade, (byte)Math.Round(model.Value * 255));
-            }
-            else if (value is Models.ColorSwitchModel)
-            {
-                var model = value as Models.ColorSwitchModel;
-                var col = model.Color.GetRGB();
-
-                _pinValue[model.RedPin] = new Tuple<bool, byte>(model.Fade, col.R);
-                _pinValue[model.GreenPin] = new Tuple<bool, byte>(model.Fade, col.G);
-                _pinValue[model.BluePin] = new Tuple<bool, byte>(model.Fade, col.B);
-            }
-
-            if (Connection.IsReady)
-                SendWaiting();
-        }
-
-        public async Task UpdateAllPins()
-        {
-            if (Connection.IsConnected == false)
-                return;
-
-            var data = GetPinsGetPackages(_switches);
-            Connection.DataReceivedEvent -= DataReceived;
-            Connection.DataReceivedEvent += Received;
-            Connection.Send(data.ToArray());
-
-            bool wait = true;
-            List<byte> rec = null;
-            void Received(object sender, EventArgs e)
-            {
-                wait = false;
-                rec = sender as List<byte>;
-            }
-
-            while (wait)
-                await Task.Delay(10);
-
-            Connection.DataReceivedEvent -= Received;
-            Connection.DataReceivedEvent += DataReceived;
-
-            DataReceived(rec, null);
-        }
-
-        private List<byte> GetPinsGetPackages(IEnumerable<Models.SwitchModel> switches)
-        {
-            //Enabled = false & get all pins
-            var pins = new HashSet<string>();
-            foreach (var s in switches)
-            {
-                s.Enabled = false;
-                if (s is Models.ToggleSwitchModel)
-                    pins.Add((s as Models.ToggleSwitchModel).Pin);
-                else if (s is Models.SliderSwitchModel)
-                    pins.Add((s as Models.SliderSwitchModel).Pin);
-                else if (s is Models.ColorSwitchModel)
-                {
-                    var model = s as Models.ColorSwitchModel;
-                    pins.Add(model.RedPin);
-                    pins.Add(model.GreenPin);
-                    pins.Add(model.BluePin);
-                }
-            }
-
-            //Create pkg data
-            var data = new List<byte>();
-            foreach (var p in pins)
-                data.Add(Adapters.PackageAdapter.CreateGetPackage(p));
-
-            return data;
-        }
-
-        private void SwitchesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-            {
-                foreach (Models.SwitchModel m in e.OldItems)
-                    m.PropertyChanged -= SwitchPropertyChanged;
-            }
-            if (e.NewItems != null)
-            {
-                foreach (Models.SwitchModel m in e.NewItems)
-                    m.PropertyChanged += SwitchPropertyChanged;
-            }
-
-            //When new switch is created, get values from hardware
-            if (Connection.IsConnected == false)
-                return;
-
-            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
-            {
-                var data = GetPinsGetPackages(e.NewItems.Cast<Models.SwitchModel>());
-                Connection.Send(data.ToArray());
-            }
-        }
-
-        private void SwitchPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Toggle" || e.PropertyName == "Value" || e.PropertyName == "Color")
-            {
-                QueueSetValues(sender as SwitchModel);
-            }
-        }
-
-        private void DataReceived(object sender, EventArgs e)
-        {
-            var data = sender as List<byte>;
+            var data = e.Object as List<byte>;
             if (data.Count != 0)
             {
                 var pkgs = Adapters.PackageAdapter.DeserializePackages(data.ToArray());
@@ -164,64 +51,109 @@ namespace SmartRoom.Managers
 
         private void SendWaiting()
         {
-            if (_pinValue.Count == 0)
+            if (_setQueue.Count == 0 && _getQueue.Count == 0)
                 return;
 
             var data = new List<byte>();
-            var items = _pinValue.ToArray();
-            foreach (var p in items)
-            {
-                data.AddRange(Adapters.PackageAdapter.CreateSetPackage(p.Key, p.Value.Item1, p.Value.Item2));
-                _pinValue.Remove(p.Key);
-            }
+            foreach (var s in _setQueue)
+                data.AddRange(Adapters.PackageAdapter.CreateSetPackage(s.Key, s.Value.Item1, s.Value.Item2));
+            foreach (var g in _getQueue)
+                data.Add(Adapters.PackageAdapter.CreateGetPackage(g.Item1, g.Item2));
+
+            _setQueue.Clear();
+            _getQueue.Clear();
+
             Connection.Send(data.ToArray());
         }
           
-        private void ProcessPackages(List<Models.PackageModel> packages) //Very intense process, try to optimize in future, updates only first with pin, not all
+        private void ProcessPackages(List<Models.PackageModel> packages)
         {
-            foreach (var s in _switches)
+            foreach (var pkg in packages)
             {
-                if (s is Models.ToggleSwitchModel)
+                if(pkg.IsID == false)
                 {
-                    var model = s as Models.ToggleSwitchModel;
-                    var pkg = packages.TakeWhile(x => x is Models.PackageValueModel)
-                                      .Select(x => x as Models.PackageValueModel)
-                                      .Where(x => x.PinId == model.Pin && x.IsID == false)
-                                      .FirstOrDefault();
-                    if (pkg == null) continue;
-                    model.Toggle = (pkg.Value != 0);
-                    model.Enabled = true;
+                    if (pkg is PackageValueModel m)
+                        PinValuesUpdated?.Invoke(this, new PinValueEventArgs(m.PinId, m.Value));
                 }
-                else if (s is Models.SliderSwitchModel)
+                else
                 {
-                    var model = s as Models.SliderSwitchModel;
-                    var pkg = packages.TakeWhile(x => x is Models.PackageValueModel)
-                                      .Select(x => x as Models.PackageValueModel)
-                                      .Where(x => x.PinId == model.Pin && x.IsID == false)
-                                      .FirstOrDefault();
-
-                    if (pkg == null) continue;
-                    model.Value = (float)pkg.Value / 255f;
-                    model.Enabled = true;
-                }
-                else if(s is Models.ColorSwitchModel)
-                {
-                    var model = s as Models.ColorSwitchModel;
-                    var pkg = packages.TakeWhile(x => x is Models.PackageValueModel)
-                                      .Select(x => x as Models.PackageValueModel)
-                                      .Where(x => x.IsID == false && (x.PinId == model.RedPin || x.PinId == model.GreenPin || x.PinId == model.BluePin))
-                                      .ToList();
-
-                    if (pkg.Count == 0) continue;
-                    var color = model.Color.GetRGB();
-                    foreach (var p in pkg)
-                        if (p.PinId == model.RedPin) color.R = p.Value;
-                        else if (p.PinId == model.GreenPin) color.G = p.Value;
-                        else if (p.PinId == model.BluePin) color.B = p.Value;
-                    model.Color.FromRGB(color);
-                    model.Enabled = true;
+                    if (pkg is PackageValueModel v)
+                        IdValuesReceived?.Invoke(this, new IdValuesEventArgs(v.PinId, false, v.Value));
+                    else if (pkg is PackageTextModel t)
+                        IdValuesReceived?.Invoke(this, new IdValuesEventArgs(t.PinId, true, t.Text));
                 }
             }
+        }
+
+        public void SetValue(IEnumerable<SwitchModel> models)
+        {
+            foreach (var m in models)
+                foreach (var v in m.GetPinsValue())
+                    _setQueue[v.Item1] = new Tuple<bool, byte>(m.Fade, v.Item2);
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void SetValue(SwitchModel model)
+        {
+            foreach (var v in model.GetPinsValue())
+                _setQueue[v.Item1] = new Tuple<bool, byte>(model.Fade, v.Item2);
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void SetValue(string pin, byte value, bool fade)
+        {
+            _setQueue[pin] = new Tuple<bool, byte>(fade, value);
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetValue(IEnumerable<SwitchModel> models)
+        {
+            foreach (var m in models)
+                foreach (var p in m.GetPinsValue())
+                    _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetValue(SwitchModel model)
+        {
+            foreach (var p in model.GetPinsValue())
+                _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetValue(string pin)
+        {
+            _getQueue.Add(new Tuple<string, bool>(pin, false));
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetId(IEnumerable<string> ids)
+        {
+            foreach (var id in ids)
+                _getQueue.Add(new Tuple<string, bool>(id, true));
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetId(string id)
+        {
+            _getQueue.Add(new Tuple<string, bool>(id, true));
+
+            if (Connection.IsReady)
+                SendWaiting();
         }
     }
 }

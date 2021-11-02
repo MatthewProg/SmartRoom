@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SmartRoom.Interfaces
 {
-    interface IViewModel
+    public interface IViewModel
     {
         public Task TaskSave { get; }
         public Task TaskLoad { get; }

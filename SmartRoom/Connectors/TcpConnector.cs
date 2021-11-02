@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SmartRoom.Connectors
 {
-    public class TcpConnector
+    public class TcpConnector : Interfaces.ITcpConnector
     {
         private const int SERVER_BUFFER = 32;
 
@@ -26,9 +26,9 @@ namespace SmartRoom.Connectors
         private List<byte> _receiveBuffer;
         private Task _processTask;
 
-        public event EventHandler DataReceivedEvent;
+        public event EventHandler<Events.ObjectEventArgs> DataReceivedEvent;
 
-        public TcpConnector(string address, int port)
+        public TcpConnector(string address = "127.0.0.1", int port = 23)
         {
             _address = address;
             _port = port;
@@ -58,22 +58,23 @@ namespace SmartRoom.Connectors
         {
             _sendBuffer.AddRange(data);
             if (IsReady)
-                _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(_receiveBuffer, null); });
+                _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(_receiveBuffer)); });
             else
-                _processTask.ContinueWith(delegate {
-                    _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(_receiveBuffer, null); });
+                _processTask.ContinueWith(delegate
+                {
+                    _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(_receiveBuffer)); });
                 });
         }
 
         private async Task Process()
         {
-            if(IsConnected)
+            if (IsConnected)
             {
                 var stream = _client.GetStream();
                 while (_sendBuffer.Count != 0)
                 {
                     var range = (_sendBuffer.Count < SERVER_BUFFER ? _sendBuffer.Count : SERVER_BUFFER);
-                    var toSend = _sendBuffer.GetRange(0, range);
+                    var toSend = _sendBuffer.GetRange(0, range); //Potential fragmentation of SET pkg!
                     _sendBuffer.RemoveRange(0, range);
 
                     await stream.WriteAsync(toSend.ToArray(), 0, toSend.Count);
@@ -87,7 +88,7 @@ namespace SmartRoom.Connectors
 
                             _receiveBuffer.Add((byte)lastRead);
                         }
-                        catch (TimeoutException) { ; }
+                        catch (TimeoutException) {; }
                     }
                 }
             }

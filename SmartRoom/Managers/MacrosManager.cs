@@ -107,7 +107,7 @@ namespace SmartRoom.Managers
                         continue;
 
                     if (item is Models.SwitchModel)
-                        _packagesManager.QueueSetValues(item as Models.SwitchModel);
+                        _packagesManager.SetValue(item as Models.SwitchModel);
                     else if(item is Models.DelayMacroItemModel)
                         Delay((item as Models.DelayMacroItemModel).Delay, pause.Token);
 

@@ -91,17 +91,18 @@ namespace SmartRoom.Fragments
             if (_refreshTask != null && _refreshTask.IsCompleted == false)
                 return;
 
-            _refreshTask = Task.Run(async () => 
+            _refreshTask = Task.Run(() =>
             {
-                do { await Task.Delay(10); } 
-                while (_pkgManager.Connection.IsConnected == false);
-                await _pkgManager.UpdateAllPins();
-            }).ContinueWith(delegate
-            {
-                Activity.RunOnUiThread(() =>
+                if(_pkgManager.Connection.IsConnected)
                 {
-                    srl.Refreshing = false;
-                });
+                    _switches.SwitchesCollection.ToList().ForEach(x => x.Enabled = false);
+                    _pkgManager.GetValue(_switches.SwitchesCollection);
+                    Task.Delay(200).Wait();
+                    Activity.RunOnUiThread(() =>
+                    {
+                        srl.Refreshing = false;
+                    });
+                }
             });
         }
 

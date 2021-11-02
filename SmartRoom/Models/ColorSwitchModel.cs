@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SmartRoom.Events;
 using SmartRoom.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,14 @@ namespace SmartRoom.Models
             this.Color = (ColorModel)m.Color.Clone();
         }
 
+        public ColorSwitchModel(string title, string redPin, string greenPin, string bluePin, ColorModel color, bool fade = false, bool enabled = false) : base(title, fade, enabled)
+        {
+            RedPin = redPin;
+            GreenPin = greenPin;
+            BluePin = bluePin;
+            Color = color;
+        }
+
         public override object Clone()
         {
             return new ColorSwitchModel(this);
@@ -133,6 +142,29 @@ namespace SmartRoom.Models
             this.BluePin = obj.BluePin;
             this.Title = obj.Title;
             return this;
+        }
+
+        public override IEnumerable<Tuple<string, byte>> GetPinsValue()
+            => new List<Tuple<string, byte>>()
+            {
+                new Tuple<string, byte>(this.RedPin,   _color.GetRGB().R),
+                new Tuple<string, byte>(this.GreenPin, _color.GetRGB().G),
+                new Tuple<string, byte>(this.BluePin,  _color.GetRGB().B)
+            };
+
+        public override void PinUpdateListener(object sender, PinValueEventArgs e)
+        {
+            if(this.RedPin == e.Pin || this.GreenPin == e.Pin || this.BluePin == e.Pin)
+            {
+                this.Enabled = true;
+                var col = this.Color.GetRGB();
+
+                if (this.RedPin == e.Pin) col.R = e.Value;
+                else if (this.GreenPin == e.Pin) col.G = e.Value;
+                else col.B = e.Value;
+                    
+                this.Color.FromRGB(col);
+            }
         }
     }
 }
