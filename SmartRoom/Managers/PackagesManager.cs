@@ -18,6 +18,8 @@ namespace SmartRoom.Managers
 {
     public class PackagesManager : Interfaces.IPackagesManager
     {
+        private static readonly object _queueLock = new object();
+
         public event EventHandler<PinValueEventArgs> PinValuesUpdated;
         public event EventHandler<IdValuesEventArgs> IdValuesReceived;
 
@@ -55,13 +57,16 @@ namespace SmartRoom.Managers
                 return;
 
             var data = new List<byte>();
-            foreach (var s in _setQueue)
-                data.AddRange(Adapters.PackageAdapter.CreateSetPackage(s.Key, s.Value.Item1, s.Value.Item2));
-            foreach (var g in _getQueue)
-                data.Add(Adapters.PackageAdapter.CreateGetPackage(g.Item1, g.Item2));
+            lock (_queueLock)
+            {
+                foreach (var s in _setQueue)
+                    data.AddRange(Adapters.PackageAdapter.CreateSetPackage(s.Key, s.Value.Item1, s.Value.Item2));
+                foreach (var g in _getQueue)
+                    data.Add(Adapters.PackageAdapter.CreateGetPackage(g.Item1, g.Item2));
 
-            _setQueue.Clear();
-            _getQueue.Clear();
+                _setQueue.Clear();
+                _getQueue.Clear();
+            }
 
             Connection.Send(data.ToArray());
         }
@@ -87,9 +92,12 @@ namespace SmartRoom.Managers
 
         public void SetValue(IEnumerable<SwitchModel> models)
         {
-            foreach (var m in models)
-                foreach (var v in m.GetPinsValue())
-                    _setQueue[v.Item1] = new Tuple<bool, byte>(m.Fade, v.Item2);
+            lock (_queueLock)
+            {
+                foreach (var m in models)
+                    foreach (var v in m.GetPinsValue())
+                        _setQueue[v.Item1] = new Tuple<bool, byte>(m.Fade, v.Item2);
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -97,8 +105,11 @@ namespace SmartRoom.Managers
 
         public void SetValue(SwitchModel model)
         {
-            foreach (var v in model.GetPinsValue())
-                _setQueue[v.Item1] = new Tuple<bool, byte>(model.Fade, v.Item2);
+            lock (_queueLock)
+            {
+                foreach (var v in model.GetPinsValue())
+                    _setQueue[v.Item1] = new Tuple<bool, byte>(model.Fade, v.Item2);
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -106,7 +117,10 @@ namespace SmartRoom.Managers
 
         public void SetValue(string pin, byte value, bool fade)
         {
-            _setQueue[pin] = new Tuple<bool, byte>(fade, value);
+            lock (_queueLock)
+            {
+                _setQueue[pin] = new Tuple<bool, byte>(fade, value);
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -114,9 +128,12 @@ namespace SmartRoom.Managers
 
         public void GetValue(IEnumerable<SwitchModel> models)
         {
-            foreach (var m in models)
-                foreach (var p in m.GetPinsValue())
-                    _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+            lock (_queueLock)
+            {
+                foreach (var m in models)
+                    foreach (var p in m.GetPinsValue())
+                        _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -124,8 +141,11 @@ namespace SmartRoom.Managers
 
         public void GetValue(SwitchModel model)
         {
-            foreach (var p in model.GetPinsValue())
-                _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+            lock (_queueLock)
+            {
+                foreach (var p in model.GetPinsValue())
+                    _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -133,7 +153,10 @@ namespace SmartRoom.Managers
 
         public void GetValue(string pin)
         {
-            _getQueue.Add(new Tuple<string, bool>(pin, false));
+            lock (_queueLock)
+            {
+                _getQueue.Add(new Tuple<string, bool>(pin, false));
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -141,8 +164,11 @@ namespace SmartRoom.Managers
 
         public void GetId(IEnumerable<string> ids)
         {
-            foreach (var id in ids)
-                _getQueue.Add(new Tuple<string, bool>(id, true));
+            lock (_queueLock)
+            {
+                foreach (var id in ids)
+                    _getQueue.Add(new Tuple<string, bool>(id, true));
+            }
 
             if (Connection.IsReady)
                 SendWaiting();
@@ -150,7 +176,33 @@ namespace SmartRoom.Managers
 
         public void GetId(string id)
         {
-            _getQueue.Add(new Tuple<string, bool>(id, true));
+            lock (_queueLock)
+            {
+                _getQueue.Add(new Tuple<string, bool>(id, true));
+            }
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetData(IEnumerable<SensorModel> models)
+        {
+            lock (_queueLock)
+            {
+                foreach (var m in models)
+                    _getQueue.Add(new Tuple<string, bool>(m.Input, m.IsId));
+            }
+
+            if (Connection.IsReady)
+                SendWaiting();
+        }
+
+        public void GetData(SensorModel model)
+        {
+            lock (_queueLock)
+            {
+                _getQueue.Add(new Tuple<string, bool>(model.Input, model.IsId));
+            }
 
             if (Connection.IsReady)
                 SendWaiting();

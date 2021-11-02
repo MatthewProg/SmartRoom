@@ -132,7 +132,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroToggleViewHolder;
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Toggle.Checked = e.Toggle;
                 v.Toggle.Enabled = e.Enabled;
                 v.Fade.Checked = e.Fade;
@@ -143,7 +143,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroSliderViewHolder;
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Slider.Enabled = e.Enabled;
                 v.Slider.Progress = (int)Math.Round(e.Value * 100f);
                 v.Fade.Checked = e.Fade;
@@ -154,7 +154,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroColorViewHolder;
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Picker.Enabled = e.Enabled;
                 v.Picker.Color = e.Color.GetAndroid();
                 v.ColorHex.Text = e.Color.GetHex();

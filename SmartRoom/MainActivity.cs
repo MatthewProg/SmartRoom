@@ -22,6 +22,7 @@ namespace SmartRoom
         private Managers.MacrosManager _macrosManager;
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
+        private ViewModels.SensorsViewModel _sensors;
         private ViewModels.MacrosViewModel _macros;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -47,7 +48,7 @@ namespace SmartRoom
             _packagesManager = new Managers.PackagesManager(new Connectors.TcpConnector());
             _settings = new ViewModels.SettingsViewModel();
             _switches = new ViewModels.SwitchesViewModel(_packagesManager);
-            //_sensors = new ViewModels.SensorsViewModel();
+            _sensors = new ViewModels.SensorsViewModel(_packagesManager);
             _macros = new ViewModels.MacrosViewModel();
             _macrosManager = new Managers.MacrosManager(_packagesManager, _macros);
             _settings.LoadModelAsync();
@@ -121,7 +122,7 @@ namespace SmartRoom
             else if (id == Resource.Id.nav_sensors)
             {
                 var transaction = SupportFragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSensors(), "MainContent");
+                transaction.Replace(Resource.Id.main_view, new Fragments.FragmentSensors(_packagesManager, _sensors), "MainContent");
                 transaction.Commit();
             }
             else if (id == Resource.Id.nav_settings)

@@ -77,7 +77,9 @@
     <Compile Include="Adapters\MacroItemsAdapter.cs" />
     <Compile Include="Adapters\MacrosAdapter.cs" />
     <Compile Include="Adapters\PackageAdapter.cs" />
+    <Compile Include="Adapters\SensorsAdapter.cs" />
     <Compile Include="Callbacks\ObservableCollectionCallback.cs" />
+    <Compile Include="Converters\SensorsJsonConverter.cs" />
     <Compile Include="Events\IdValuesEventArgs.cs" />
     <Compile Include="Events\ObjectEventArgs.cs" />
     <Compile Include="Events\PinValueEventArgs.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Managers\MacrosManager.cs" />
     <Compile Include="Managers\PackagesManager.cs" />
+    <Compile Include="Managers\SensorsManager.cs" />
     <Compile Include="Models\ColorModel.cs" />
     <Compile Include="Models\ColorSwitchModel.cs" />
     <Compile Include="Models\ColorTypes.cs" />
@@ -122,21 +125,27 @@
     <Compile Include="Models\ListItemIconModel.cs" />
     <Compile Include="Models\MacroModel.cs" />
     <Compile Include="Models\PackageModel.cs" />
+    <Compile Include="Models\SensorModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\SliderSwitchModel.cs" />
     <Compile Include="Models\SwitchModel.cs" />
+    <Compile Include="Models\ValueSensorModel.cs" />
+    <Compile Include="Models\TextSensorModel.cs" />
     <Compile Include="Models\ToggleSwitchModel.cs" />
     <Compile Include="ViewHolders\MacroColorViewHolder.cs" />
     <Compile Include="ViewHolders\MacroDelayViewHolder.cs" />
+    <Compile Include="ViewHolders\SensorTextViewHolder.cs" />
     <Compile Include="ViewHolders\SwitchColorViewHolder.cs" />
     <Compile Include="ViewHolders\MacroSliderViewHolder.cs" />
     <Compile Include="ViewHolders\SwitchSliderViewHolder.cs" />
     <Compile Include="ViewHolders\MacroToggleViewHolder.cs" />
+    <Compile Include="ViewHolders\SensorValueViewHolder.cs" />
     <Compile Include="ViewHolders\SwitchToggleViewHolder.cs" />
     <Compile Include="ViewModels\MacrosViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\SensorsViewModel.cs" />
     <Compile Include="ViewModels\SwitchesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -418,6 +427,24 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_hourglass.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_refresh.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\list_item_sensors_value.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\list_item_sensors_text.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

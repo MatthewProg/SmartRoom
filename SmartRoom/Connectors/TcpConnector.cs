@@ -16,6 +16,7 @@ namespace SmartRoom.Connectors
 {
     public class TcpConnector : Interfaces.ITcpConnector
     {
+        private readonly object _transmitLock = new object();
         private const int SERVER_BUFFER = 32;
 
         private TcpClient _client;
@@ -56,13 +57,26 @@ namespace SmartRoom.Connectors
 
         public void Send(byte[] data)
         {
-            _sendBuffer.AddRange(data);
+            lock (_transmitLock)
+            {
+                _sendBuffer.AddRange(data);
+            }
             if (IsReady)
-                _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(_receiveBuffer)); });
+                _processTask = Task.Run(async () => 
+                {
+                    await Process();
+                    DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(new List<byte>(_receiveBuffer)));
+                    _receiveBuffer.Clear();
+                });
             else
                 _processTask.ContinueWith(delegate
                 {
-                    _processTask = Task.Run(async () => { await Process(); DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(_receiveBuffer)); });
+                    _processTask = Task.Run(async () => 
+                    { 
+                        await Process();
+                        DataReceivedEvent?.Invoke(null, new Events.ObjectEventArgs(new List<byte>(_receiveBuffer)));
+                        _receiveBuffer.Clear();
+                    });
                 });
         }
 
@@ -75,7 +89,10 @@ namespace SmartRoom.Connectors
                 {
                     var range = (_sendBuffer.Count < SERVER_BUFFER ? _sendBuffer.Count : SERVER_BUFFER);
                     var toSend = _sendBuffer.GetRange(0, range); //Potential fragmentation of SET pkg!
-                    _sendBuffer.RemoveRange(0, range);
+                    lock (_transmitLock)
+                    {
+                        _sendBuffer.RemoveRange(0, range);
+                    }
 
                     await stream.WriteAsync(toSend.ToArray(), 0, toSend.Count);
 

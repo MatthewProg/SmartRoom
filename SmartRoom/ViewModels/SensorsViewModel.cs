@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SmartRoom.ViewModels
 {
-    public class SwitchesViewModel : Interfaces.IViewModel
+    public class SensorsViewModel : Interfaces.IViewModel
     {
         private readonly Interfaces.IPackagesManager _packagesManager;
         private bool _saveScheduled;
@@ -23,84 +23,84 @@ namespace SmartRoom.ViewModels
 
         public Task TaskSave { get; private set; }
         public Task TaskLoad { get; private set; }
-        public ObservableCollection<Models.SwitchModel> SwitchesCollection { get; private set; }
+        public ObservableCollection<Models.SensorModel> Sensors { get; private set; }
 
-        public SwitchesViewModel(Interfaces.IPackagesManager packagesManager)
+        public SensorsViewModel(Interfaces.IPackagesManager packagesManager)
         {
-            SwitchesCollection = new ObservableCollection<Models.SwitchModel>();
-            SwitchesCollection.CollectionChanged += SwitchesChanged;
+            Sensors = new ObservableCollection<Models.SensorModel>();
+            Sensors.CollectionChanged += SensorsCollectionChanged;
             _saveScheduled = false;
             _loadScheduled = false;
             _packagesManager = packagesManager;
         }
 
-        private void SwitchesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void SensorsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if(e.OldItems != null)
+            if (e.OldItems != null)
             {
-                foreach (Models.SwitchModel m in e.OldItems)
+                foreach (Models.SensorModel m in e.OldItems)
                 {
-                    m.PropertyChanged -= SwitchesPropertyChanged;
-                    _packagesManager.PinValuesUpdated -= m.PinUpdateListener;
+                    m.PropertyChanged -= SensorPropertyChanged;
+                    if (m.IsId) _packagesManager.IdValuesReceived -= m.UpdateListener;
+                    else _packagesManager.PinValuesUpdated -= m.UpdateListener;
                 }
             }
             if (e.NewItems != null)
             {
-                foreach (Models.SwitchModel m in e.NewItems)
+                foreach (Models.SensorModel m in e.NewItems)
                 {
-                    m.PropertyChanged += SwitchesPropertyChanged;
-                    _packagesManager.PinValuesUpdated += m.PinUpdateListener;
-                    _packagesManager.GetValue(m);
+                    m.PropertyChanged += SensorPropertyChanged;
+                    if (m.IsId) _packagesManager.IdValuesReceived += m.UpdateListener;
+                    else _packagesManager.PinValuesUpdated += m.UpdateListener;
                 }
             }
             SaveModelAsync();
         }
 
-        private void SwitchesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void SensorPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Toggle" || e.PropertyName == "Value" || e.PropertyName == "Color")
-                _packagesManager.SetValue(sender as Models.SwitchModel);
+            if(e.PropertyName == "IsId")
+            {
+                var s = sender as Models.SensorModel;
+                if (s.IsId == true)
+                {
+                    _packagesManager.PinValuesUpdated -= s.UpdateListener;
+                    _packagesManager.IdValuesReceived += s.UpdateListener;
+                }
+                else
+                {
+                    _packagesManager.PinValuesUpdated += s.UpdateListener;
+                    _packagesManager.IdValuesReceived -= s.UpdateListener;
+                }
+            }
 
-            if (e.PropertyName != "Toggle" && e.PropertyName != "Value" && e.PropertyName != "Color" &&
-                e.PropertyName != "Fade" && e.PropertyName != "Enabled")
+            if (e.PropertyName != "Text" && e.PropertyName != "Value")
                 SaveModelAsync();
         }
 
-        private async Task SaveSwitchesAsync(string filename)
+        private async Task SaveSensorsAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             using (var writer = File.CreateText(path))
-                await writer.WriteLineAsync(JsonConvert.SerializeObject(SwitchesCollection, new Converters.SwitchesJsonConverter()));
+                await writer.WriteLineAsync(JsonConvert.SerializeObject(Sensors, new Converters.SensorsJsonConverter()));
         }
 
-        private async Task LoadSwitchesAsync(string filename)
+        private async Task LoadSensorsAsync(string filename)
         {
             var path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), filename);
             if (File.Exists(path))
             {
                 using (var reader = new StreamReader(path))
                 {
-                    var ds = JsonConvert.DeserializeObject<List<Models.SwitchModel>>(await reader.ReadToEndAsync(), new Converters.SwitchesJsonConverter());
-                    SwitchesCollection.CollectionChanged -= SwitchesChanged;
-                    foreach (var e in SwitchesCollection)
-                    {
-                        e.PropertyChanged -= SwitchesPropertyChanged;
-                        _packagesManager.PinValuesUpdated -= e.PinUpdateListener;
-                    }
-                    SwitchesCollection.Clear();
+                    var ds = JsonConvert.DeserializeObject<List<Models.SensorModel>>(await reader.ReadToEndAsync(), new Converters.SensorsJsonConverter());
+                    Sensors.Clear();
                     foreach (var e in ds)
-                        SwitchesCollection.Add(e);
+                        Sensors.Add(e);
                 }
-                foreach (var e in SwitchesCollection)
-                {
-                    e.PropertyChanged += SwitchesPropertyChanged;
-                    _packagesManager.PinValuesUpdated += e.PinUpdateListener;
-                }
-                SwitchesCollection.CollectionChanged += SwitchesChanged;
             }
         }
 
-        public Task SaveModelAsync(string filename = "switches.json")
+        public Task SaveModelAsync(string filename = "sensors.json")
         {
             _saveScheduled = true;
 
@@ -109,7 +109,7 @@ namespace SmartRoom.ViewModels
                 do
                 {
                     _saveScheduled = false;
-                    await SaveSwitchesAsync(filename);
+                    await SaveSensorsAsync(filename);
                 } while (_saveScheduled);
             };
 
@@ -123,7 +123,7 @@ namespace SmartRoom.ViewModels
             return TaskSave;
         }
 
-        public Task LoadModelAsync(string filename = "switches.json")
+        public Task LoadModelAsync(string filename = "sensors.json")
         {
             _loadScheduled = true;
 
@@ -132,7 +132,7 @@ namespace SmartRoom.ViewModels
                 do
                 {
                     _loadScheduled = false;
-                    await LoadSwitchesAsync(filename);
+                    await LoadSensorsAsync(filename);
                 } while (_loadScheduled);
             };
 

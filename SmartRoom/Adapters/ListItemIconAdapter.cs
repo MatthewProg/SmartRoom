@@ -44,7 +44,7 @@ namespace SmartRoom.Adapters
             var subtitle = view.FindViewById<TextView>(Resource.Id.list_item_icon_subtitle);
             var icon = view.FindViewById<ShapeableImageView>(Resource.Id.list_item_icon_icon);
 
-            title.Text = (item.Title != string.Empty ? item.Title : view.Resources.GetString(Resource.String.text_untitled));
+            title.Text = (string.IsNullOrWhiteSpace(item.Title) ? view.Resources.GetString(Resource.String.text_untitled) : item.Title);
             subtitle.Text = (string.IsNullOrWhiteSpace(item.Subtitle) == false ? item.Subtitle : view.Resources.GetString(Resource.String.text_untitled));
             subtitle.Visibility = (string.IsNullOrWhiteSpace(item.Subtitle) == false ? ViewStates.Visible : ViewStates.Gone);
             icon.SetImageResource(item.Icon);

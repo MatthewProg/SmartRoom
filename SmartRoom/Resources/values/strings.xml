@@ -31,8 +31,12 @@
     <string name="button_pick">Pick</string>
     <string name="button_select">Select</string>
     <string name="text_untitled">&lt;Untitled&gt;</string>
+    <string name="text_no_data">&lt;NO_DATA&gt;</string>
+    <string name="text_state_on">ON</string>
+    <string name="text_state_off">OFF</string>
     <string name="text_title">Title</string>
     <string name="text_value">Value</string>
+    <string name="text_state">State</string>
     <string name="text_fade">Fade</string>
     <string name="text_delay">Delay</string>
     <string name="text_milisec">ms</string>
@@ -55,6 +59,7 @@
     <string name="accessibility_icon">Icon</string>
     <string name="accessibility_delete">Delete</string>
     <string name="accessibility_edit">Edit</string>
+    <string name="accessibility_refresh">Refresh</string>
     <string name="accessibility_stop">Stop</string>
     <string name="accessibility_pause">Pause</string>
     <string name="accessibility_play">Play</string>

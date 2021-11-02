@@ -26,9 +26,10 @@ namespace SmartRoom.Interfaces
         public void GetValue(Models.SwitchModel model);
         public void GetValue(string pin);
 
-        //public void GetId(IEnumerable<Models.SensorModel> models);
-        //public void GetId(Models.SensorModel model);
         public void GetId(IEnumerable<string> ids);
         public void GetId(string id);
+
+        public void GetData(IEnumerable<Models.SensorModel> models);
+        public void GetData(Models.SensorModel model);
     }
 }

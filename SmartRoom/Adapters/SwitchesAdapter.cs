@@ -81,7 +81,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.SwitchToggleViewHolder;
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Toggle.Checked = e.Toggle;
                 v.Toggle.Enabled = e.Enabled;
                 v.Fade.Checked = e.Fade;             
@@ -92,7 +92,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.SwitchSliderViewHolder;
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Slider.Enabled = e.Enabled;
                 v.Slider.Progress = (int)Math.Round(e.Value * 100f);         
                 v.Fade.Checked = e.Fade;
@@ -104,7 +104,7 @@ namespace SmartRoom.Adapters
                 var hsv = e.Color.GetHSV();
 
                 v.Model = e;
-                v.Title.Text = (e.Title != string.Empty ? e.Title : holder.ItemView.Resources.GetString(Resource.String.text_untitled));
+                v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Slider.Enabled = e.Enabled;
                 v.Slider.ColorBarPosition = (int)Math.Round(hsv.H);
                 v.Slider.AlphaMaxPosition = 100;
@@ -148,7 +148,7 @@ namespace SmartRoom.Adapters
                 return v;
             }
             else
-                throw new ArgumentException("Unable to find correct switch view");
+                throw new ArgumentException("Unable to find correct switch view holder");
         }
 
         private void FadeChanged(Interfaces.IViewHolder<Models.SwitchModel> model, CompoundButton.CheckedChangeEventArgs e)

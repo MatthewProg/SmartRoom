@@ -21,12 +21,12 @@ namespace SmartRoom.Fragments
     public class FragmentSwitches : Fragment
     {
         private Extensions.Popup _popup;
-        private Managers.PackagesManager _pkgManager;
+        private Interfaces.IPackagesManager _pkgManager;
         private ViewModels.SwitchesViewModel _switches;
         private View _view;
         private Task _refreshTask;
 
-        public FragmentSwitches(ViewModels.SwitchesViewModel switches, Managers.PackagesManager pkgManager)
+        public FragmentSwitches(ViewModels.SwitchesViewModel switches, Interfaces.IPackagesManager pkgManager)
         {
             _popup = null;
             _view = null;

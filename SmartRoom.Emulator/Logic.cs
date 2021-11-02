@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SmartRoom.Emulator
 {
     public class Logic
     {
-        private Dictionary<string, Task> _fading;
+        private Dictionary<string, Tuple<Task, CancellationTokenSource>> _fading;
 
         public ObservableDictionary<string, byte> Pins { get; set; }
         public Dictionary<string, Tuple<bool, string>> IdValues { get; private set; }
@@ -17,7 +18,7 @@ namespace SmartRoom.Emulator
 
         public Logic()
         {
-            _fading = new Dictionary<string, Task>();
+            _fading = new Dictionary<string, Tuple<Task, CancellationTokenSource>>();
             FadeDuration = 500;
             Pins = new ObservableDictionary<string, byte>()
             {
@@ -31,7 +32,7 @@ namespace SmartRoom.Emulator
             {
                 {"0", new Tuple<bool, string>(false, "255") },
                 {"1", new Tuple<bool, string>(false, "0") },
-                {"2", new Tuple<bool, string>(false, "128") },
+                {"2", new Tuple<bool, string>(true, "128") },
                 {"3", new Tuple<bool, string>(true, "Hi short") },
                 {"4", new Tuple<bool, string>(true, "It's over 32 characters long!!! :)") }
             };
@@ -39,8 +40,8 @@ namespace SmartRoom.Emulator
 
         public bool IsFading(string pin)
         {
-            if(_fading.TryGetValue(pin, out Task task))
-                return task.IsCompleted;
+            if(_fading.TryGetValue(pin, out Tuple<Task, CancellationTokenSource> tuple))
+                return tuple.Item1.IsCompleted;
             return false;
         }
 
@@ -87,17 +88,16 @@ namespace SmartRoom.Emulator
                     bool fade = ((data[i] & 0b00100000) >> 5) == 1;
 
                     i++;
+                    if (_fading.ContainsKey(pinName))
+                    {
+                        _fading[pinName].Item2.Cancel();
+                        _fading[pinName].Item2.Dispose();
+                        _fading.Remove(pinName);
+                    }
                     if (fade)
                         Fade(pinName, data[i]);
                     else
-                    {
-                        if (_fading.ContainsKey(pinName))
-                        {
-                            _fading[pinName].Dispose();
-                            _fading.Remove(pinName);
-                        }
                         Pins[pinName] = data[i];
-                    }
                 }
             }
             output.Add(0b01100000); //END PKG
@@ -105,18 +105,25 @@ namespace SmartRoom.Emulator
         }
         public void Fade(string pin, byte value)
         {
-            _fading[pin] = Task.Run(() =>
+            var cts = new CancellationTokenSource();
+            var task = Task.Run(() =>
             {
-                var s = new Stopwatch();
-                var beg = Pins[pin];
-                int sub = (int)value - (int)beg;
-                s.Start();
-                while (s.ElapsedMilliseconds <= FadeDuration)
+                try
                 {
-                    Pins[pin] = (byte)Math.Round(beg + (sub * ((float)s.ElapsedMilliseconds / (float)FadeDuration)));
+                    cts.Token.ThrowIfCancellationRequested();
+                    var s = new Stopwatch();
+                    var beg = Pins[pin];
+                    int sub = (int)value - (int)beg;
+                    s.Start();
+                    while (s.ElapsedMilliseconds <= FadeDuration)
+                    {
+                        Pins[pin] = (byte)Math.Round(beg + (sub * ((float)s.ElapsedMilliseconds / (float)FadeDuration)));
+                    }
+                    Pins[pin] = value;
                 }
-                Pins[pin] = value;
-            });
+                catch (Exception) { }
+            }, cts.Token);
+            _fading[pin] = new Tuple<Task, CancellationTokenSource>(task, cts);
         }
 
         public byte[] CreatePinPkg(string pin)
@@ -150,7 +157,7 @@ namespace SmartRoom.Emulator
 
             var enc = Encoding.ASCII.GetBytes(text);
             output.AddRange(enc);
-            output.Add(0x00000011); //End of Text char
+            output.Add(0b00000011); //End of Text char
 
             return output.ToArray();
         }

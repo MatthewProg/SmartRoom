@@ -120,7 +120,7 @@ namespace SmartRoom.Adapters
                 ith.AttachToRecyclerView(items);
             }
 
-            title.Text = (item.Name != string.Empty ? item.Name : view.Resources.GetString(Resource.String.text_untitled));
+            title.Text = (string.IsNullOrWhiteSpace(item.Name) ? view.Resources.GetString(Resource.String.text_untitled) : item.Name);
             repeat.SetColorFilter(item.Repeat ? GetColor(Resource.Color.colorAccent) : GetColor(Resource.Color.button_material_dark));
             playpause.Checked = item.Running;
 

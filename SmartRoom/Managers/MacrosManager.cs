@@ -16,12 +16,12 @@ namespace SmartRoom.Managers
 {
     public class MacrosManager
     {
-        private readonly PackagesManager _packagesManager;
+        private readonly Interfaces.IPackagesManager _packagesManager;
         private Dictionary<Models.MacroModel, Tuple<Task, CancellationTokenSource>> _tasks;
 
         public ViewModels.MacrosViewModel MacrosViewModel { get; private set; }
 
-        public MacrosManager(PackagesManager packagesManager, ViewModels.MacrosViewModel macros)
+        public MacrosManager(Interfaces.IPackagesManager packagesManager, ViewModels.MacrosViewModel macros)
         {
             _packagesManager = packagesManager;
             _tasks = new Dictionary<Models.MacroModel, Tuple<Task, CancellationTokenSource>>();
