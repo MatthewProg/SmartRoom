@@ -34,7 +34,7 @@ namespace SmartRoom.Managers
 
         private void SensorPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Refresh")
+            if (e.PropertyName == "Refresh" || e.PropertyName == "Input" || e.PropertyName == "IsId")
                 RefreshSensor(sender as Models.SensorModel);
         }
 
@@ -57,8 +57,11 @@ namespace SmartRoom.Managers
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
                 if (e.NewItems != null)
-                    foreach (Models.SensorModel s in e.OldItems)
+                    foreach (Models.SensorModel s in e.NewItems)
+                    {
+                        s.PropertyChanged += SensorPropertyChanged;
                         RefreshSensor(s);
+                    }
         }
 
         public void PauseAll()

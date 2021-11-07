@@ -93,6 +93,11 @@ namespace SmartRoom.Adapters
                 }
                 else
                     vh.Value.Text = r.GetString(Resource.String.text_no_data);
+                vh.Text.Text = v.Display switch
+                {
+                    Models.ValueSensorModel.DisplayType.STATE => r.GetString(Resource.String.text_state),
+                    _ => r.GetString(Resource.String.text_value)
+                };
             }
             else if (obj is Models.TextSensorModel t)
             {

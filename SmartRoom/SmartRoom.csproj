@@ -83,6 +83,8 @@
     <Compile Include="Events\IdValuesEventArgs.cs" />
     <Compile Include="Events\ObjectEventArgs.cs" />
     <Compile Include="Events\PinValueEventArgs.cs" />
+    <Compile Include="Fragments\FragmentPopupSensor.cs" />
+    <Compile Include="Fragments\FragmentPopupTimespan.cs" />
     <Compile Include="Interfaces\IPackagesManager.cs" />
     <Compile Include="Interfaces\ITcpConnector.cs" />
     <Compile Include="Connectors\TcpConnector.cs" />
@@ -443,6 +445,24 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\list_item_sensors_text.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_sensor.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\dark_border.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\popup_timespan.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

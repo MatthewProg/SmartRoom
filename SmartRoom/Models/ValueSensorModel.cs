@@ -37,7 +37,7 @@ namespace SmartRoom.Models
             this.Value = other.Value;
         }
 
-        [JsonProperty(propertyName: "D")]
+        [JsonProperty(propertyName: "Dt")]
         public DisplayType Display
         {
             get => _display;

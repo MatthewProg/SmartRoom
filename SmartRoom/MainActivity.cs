@@ -53,6 +53,7 @@ namespace SmartRoom
             _macrosManager = new Managers.MacrosManager(_packagesManager, _macros);
             _settings.LoadModelAsync();
             _switches.LoadModelAsync();
+            _sensors.LoadModelAsync();
             _macros.LoadModelAsync();
             Task.WhenAll(_switches.TaskLoad, _settings.TaskLoad).ContinueWith(delegate
             {

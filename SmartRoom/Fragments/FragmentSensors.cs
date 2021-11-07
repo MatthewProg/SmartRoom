@@ -24,17 +24,28 @@ namespace SmartRoom.Fragments
     {
         private Managers.SensorsManager _sensorsManager;
         private ViewModels.SensorsViewModel _sensors;
+        private Extensions.Popup _popup;
         private Task _refreshTask;
+        private View _view;
 
         public FragmentSensors(IPackagesManager packagesManager, SensorsViewModel sensors)
         {
+            _popup = null;
             _sensors = sensors;
+            _sensors.Sensors.CollectionChanged += Sensors_CollectionChanged;
             _sensorsManager = new SensorsManager(packagesManager, sensors);
+        }
+
+        private void Sensors_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+               e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                UpdateTitleVisibity(_view);
         }
 
         public override void OnResume()
         {
-            Refresh_Refresh(Activity.FindViewById<SwipeRefreshLayout>(Resource.Id.sensors_refresh), null);
+            Refresh_Refresh(_view.FindViewById<SwipeRefreshLayout>(Resource.Id.sensors_refresh), null);
             base.OnResume();
         }
 
@@ -52,20 +63,26 @@ namespace SmartRoom.Fragments
         private void Fab_Click(object sender, EventArgs e)
         {
             View view = (View)sender;
-            Snackbar.Make(view, "Add sensors", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
+            _popup = new FragmentPopupSensor();
+            _popup.PopupClose += PopupClose;
+            _popup.Show(Activity.SupportFragmentManager, "SensorPopup");
         }
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        private void PopupClose(object sender, Events.PopupEventArgs e)
         {
-            var view = inflater.Inflate(Resource.Layout.content_sensors, container, false);
+            if (e.HasResult)
+                _sensors.Sensors.Add(e.Result as Models.SensorModel);
+        }
 
-            var fab = view.FindViewById<FloatingActionButton>(Resource.Id.fab_sensors);
-            var title = view.FindViewById<TextView>(Resource.Id.sensors_title);
-            var refresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.sensors_refresh);
-            var list = view.FindViewById<RecyclerView>(Resource.Id.sensors_list);
+        private void LoadSensors(View v)
+        {
+            if (v == null)
+                return;
 
-            refresh.Refresh += Refresh_Refresh;
+            var list = v.FindViewById<RecyclerView>(Resource.Id.sensors_list);
+            
+            var loading = v.FindViewById<RelativeLayout>(Resource.Id.sensors_loading);
+            var fab = v.FindViewById<FloatingActionButton>(Resource.Id.fab_sensors);
 
             var adapter = new Adapters.SensorsAdapter(this.Activity, _sensors.Sensors);
             adapter.EditClickEvent += Adapter_EditClickEvent;
@@ -78,7 +95,45 @@ namespace SmartRoom.Fragments
             var touchHelper = new ItemTouchHelper(new Callbacks.ObservableCollectionCallback<Models.SensorModel>(_sensors.Sensors));
             touchHelper.AttachToRecyclerView(list);
 
+            loading.Visibility = ViewStates.Gone;
+            fab.Visibility = ViewStates.Visible;
+            UpdateTitleVisibity(v);
+            Refresh_Refresh(v.FindViewById<SwipeRefreshLayout>(Resource.Id.sensors_refresh), null);
+        }
+
+        private void UpdateTitleVisibity(View v)
+        {
+            if (v == null) return;
+
+            Activity.RunOnUiThread(() =>
+            {
+                var title = v.FindViewById<TextView>(Resource.Id.sensors_title);
+                if (_sensors.Sensors.Count == 0)
+                    title.Visibility = ViewStates.Visible;
+                else
+                    title.Visibility = ViewStates.Gone;
+            });
+        }
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            var view = inflater.Inflate(Resource.Layout.content_sensors, container, false);
+            _view = view;
+
+            var fab = view.FindViewById<FloatingActionButton>(Resource.Id.fab_sensors);
+            var refresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.sensors_refresh);
+
+            refresh.Refresh += Refresh_Refresh;
             fab.Click += Fab_Click;
+            fab.Visibility = ViewStates.Gone;
+
+            if (_sensors.TaskLoad.IsCompleted == false)
+                _sensors.TaskLoad.ContinueWith(delegate
+                {
+                    Activity.RunOnUiThread(() => LoadSensors(view));
+                });
+            else
+                LoadSensors(view);
 
             return view;
         }
@@ -86,7 +141,7 @@ namespace SmartRoom.Fragments
         private void Refresh_Refresh(object sender, EventArgs e)
         {
             var r = sender as SwipeRefreshLayout;
-            if (r == null || _refreshTask?.Status == TaskStatus.Running)
+            if (r == null || _refreshTask?.Status == TaskStatus.Running || _sensors.Sensors.Count == 0 || _sensors.TaskLoad.IsCompleted == false)
                 return;
 
             _refreshTask = Task.Run(async () =>
@@ -106,7 +161,8 @@ namespace SmartRoom.Fragments
 
         private void Adapter_EditClickEvent(object sender, EventArgs e)
         {
-            throw new NotImplementedException(); //Show popup and edit
+            _popup = new FragmentPopupSensor(sender as Models.SensorModel);
+            _popup?.Show(this.Activity.SupportFragmentManager, "SensorPopup");
         }
     }
 }
