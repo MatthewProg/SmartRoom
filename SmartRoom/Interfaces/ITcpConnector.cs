@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartRoom.Events;
+using System;
 
 namespace SmartRoom.Interfaces
 {
@@ -7,6 +8,7 @@ namespace SmartRoom.Interfaces
         bool IsConnected { get; }
         bool IsReady { get; }
 
+        event EventHandler<ConnectionStatusEventArgs> ConnectionEvent;
         event EventHandler<Events.ObjectEventArgs> DataReceivedEvent;
 
         void Close();

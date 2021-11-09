@@ -45,13 +45,13 @@ namespace SmartRoom.Adapters
                 {
                     foreach (Interfaces.IMacroItemModel m in e.OldItems)
                         m.PropertyChanged -= ItemPropChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
                 }
                 if (e.NewItems != null)
                 {
                     foreach (Interfaces.IMacroItemModel m in e.NewItems)
                         m.PropertyChanged += ItemPropChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace SmartRoom.Adapters
             if (e.PropertyName == "Enabled" || e.PropertyName == "Title" || e.PropertyName == "Color")
             {
                 var index = Macro.Items.IndexOf(sender as Interfaces.IMacroItemModel);
-                _activity.RunOnUiThread(() => NotifyItemChanged(index));
+                _activity?.RunOnUiThread(() => NotifyItemChanged(index));
             }
         }
 

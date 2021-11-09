@@ -34,6 +34,7 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_pick">Pick</string>
     <string name="button_select">Select</string>
+    <string name="button_connect">Connect</string>
     <string name="text_untitled">&lt;Untitled&gt;</string>
     <string name="text_no_data">&lt;NO_DATA&gt;</string>
     <string name="text_state_on">ON</string>
@@ -59,6 +60,12 @@
     <string name="text_alias_red_pin">R</string>
     <string name="text_alias_green_pin">G</string>
     <string name="text_alias_blue_pin">B</string>
+    <string name="text_status">Status</string>
+    <string name="text_disconnected">Disconnected</string>
+    <string name="text_connected">Connected</string>
+    <string name="text_connecting">Connecting</string>
+    <string name="text_server">Server</string>
+    <string name="text_loading">Loading...</string>
     <string name="settings_ip">IP Address</string>
     <string name="settings_ip_desc">Server address</string>
     <string name="settings_port">Port</string>

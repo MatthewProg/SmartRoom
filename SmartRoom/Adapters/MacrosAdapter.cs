@@ -47,7 +47,7 @@ namespace SmartRoom.Adapters
                     foreach (Models.MacroModel m in e.NewItems)
                         m.PropertyChanged += MacroPropChanged;
                 }
-                _activity.RunOnUiThread(NotifyDataSetChanged); //Change to notify item
+                _activity?.RunOnUiThread(NotifyDataSetChanged); //Change to notify item
             }
         }
 
@@ -55,7 +55,7 @@ namespace SmartRoom.Adapters
         {
             if (e.PropertyName == "Running")
             {
-                _activity.RunOnUiThread(NotifyDataSetChanged); //Change to notify item
+                _activity?.RunOnUiThread(NotifyDataSetChanged); //Change to notify item
             }
         }
 

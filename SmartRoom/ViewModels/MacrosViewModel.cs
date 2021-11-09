@@ -122,8 +122,6 @@ namespace SmartRoom.ViewModels
                     }
                 }
             }
-            else
-                await SaveModelAsync(filename);
         }
 
         public Task SaveModelAsync(string filename = "macros.json")

@@ -46,7 +46,7 @@ namespace SmartRoom.Fragments
             if (_switches.TaskLoad.IsCompleted == false)
             {
                  _switches.TaskLoad.ContinueWith(delegate { 
-                    Activity.RunOnUiThread(() => { 
+                    Activity?.RunOnUiThread(() => { 
                         _switches.SwitchesCollection.CollectionChanged += SwitchesChanged;
                         if (_view != null)
                         {
@@ -97,12 +97,12 @@ namespace SmartRoom.Fragments
                 {
                     _switches.SwitchesCollection.ToList().ForEach(x => x.Enabled = false);
                     _pkgManager.GetValue(_switches.SwitchesCollection);
-                    Task.Delay(200).Wait();
-                    Activity.RunOnUiThread(() =>
-                    {
-                        srl.Refreshing = false;
-                    });
                 }
+                Task.Delay(200).Wait();
+                Activity?.RunOnUiThread(() =>
+                {
+                    srl.Refreshing = false;
+                });
             });
         }
 

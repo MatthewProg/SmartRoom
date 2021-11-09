@@ -99,7 +99,7 @@ namespace SmartRoom.Managers
                         _setQueue[v.Item1] = new Tuple<bool, byte>(m.Fade, v.Item2);
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -111,7 +111,7 @@ namespace SmartRoom.Managers
                     _setQueue[v.Item1] = new Tuple<bool, byte>(model.Fade, v.Item2);
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -122,7 +122,7 @@ namespace SmartRoom.Managers
                 _setQueue[pin] = new Tuple<bool, byte>(fade, value);
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -135,7 +135,7 @@ namespace SmartRoom.Managers
                         _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -147,7 +147,7 @@ namespace SmartRoom.Managers
                     _getQueue.Add(new Tuple<string, bool>(p.Item1, false));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -158,7 +158,7 @@ namespace SmartRoom.Managers
                 _getQueue.Add(new Tuple<string, bool>(pin, false));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -170,7 +170,7 @@ namespace SmartRoom.Managers
                     _getQueue.Add(new Tuple<string, bool>(id, true));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -181,7 +181,7 @@ namespace SmartRoom.Managers
                 _getQueue.Add(new Tuple<string, bool>(id, true));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -193,7 +193,7 @@ namespace SmartRoom.Managers
                     _getQueue.Add(new Tuple<string, bool>(m.Input, m.IsId));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
 
@@ -204,7 +204,7 @@ namespace SmartRoom.Managers
                 _getQueue.Add(new Tuple<string, bool>(model.Input, model.IsId));
             }
 
-            if (Connection.IsReady)
+            if (Connection.IsReady && Connection.IsConnected)
                 SendWaiting();
         }
     }

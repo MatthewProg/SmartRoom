@@ -37,7 +37,7 @@ namespace SmartRoom.Fragments
                 PopulateList(v);
             else
                 _settings.TaskLoad.ContinueWith(delegate {
-                    Activity.RunOnUiThread(() =>
+                    Activity?.RunOnUiThread(() =>
                     {
                         PopulateList(v);
                     });

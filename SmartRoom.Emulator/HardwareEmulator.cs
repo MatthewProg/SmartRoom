@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SmartRoom.Emulator
@@ -85,6 +86,28 @@ namespace SmartRoom.Emulator
 
         public bool IsRunning => _run;
 
+        public bool IsConnected(TcpClient client)
+        {
+            var bs = client.Client.Blocking;
+            try
+            {
+                client.Client.Blocking = false;
+                client.Client.Send(new byte[1] { 0b11100000 }); //PING BYTE
+                return true;
+            }
+            catch (SocketException e) 
+            {
+                if (e.NativeErrorCode == 10035)
+                    return true;
+                else
+                    return false;
+            }
+            finally
+            {
+                client.Client.Blocking = bs;
+            }
+        }
+
         public void Stop()
         {
             _server.Stop();
@@ -99,36 +122,50 @@ namespace SmartRoom.Emulator
                 Logger.Server($"Client connected from {client.Client.RemoteEndPoint}");
 
                 var stream = client.GetStream();
-                while(client.Connected)
+                short counter = 0;
+                while (client.Connected)
                 {
-                    byte[] buffer = new byte[32];
-                    int i = 0;
-                    do
+                    if (counter == 10)
+                        if (IsConnected(client) == false)
+                            break;
+                    if (stream.DataAvailable && stream.CanRead)
                     {
-                        if (i == buffer.Length) break;
-
-                        buffer[i] = (byte)stream.ReadByte();
-                        i++;
-                    } while (stream.DataAvailable);
-
-                    Logger.Received(i);
-
-                    var response = _logic.ProcessData(buffer, i);
-                    i = 0;
-                    while(i<response.Length)
-                    {
-                        if (i % 32 == 0)
+                        byte[] buffer = new byte[32];
+                        int i = 0;
+                        do
                         {
-                            Logger.Processing(true);
-                            await Task.Delay(Delay); //Simulate processing
-                            Logger.Processing(false);
+                            if (i == buffer.Length) break;
+
+                            buffer[i] = (byte)stream.ReadByte();
+                            i++;
+                        } while (stream.DataAvailable);
+
+                        Logger.Received(i);
+
+                        var response = _logic.ProcessData(buffer, i);
+                        i = 0;
+                        while (i < response.Length)
+                        {
+                            if (i % 32 == 0)
+                            {
+                                Logger.Processing(true);
+                                await Task.Delay(Delay); //Simulate processing
+                                Logger.Processing(false);
+                            }
+
+                            stream.WriteByte(response[i]);
+                            i++;
                         }
 
-                        stream.WriteByte(response[i]);
-                        i++;
+                        Logger.Send(i);
                     }
-
-                    Logger.Send(i);
+                    else
+                    {
+                        await Task.Delay(100);
+                        counter++;
+                        if(counter > 10)
+                            counter = 0;
+                    }
                 }
                 Logger.Server("Client disconnected!");
             }

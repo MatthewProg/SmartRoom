@@ -60,6 +60,10 @@
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
+    <MandroidI18n />
+    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidSigningKeyStore>
+    </AndroidSigningKeyStore>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -80,6 +84,7 @@
     <Compile Include="Adapters\SensorsAdapter.cs" />
     <Compile Include="Callbacks\ObservableCollectionCallback.cs" />
     <Compile Include="Converters\SensorsJsonConverter.cs" />
+    <Compile Include="Events\ConnectionStatusEventArgs.cs" />
     <Compile Include="Events\IdValuesEventArgs.cs" />
     <Compile Include="Events\ObjectEventArgs.cs" />
     <Compile Include="Events\PinValueEventArgs.cs" />
@@ -208,6 +213,9 @@
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.3.1.3" />
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
       <Version>2.1.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Preference">
+      <Version>1.1.1.11</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.SwipeRefreshLayout">
       <Version>1.1.0.5</Version>
@@ -465,6 +473,17 @@
     <AndroidResource Include="Resources\layout\popup_timespan.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\dark_border_rounded.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_broadcast.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

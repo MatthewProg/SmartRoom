@@ -105,7 +105,7 @@ namespace SmartRoom.Fragments
 
         private void SelectRadio(RadioButton radio)
         {
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 foreach (var r in _radios)
                 {
@@ -128,10 +128,12 @@ namespace SmartRoom.Fragments
         {
             if(e.HasResult)
             {
-                Activity.RunOnUiThread(() =>
+                Activity?.RunOnUiThread(() =>
                 {
-                    _model.Refresh = (TimeSpan)(e.Result as TimeSpan?);
-                    _view.FindViewById<TextView>(Resource.Id.popup_sensor_refresh).Text = _model.Refresh.ToString(@"hh\:mm\:ss\.fff", new CultureInfo("en-US"));
+                    var ts = (TimeSpan)(e.Result as TimeSpan?);
+                    if (_model != null)
+                        _model.Refresh = ts;
+                    _view.FindViewById<TextView>(Resource.Id.popup_sensor_refresh).Text = ts.ToString(@"hh\:mm\:ss\.fff", new CultureInfo("en-US"));
                 });
             }
         }

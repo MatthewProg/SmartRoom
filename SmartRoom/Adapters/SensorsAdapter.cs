@@ -40,13 +40,13 @@ namespace SmartRoom.Adapters
                 {
                     foreach (Models.SensorModel m in e.OldItems)
                         m.PropertyChanged -= SensorPropertyChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
                 }
                 if (e.NewItems != null)
                 {
                     foreach (Models.SensorModel m in e.NewItems)
                         m.PropertyChanged += SensorPropertyChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace SmartRoom.Adapters
                 e.PropertyName == "Text" || e.PropertyName == "Display")
             {
                 var index = _sensors.IndexOf(sender as Models.SensorModel);
-                _activity.RunOnUiThread(() => NotifyItemChanged(index));
+                _activity?.RunOnUiThread(() => NotifyItemChanged(index));
             }
         }
 

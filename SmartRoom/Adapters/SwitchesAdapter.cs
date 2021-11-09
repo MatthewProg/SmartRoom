@@ -40,13 +40,13 @@ namespace SmartRoom.Adapters
                 {
                     foreach (Models.SwitchModel m in e.OldItems)
                         m.PropertyChanged -= SwitchPropChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count));
                 }
                 if (e.NewItems != null)
                 {
                     foreach (Models.SwitchModel m in e.NewItems)
                         m.PropertyChanged += SwitchPropChanged;
-                    _activity.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
+                    _activity?.RunOnUiThread(() => NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count));
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace SmartRoom.Adapters
             if (e.PropertyName == "Enabled" || e.PropertyName == "Title") //So as not to break animation
             {
                 var index = _switches.IndexOf(sender as Models.SwitchModel);
-                _activity.RunOnUiThread(() => NotifyItemChanged(index));
+                _activity?.RunOnUiThread(() => NotifyItemChanged(index));
             }
         }
 

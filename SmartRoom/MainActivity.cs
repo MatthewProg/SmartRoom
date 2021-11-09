@@ -5,6 +5,7 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
+using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
@@ -20,6 +21,7 @@ namespace SmartRoom
     {
         private Managers.PackagesManager _packagesManager;
         private Managers.MacrosManager _macrosManager;
+        private Interfaces.ITcpConnector _tcpConnector;
         private ViewModels.SettingsViewModel _settings;
         private ViewModels.SwitchesViewModel _switches;
         private ViewModels.SensorsViewModel _sensors;
@@ -30,7 +32,7 @@ namespace SmartRoom
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            AndroidX.AppCompat.Widget.Toolbar toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -38,14 +40,11 @@ namespace SmartRoom
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_menu);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            var mainTransaction = SupportFragmentManager.BeginTransaction();
-            mainTransaction.Add(Resource.Id.main_view, new Fragments.FragmentMain(), "Main");
-            mainTransaction.Commit();
-
-            _packagesManager = new Managers.PackagesManager(new Connectors.TcpConnector());
+            _tcpConnector = new Connectors.TcpConnector();
+            _packagesManager = new Managers.PackagesManager(_tcpConnector);
             _settings = new ViewModels.SettingsViewModel();
             _switches = new ViewModels.SwitchesViewModel(_packagesManager);
             _sensors = new ViewModels.SensorsViewModel(_packagesManager);
@@ -61,6 +60,17 @@ namespace SmartRoom
                     ViewModels.SettingsViewModel.Settings.Address,
                     ViewModels.SettingsViewModel.Settings.Port);
             });
+
+            _tcpConnector.ConnectionEvent += (s,e) => RunOnUiThread(() => ConnectionEvent(e));
+            FindViewById<Button>(Resource.Id.nav_reconnect).Click += delegate
+            {
+                _tcpConnector.Connect(ViewModels.SettingsViewModel.Settings.Address,
+                                      ViewModels.SettingsViewModel.Settings.Port);
+            };
+
+            var mainTransaction = SupportFragmentManager.BeginTransaction();
+            mainTransaction.Add(Resource.Id.main_view, new Fragments.FragmentMain(_tcpConnector, _settings), "Main");
+            mainTransaction.Commit();
         }
 
         public override void OnBackPressed()
@@ -142,6 +152,34 @@ namespace SmartRoom
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        private void ConnectionEvent(Events.ConnectionStatusEventArgs e)
+        {
+            var button = FindViewById<Button>(Resource.Id.nav_reconnect);
+            var status = FindViewById<TextView>(Resource.Id.nav_status);
+
+            switch (e.Status)
+            {
+                case Events.ConnectionStatusEventArgs.ConnectionStatus.FAILED:
+                case Events.ConnectionStatusEventArgs.ConnectionStatus.DISCONNECTED:
+                    button.Enabled = true;
+                    status.Text = Resources.GetString(Resource.String.text_disconnected);
+                    status.SetTextColor(Android.Graphics.Color.Red);
+                    break;
+                case Events.ConnectionStatusEventArgs.ConnectionStatus.CONNECTING:
+                    button.Enabled = false;
+                    status.Text = Resources.GetString(Resource.String.text_connecting);
+                    status.SetTextColor(Android.Graphics.Color.Orange);
+                    break;
+                case Events.ConnectionStatusEventArgs.ConnectionStatus.CONNECTED:
+                    button.Enabled = true;
+                    status.Text = Resources.GetString(Resource.String.text_connected);
+                    status.SetTextColor(Android.Graphics.Color.Green);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

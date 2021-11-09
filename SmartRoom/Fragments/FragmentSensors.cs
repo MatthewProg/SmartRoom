@@ -105,7 +105,7 @@ namespace SmartRoom.Fragments
         {
             if (v == null) return;
 
-            Activity.RunOnUiThread(() =>
+            Activity?.RunOnUiThread(() =>
             {
                 var title = v.FindViewById<TextView>(Resource.Id.sensors_title);
                 if (_sensors.Sensors.Count == 0)
@@ -150,7 +150,7 @@ namespace SmartRoom.Fragments
                     _sensorsManager.RefreshSensor(s);
 
                 await Task.Delay(500);
-                Activity.RunOnUiThread(() => { r.Refreshing = false; });
+                Activity?.RunOnUiThread(() => { r.Refreshing = false; });
             });
         }
 

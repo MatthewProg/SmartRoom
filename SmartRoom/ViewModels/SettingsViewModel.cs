@@ -101,7 +101,7 @@ namespace SmartRoom.ViewModels
                 }
             }
             else
-                await SaveModelAsync();
+                await SaveSettingsAsync(filename);
         }
 
         public Task SaveModelAsync(string filename = "settings.json")

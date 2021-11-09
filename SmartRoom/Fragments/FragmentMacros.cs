@@ -43,7 +43,7 @@ namespace SmartRoom.Fragments
             else
                 Task.WhenAll(_macrosManager.MacrosViewModel.TaskLoad, _switches.TaskLoad).ContinueWith(delegate
                 {
-                    Activity.RunOnUiThread(() => ShowLoaded(v));
+                    Activity?.RunOnUiThread(() => ShowLoaded(v));
                 });
 
             add.Click += Add_Click;
