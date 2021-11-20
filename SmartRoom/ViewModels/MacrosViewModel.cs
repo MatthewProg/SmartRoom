@@ -87,12 +87,13 @@ namespace SmartRoom.ViewModels
 
         private void MacroItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            SaveModelAsync();
+            if (e.PropertyName != "Executing")
+                SaveModelAsync();
         }
 
         private void MacroPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Running")
+            if (e.PropertyName != "Running" || e.PropertyName != "Expanded")
                 SaveModelAsync();
         }
 
@@ -112,6 +113,8 @@ namespace SmartRoom.ViewModels
                 using (var reader = new StreamReader(path))
                 {
                     Macros = JsonConvert.DeserializeObject<ObservableCollection<Models.MacroModel>>(await reader.ReadToEndAsync(), new Converters.MacroJsonConverter());
+                    if(Macros == null)
+                        Macros = new ObservableCollection<Models.MacroModel>();
                     Macros.CollectionChanged += MacrosCollectionChanged;
                     foreach (Models.MacroModel item in Macros)
                     {

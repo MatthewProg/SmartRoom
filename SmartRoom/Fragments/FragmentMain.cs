@@ -19,6 +19,7 @@ namespace SmartRoom.Fragments
     {
         private Interfaces.ITcpConnector _connector;
         private ViewModels.SettingsViewModel _settings;
+        private bool _paused;
         private View _view;
 
         public FragmentMain(ITcpConnector connector, SettingsViewModel settings)
@@ -35,6 +36,7 @@ namespace SmartRoom.Fragments
         public override void OnPause()
         {
             _connector.ConnectionEvent -= ConnectionEvent;
+            _paused = true;
             base.OnPause();
         }
 
@@ -54,8 +56,11 @@ namespace SmartRoom.Fragments
                 _settings.TaskLoad.ContinueWith(delegate 
                 {
                     Activity?.RunOnUiThread(() => {
-                        UpdateSettings(view);
-                        UpdateStatus(view);
+                        if (_paused == false)
+                        {
+                            UpdateSettings(view);
+                            UpdateStatus(view);
+                        }
                     });
                 });
 
@@ -74,6 +79,9 @@ namespace SmartRoom.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
+                if (_paused)
+                    return;
+
                 var button = _view.FindViewById<MaterialButton>(Resource.Id.main_connect);
                 var status = _view.FindViewById<TextView>(Resource.Id.main_status);
 

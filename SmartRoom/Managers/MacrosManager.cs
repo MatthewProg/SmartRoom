@@ -61,6 +61,7 @@ namespace SmartRoom.Managers
                 _tasks[macro].Item2.Cancel();
                 macro.Running = false;
                 _tasks[macro].Item1.Wait();
+                macro.Items.Where(x => x.Executing == true).ToList().ForEach(x=>x.Executing = false);
             }
 
             _tasks[macro].Item1.Dispose();
@@ -106,13 +107,17 @@ namespace SmartRoom.Managers
                     if (item.Enabled == false)
                         continue;
 
+                    item.Executing = true;
+
                     if (item is Models.SwitchModel)
                         _packagesManager.SetValue(item as Models.SwitchModel);
                     else if(item is Models.DelayMacroItemModel)
                         Delay((item as Models.DelayMacroItemModel).Delay, pause.Token);
 
+
                     if (token.IsCancellationRequested)
                     {
+                        item.Executing = false;
                         macro.Running = false;
                         return;
                     }
@@ -122,6 +127,7 @@ namespace SmartRoom.Managers
                         Delay(-1, pause.Token);
                         pause = new CancellationTokenSource();
                     }
+                    item.Executing = false;
                 }
             } while (macro.Repeat);
             macro.Running = false;

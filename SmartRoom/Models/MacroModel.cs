@@ -21,6 +21,7 @@ namespace SmartRoom.Models
         private bool _repeat;
         private bool _enabled;
         private bool _running;
+        private bool _expanded;
 
         public MacroModel()
         {
@@ -76,6 +77,19 @@ namespace SmartRoom.Models
 
                 _running = value;
                 OnPropertyChanged("Running");
+            }
+        }
+
+        [JsonIgnore]
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if(_expanded == value) return;
+
+                _expanded = value;
+                OnPropertyChanged("Expanded");
             }
         }
 

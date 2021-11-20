@@ -19,6 +19,7 @@ namespace SmartRoom.Models
         private string _title;
         private bool _fade;
         private bool _enabled;
+        private bool _executing;
 
         [JsonProperty(propertyName: "T")]
         public string Title
@@ -59,6 +60,19 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonIgnore]
+        public bool Executing 
+        {
+            get => _executing;
+            set
+            {
+                if(value == _executing) return;
+
+                _executing = value;
+                OnPropertyChanged("Executing");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected SwitchModel(SwitchModel model)
@@ -66,6 +80,7 @@ namespace SmartRoom.Models
             this.Fade = model.Fade;
             this.Enabled = model.Enabled;
             this.Title = model.Title;
+            this.Executing = model.Executing;
         }
 
         protected SwitchModel()
@@ -78,13 +93,15 @@ namespace SmartRoom.Models
             _title = title;
             _fade = fade;
             _enabled = enabled;
+            _executing = false;
         }
 
         public virtual bool Equals(SwitchModel other)
         {
             return (this.Fade == other.Fade &&
                     this.Enabled == other.Enabled &&
-                    this.Title == other.Title);
+                    this.Title == other.Title &&
+                    this.Executing == other.Executing);
         }
 
         protected virtual void OnPropertyChanged(String info)

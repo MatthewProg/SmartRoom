@@ -15,11 +15,12 @@ using System.Text;
 
 namespace SmartRoom.Models
 {
-    public class DelayMacroItemModel : Interfaces.IMacroItemModel
+    public class DelayMacroItemModel : IMacroItemModel
     {
         private string _title;
         private bool _enabled;
         private int _delay;
+        private bool _executing;
 
         [JsonProperty(PropertyName = "T")]
         public string Title
@@ -60,6 +61,19 @@ namespace SmartRoom.Models
             }
         }
 
+        [JsonIgnore]
+        public bool Executing
+        {
+            get => _executing;
+            set
+            {
+                if(_executing == value) return;
+
+                _executing = value;
+                OnPropertyChanged("Executing");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public DelayMacroItemModel()
@@ -72,6 +86,7 @@ namespace SmartRoom.Models
             this.Delay = m.Delay;
             this.Enabled = m.Enabled;
             this.Title = m.Title;
+            this.Executing = m.Executing;
         }
 
         public object Clone()

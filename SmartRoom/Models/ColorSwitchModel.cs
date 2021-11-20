@@ -124,7 +124,9 @@ namespace SmartRoom.Models
             var obj = JToken.FromObject(this);
             JObject o = (JObject)obj;
             JProperty color = new JProperty("C", Color.GetHex());
+            JProperty enabled = new JProperty("E", Enabled);
             o.AddFirst(color);
+            o.AddFirst(enabled);
             o.Add("F", Fade);
             return o.ToString();
         }
@@ -134,6 +136,8 @@ namespace SmartRoom.Models
             var o = JObject.Parse(json);
             Color.FromHex(o.Value<string>("C"));
             this.Fade = o.Value<bool>("F");
+            this.Enabled = o.Value<bool>("E");
+            o.Remove("E");
             o.Remove("C");
             o.Remove("F");
             var obj = o.ToObject<ColorSwitchModel>();

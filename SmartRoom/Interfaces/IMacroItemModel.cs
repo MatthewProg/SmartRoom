@@ -16,6 +16,7 @@ namespace SmartRoom.Interfaces
     {
         public string Title { get; set; }
         public bool Enabled { get; set; }
+        public bool Executing { get; set; }
 
         public string MacroSerialize();
         public IMacroItemModel MacroDeserialize(string json);

@@ -104,7 +104,7 @@ namespace SmartRoom.Adapters
             if (isNew)
             {
                 expand.Checked = false;
-                expand.CheckedChange += delegate { Expand_CheckedChange(expandLayout, cardView, expand.Checked); };
+                expand.CheckedChange += delegate { Expand_CheckedChange(expandLayout, cardView, item, expand.Checked); };
                 delete.Click += delegate { Delete_Click(item); };
                 edit.Click += delegate { Edit_Click(item); };
                 repeat.Click += delegate { Repeat_Click(item, repeat); };
@@ -123,6 +123,7 @@ namespace SmartRoom.Adapters
             title.Text = (string.IsNullOrWhiteSpace(item.Name) ? view.Resources.GetString(Resource.String.text_untitled) : item.Name);
             repeat.SetColorFilter(item.Repeat ? GetColor(Resource.Color.colorAccent) : GetColor(Resource.Color.button_material_dark));
             playpause.Checked = item.Running;
+            expand.Checked = item.Expanded;
 
             return view;
         }
@@ -178,8 +179,9 @@ namespace SmartRoom.Adapters
             _macrosManager.MacrosViewModel.Macros.Remove(model);
         }
 
-        private void Expand_CheckedChange(LinearLayout expand, AndroidX.CardView.Widget.CardView cardView, bool check)
+        private void Expand_CheckedChange(LinearLayout expand, AndroidX.CardView.Widget.CardView cardView, Models.MacroModel model, bool check)
         {
+            model.Expanded = check;
             if(check == true)
             {
                 AndroidX.Transitions.TransitionManager.BeginDelayedTransition(cardView, new AndroidX.Transitions.AutoTransition());

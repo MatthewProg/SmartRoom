@@ -58,7 +58,7 @@ namespace SmartRoom.Adapters
 
         private void ItemPropChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Enabled" || e.PropertyName == "Title" || e.PropertyName == "Color")
+            if (e.PropertyName == "Enabled" || e.PropertyName == "Title" || e.PropertyName == "Color" || e.PropertyName == "Executing")
             {
                 var index = Macro.Items.IndexOf(sender as Interfaces.IMacroItemModel);
                 _activity?.RunOnUiThread(() => NotifyItemChanged(index));
@@ -132,6 +132,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroToggleViewHolder;
 
                 v.Model = e;
+                v.CurrentIndicator.Visibility = e.Executing ? ViewStates.Visible : ViewStates.Invisible;
                 v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Toggle.Checked = e.Toggle;
                 v.Toggle.Enabled = e.Enabled;
@@ -143,6 +144,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroSliderViewHolder;
 
                 v.Model = e;
+                v.CurrentIndicator.Visibility = e.Executing ? ViewStates.Visible : ViewStates.Invisible;
                 v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Slider.Enabled = e.Enabled;
                 v.Slider.Progress = (int)Math.Round(e.Value * 100f);
@@ -154,6 +156,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroColorViewHolder;
 
                 v.Model = e;
+                v.CurrentIndicator.Visibility = e.Executing ? ViewStates.Visible : ViewStates.Invisible;
                 v.Title.Text = (string.IsNullOrWhiteSpace(e.Title) ? holder.ItemView.Resources.GetString(Resource.String.text_untitled) : e.Title);
                 v.Picker.Enabled = e.Enabled;
                 v.Picker.Color = e.Color.GetAndroid();
@@ -166,6 +169,7 @@ namespace SmartRoom.Adapters
                 var v = holder as ViewHolders.MacroDelayViewHolder;
 
                 v.Model = e;
+                v.CurrentIndicator.Visibility = e.Executing ? ViewStates.Visible : ViewStates.Invisible;
                 v.Value.Enabled = e.Enabled;
                 v.Value.Text = e.Delay.ToString();
             }
