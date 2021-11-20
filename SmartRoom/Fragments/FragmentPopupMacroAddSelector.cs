@@ -64,7 +64,7 @@ namespace SmartRoom.Fragments
 
             var res = new Android.Graphics.Drawables.InsetDrawable(
                 new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.White), 
-                5, 55, 5, 55);
+                2, 55, 2, 55);
             Dialog.Window.SetBackgroundDrawable(res);
 
             return view;
