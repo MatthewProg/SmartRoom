@@ -66,7 +66,7 @@ namespace SmartRoom.Tests
         [TestCase(120F, 0.8F, 0.56F, 29, 143, 29)]
         [TestCase(209F, 0F, 1F, 255, 255, 255)]
         [TestCase(290F, 1F, 0F, 0, 0, 0)]
-        [TestCase(64F, 0.18F, 0.9F, 227, 229, 188)]
+        [TestCase(63F, 0.18F, 0.9F, 227, 230, 188)]
         [TestCase(64F, 0.25F, 0.2F, 50, 51, 38)]
         public void FromHSV(float h, float s, float v, byte r, byte g, byte b)
         {

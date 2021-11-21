@@ -164,7 +164,7 @@ namespace SmartRoom.Models
         {
             if (hsl.S == 0)
             {
-                _rgb.R = _rgb.G = _rgb.B = (byte)Math.Round(hsl.L * 255);
+                _rgb.R = _rgb.G = _rgb.B = (byte)Math.Round(0.001 + hsl.L * 255);
             }
             else
             {
@@ -180,9 +180,9 @@ namespace SmartRoom.Models
                 else if (hsl.H >= 240F && hsl.H < 300F) { r = X; g = 0F; b = C; }
                 else { r = C; g = 0F; b = X; }
 
-                _rgb.R = (byte)Math.Round((r + m) * 255);
-                _rgb.G = (byte)Math.Round((g + m) * 255);
-                _rgb.B = (byte)Math.Round((b + m) * 255);
+                _rgb.R = (byte)Math.Round(0.001 + (r + m) * 255);
+                _rgb.G = (byte)Math.Round(0.001 + (g + m) * 255);
+                _rgb.B = (byte)Math.Round(0.001 + (b + m) * 255);
             }
             OnPropertyChanged("");
         }
@@ -200,9 +200,9 @@ namespace SmartRoom.Models
             else if (hsv.H >= 240F && hsv.H < 300F) { r = X; g = 0F; b = C; }
             else { r = C; g = 0F; b = X; }
 
-            _rgb.R = (byte)Math.Round((r + m) * 255);
-            _rgb.G = (byte)Math.Round((g + m) * 255);
-            _rgb.B = (byte)Math.Round((b + m) * 255);
+            _rgb.R = (byte)Math.Round(0.001 + (r + m) * 255);
+            _rgb.G = (byte)Math.Round(0.001 + (g + m) * 255);
+            _rgb.B = (byte)Math.Round(0.001 + (b + m) * 255);
             OnPropertyChanged("");
         }
 
