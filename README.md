@@ -1,6 +1,4 @@
-<p align="center" style="font-weight: bold;font-size: 2.5em">
-Smart Room (Android)
-</p>
+<h1 align="center">Smart Room (Android)</h1>
 
 <p align="center">
     <a href="https://github.com/VegetaTheKing/SmartRoom/actions/workflows/build-test-app.yml"><img src="https://github.com/VegetaTheKing/SmartRoom/actions/workflows/build-test-app.yml/badge.svg"></a>

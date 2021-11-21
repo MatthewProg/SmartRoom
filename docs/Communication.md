@@ -17,7 +17,7 @@
 ## Communication
 
 ESP-01S creates WiFi access point to which the device connects and starts telnet server to communicate.
-You can change SSID and password of AP as well as telnet server IP and port in the beginning of `{filename}` in `SmartRoom.WiFi` project.<br>
+You can change SSID and password of AP as well as telnet server IP and port in the beginning of <a href="https://github.com/VegetaTheKing/SmartRoom/blob/master/SmartRoom.WiFi/src/main.cpp">`main.cpp`</a> in `SmartRoom.WiFi` project.<br>
 
 ##### Default values
 
