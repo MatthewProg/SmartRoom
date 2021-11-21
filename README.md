@@ -72,10 +72,13 @@ _click image to play GIF_
 4.  In PIO Home click  Open project
 5. Navigate to repo location and open `SmartRoom.WiFi` or `SmartRoom.Controller`
 
+
 ##### Application projects
 1. Clone repository
     `git clone https://github.com/VegetaTheKing/SmartRoom.git`
 2. Open `SmartRoom.sln`
+
+`NOTE: If you run into problems with packages. Remove SmartRoom reference from SmartRoom.Tests project and try again. Don't forget to later add a reference`
 
 ## Documentation
 
