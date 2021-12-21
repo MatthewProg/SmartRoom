@@ -32,7 +32,7 @@ jobs:
       run: nuget restore ./SmartRoom.sln
       
     - name: Install NUnit.ConsoleRunner
-      run: nuget install NUnit.ConsoleRunner
+      run: nuget install NUnit.ConsoleRunner -Version 3.12.0
       
     - name: Add ref
       run: dotnet add ./SmartRoom.Tests/SmartRoom.Tests.csproj reference ./SmartRoom/SmartRoom.csproj

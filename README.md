@@ -1,8 +1,8 @@
 <h1 align="center">Smart Room (Android)</h1>
 
 <p align="center">
-    <a href="https://github.com/VegetaTheKing/SmartRoom/actions/workflows/build-test-app.yml"><img src="https://github.com/VegetaTheKing/SmartRoom/actions/workflows/build-test-app.yml/badge.svg"></a>
-    <a href="/./LICENSE"><img src="https://img.shields.io/github/license/VegetaTheKing/SmartRoom"></a>
+    <a href="https://github.com/MatthewProg/SmartRoom/actions/workflows/build-test-app.yml"><img src="https://github.com/MatthewProg/SmartRoom/actions/workflows/build-test-app.yml/badge.svg"></a>
+    <a href="/./LICENSE"><img src="https://img.shields.io/github/license/MatthewProg/SmartRoom"></a>
 </p>
 
 <details open="open">
@@ -64,7 +64,7 @@ _click image to play GIF_
 
 ##### Controller projects
 1. Clone repository
-    `git clone https://github.com/VegetaTheKing/SmartRoom.git`
+    `git clone https://github.com/MatthewProg/SmartRoom.git`
 2. Install PlatformIO IDE from <a href="https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide">link</a>
 3. Open VS Code
 4.  In PIO Home click  Open project
@@ -73,7 +73,7 @@ _click image to play GIF_
 
 ##### Application projects
 1. Clone repository
-    `git clone https://github.com/VegetaTheKing/SmartRoom.git`
+    `git clone https://github.com/MatthewProg/SmartRoom.git`
 2. Open `SmartRoom.sln`
 
 `NOTE: If you run into problems with packages. Remove SmartRoom reference from SmartRoom.Tests project and try again. Don't forget to later add a reference`
