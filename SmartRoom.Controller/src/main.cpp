@@ -10,20 +10,47 @@
 
 #define FADE_TIME 500
 
+enum Receiver
+{
+  ARD,
+  TLC,
+  ID
+};
+
 uint8_t lastReceived[BUFFER_SIZE];
 uint8_t feedback[FEEDBACK_SIZE];
-int currentFeedbackSize = 0;
+uint8_t *overflowBuffer;
 
-int arduino_values[17]; // 1-13 + A0-A3
+uint16_t overflowBufferSize = 0;
+uint16_t currentFeedbackSize = 0;
+uint16_t overflowSendIndex = 0;
+
+byte *(*ids[32])(uint16_t *);
+
+uint8_t arduino_values[17]; // 1-13 + A0-A3
 
 void requestEvent();
 void receiveEvent(int howMany);
-void interpreteInput(uint8_t input[], int inSize);
+void interpreteInput(uint8_t *input, int inSize);
 
-void setup() {
-  #if DEBUG_LOG
+/*  IDs  */
+byte *id0(uint16_t *size)
+{
+  static char output[] = "0Hello World!0";
+  *size = strlen(output);
+  output[0] = (byte)0b11000000; //Feedback pkg
+  output[(*size)-1] = (byte)0x03; //End of Text 
+  return (byte *)(output);
+}
+/* - - - */
+
+void setup()
+{
+#if DEBUG_LOG
   Serial.begin(9600);
-  #endif
+#endif
+
+  ids[0] = id0;
 
   Wire.begin(I2C_SLAVE);
   Wire.onRequest(requestEvent);
@@ -32,160 +59,232 @@ void setup() {
   Tlc.init(0);
 }
 
-void loop() {
+void loop()
+{
   tlc_updateFades();
   delay(1);
 }
 
-void requestEvent() {
-  #if DEBUG_LOG
+void requestEvent()
+{
+#if DEBUG_LOG
   Serial.print("Feedback(");
   Serial.print(currentFeedbackSize);
   Serial.print("): ");
-  for(int x=0;x<currentFeedbackSize;x++)
+  for (uint16_t x = 0; x < currentFeedbackSize; x++)
   {
     Serial.print((byte)feedback[x]);
     Serial.print(" ");
   }
-  Serial.write("\n");
-  #endif
-  Wire.write(currentFeedbackSize);
-  Wire.write(feedback, currentFeedbackSize);
+  Serial.print("\nRemaining(");
+  Serial.print(overflowBufferSize - overflowSendIndex);
+  Serial.print(")\n");
+#endif
+  if (currentFeedbackSize > 0)
+    Wire.write(feedback, currentFeedbackSize);
+
+  if (overflowBufferSize - overflowSendIndex > 0)
+  {
+    if (overflowBufferSize - overflowSendIndex >= BUFFER_SIZE)
+    {
+      memcpy(feedback, overflowBuffer + overflowSendIndex, BUFFER_SIZE);
+      overflowSendIndex += BUFFER_SIZE;
+      currentFeedbackSize = BUFFER_SIZE;
+    }
+    else
+    {
+      memcpy(feedback, overflowBuffer + overflowSendIndex, overflowBufferSize - overflowSendIndex);
+      free(overflowBuffer);
+      overflowBufferSize = 0;
+      currentFeedbackSize = overflowBufferSize - overflowSendIndex;
+    }
+  }
+  else
+  {
+    if (currentFeedbackSize < BUFFER_SIZE)
+      Wire.write((byte)0b01100000); //EOT
+
+    currentFeedbackSize = 0;
+  }
+}
+
+uint16_t binMap(uint16_t value, char shift)
+{
+  if (shift > 0)
+    return (value << shift) + (value / (1 << shift));
+  return (value >> (-shift));
 }
 
 void receiveEvent(int howMany)
 {
   //clear arrays
-  memset(feedback,0,FEEDBACK_SIZE);
-  memset(lastReceived,0,howMany);
-  
+  memset(feedback, 0, FEEDBACK_SIZE);
+  memset(lastReceived, 0, howMany);
+
   int i = 0;
-  while (Wire.available()) 
+  while (Wire.available())
   {
-      uint8_t tmp = Wire.read();
+    uint8_t tmp = Wire.read();
 
-      lastReceived[i] = tmp;
+    lastReceived[i] = tmp;
 
-      if(i<BUFFER_SIZE-1)i++;
+    if (i < BUFFER_SIZE - 1)
+      i++;
   }
-  #if DEBUG_LOG
+#if DEBUG_LOG
   Serial.print("Received: ");
-  for(int x=0;x<i;x++)
+  for (int x = 0; x < i; x++)
   {
     Serial.print((byte)lastReceived[x]);
     Serial.print(" ");
   }
   Serial.print("\n");
-  #endif
+#endif
 
-  interpreteInput(lastReceived,i);
+  interpreteInput(lastReceived, i);
 }
 
 void setValueArduino(byte pin, byte value)
 {
-  arduino_values[pin] = value;
-  value = map(value, 0, 255, 0, 1);
+  if (pin > 17)
+    return;
 
-  #if DEBUG_LOG
+  pinMode(pin, OUTPUT);
+  if (pin == 3 || pin == 5 || pin == 6 || (pin >= 9 && pin <= 11) || pin >= 14) //Analog write
+  {
+    arduino_values[pin - 1] = value;
+    analogWrite(pin, value);
+  }
+  else //Digital write
+  {
+    value = binMap(value, -7);
+    arduino_values[pin - 1] = (value == 1) ? 255 : 0;
+    digitalWrite(pin, value);
+  }
+
+#if DEBUG_LOG
   Serial.print("To Arduino -> Port: ");
   Serial.print(pin);
   Serial.print(" Value: ");
   Serial.println(value);
-  #endif
-
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, value);
+#endif
 }
 
-void setValueTlc(byte pin, int value, bool fade)
+void setValueTlc(byte pin, byte value, bool fade)
 {
-  #if DEBUG_LOG
+#if DEBUG_LOG
   Serial.print("To Tlc -> Port: ");
   Serial.print(pin);
   Serial.print(" Value: ");
   Serial.print(value);
   Serial.print(" Fade: ");
   Serial.println(fade);
-  #endif
+#endif
 
   uint32_t now = millis();
-  if (tlc_fadeBufferSize < TLC_FADE_BUFFER_LENGTH - 2) 
+  if (tlc_fadeBufferSize < TLC_FADE_BUFFER_LENGTH - 2)
+  {
     if (!tlc_isFading(pin))
-      tlc_addFade(pin, Tlc.get(pin), value, now, now + ((fade) ? FADE_TIME : 1));
+      tlc_addFade(pin, Tlc.get(pin), binMap(value, 4), now, now + ((fade) ? FADE_TIME : 1));
     else
     {
       tlc_removeFades(pin);
-      tlc_addFade(pin, Tlc.get(pin), value, now, now + ((fade) ? FADE_TIME : 1));
+      tlc_addFade(pin, Tlc.get(pin), binMap(value, 4), now, now + ((fade) ? FADE_TIME : 1));
     }
-  
+  }
 }
 
-void interpreteInput(uint8_t input[], int inSize)
+byte *encodePinValue(byte pin, byte value, Receiver rec)
 {
-  if((input[0] & 128) >> 7 == 0) //Set value
+  static byte output[2] = {0, 0};
+
+  output[0] = pin;
+  output[1] = value;
+
+  if (rec == Receiver::TLC)
+    output[0] += 0b00100000;
+  else if (rec == Receiver::ID)
+    output[0] += 0b01000000;
+
+  return output;
+}
+
+void writeToFeedback(byte *bytes, uint16_t size)
+{
+#if DEBUG_LOG
+  Serial.print("WriteToFeedback: ");
+  for (uint16_t x = 0; x < size; x++)
   {
-    for(int i=1;i<inSize;i+=2)
+    Serial.print(bytes[x]);
+    Serial.print(" ");
+  }
+  Serial.write("\n");
+#endif
+
+  uint16_t i = 0;
+  for (; i < size; i++)
+  {
+    if (currentFeedbackSize < FEEDBACK_SIZE)
     {
-      byte pin = input[i];
-      pin = pin << 3;
-      pin = pin >> 3; 
+      feedback[currentFeedbackSize] = bytes[i];
+      currentFeedbackSize++;
+    }
+    else
+      break;
+  }
+  if (i != size)
+  {
+    realloc(overflowBuffer, overflowBufferSize + (size - i));
+    for (; i < size; i++)
+    {
+      overflowBuffer[overflowBufferSize] = bytes[i];
+      overflowBufferSize++;
+    }
+  }
+}
 
-      #if DEBUG_LOG
-      Serial.print("Input -> Port: ");
-      Serial.print(pin);
-      Serial.print(" Value: ");
-      Serial.println((byte)input[i+1]);
-      #endif
+void interpreteInput(uint8_t *input, int inSize)
+{
+  byte *(*idsToExec[32])(uint16_t *);
+  uint8_t idsToExecIndex = 0;
 
-      if((input[i] & 128) >> 7 == 0) //Pass To Arduino  
-        setValueArduino(pin, input[i+1]);
+  for (int i = 0; i < inSize;)
+  {
+    if (input[i] == 0b01100000) //EOT
+      break;
+    else if (input[i] >> 7 == 1) //Set PKG
+    {
+      bool tlc = ((input[i] & 0b01000000) >> 6);
+      bool fade = ((input[i] & 0b00100000) >> 5);
+      byte pin = (input[i] & 0b00011111);
+      i++;
+
+      if (tlc == false)
+        setValueArduino(pin, input[i]);
       else
-      {
-        bool fade = (input[i] & 64) >> 6;
-        setValueTlc(pin, map(input[i+1], 0, 255, 0, 4095), fade);
-      }
-      
+        setValueTlc(pin, input[i], fade);
     }
-  }
-  else //Get value
-  {
-    currentFeedbackSize = 0;
-
-    for(int i=1;i<inSize;i++)
+    else //Get PKG
     {
-      if(i>=inSize) break;
-      currentFeedbackSize+=2;
-
-      byte pin = input[i];
-      pin = pin << 3;
-      pin = pin >> 3; 
-
-      #if DEBUG_LOG
-      Serial.print("Feedback -> Port: ");
-      Serial.print(pin);
-      #endif
-
-      if((input[i] & 128) >> 7 == 0) //Get Arduino 
+      byte pin = (input[i] & 0b00011111);
+      if ((input[i] & 0b01100000) == 0b00000000) //Arduino pin
+        writeToFeedback(encodePinValue(pin, arduino_values[pin], Receiver::ARD), 2);
+      else if ((input[i] & 0b01100000) == 0b00100000) //Tlc pin
+        writeToFeedback(encodePinValue(pin, binMap(Tlc.get(pin), -4), Receiver::TLC), 2);
+      else if ((input[i] & 0b01100000) == 0b01000000) //ID
       {
-        feedback[(i*2)-2] = pin;
-        feedback[(i*2)-1] = 255; //CHANGE THIS TO GETTING OUTPUT VALUE!
-        #if DEBUG_LOG
-        Serial.print(" Value: ");
-        Serial.print("255");
-        Serial.write("\n");
-        #endif
-      }
-      else //Get Tlc
-      {
-        feedback[(i*2)-2] = pin;
-        feedback[(i*2)-1] = map(Tlc.get(pin), 0, 4095, 0, 255);
-        #if DEBUG_LOG
-        Serial.print(" Value: ");
-        Serial.print((byte)feedback[(i*2)-1]);
-        Serial.write("\n");
-        #endif
+        idsToExec[idsToExecIndex] = ids[pin];
+        idsToExecIndex++;
       }
     }
+    i++;
   }
-  
+
+  //Get values from ids
+  for (uint8_t i = 0; i < idsToExecIndex; i++)
+  {
+    uint16_t size = 0;
+    byte *value = (idsToExec[i])(&size);
+    writeToFeedback(value, size);
+  }
 }

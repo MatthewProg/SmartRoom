@@ -125,6 +125,27 @@ namespace SmartRoom.Connectors
                 });
         }
 
+        private int GetMaxRange(List<byte> array, int limit)
+        {
+            if (array.Count <= limit)
+                return array.Count;
+            else
+            {
+                int currMax = 0;
+                for(int i = 0; i<array.Count; )
+                {
+                    if (array[i] >> 7 == 1) i += 2; //SET PKG
+                    else i++; //GET PKG
+
+                    if (i <= limit)
+                        currMax = i;
+                    else
+                        return currMax;
+                }
+                return currMax;
+            }
+        }
+
         private async Task Process()
         {
             if (IsConnected)
@@ -132,8 +153,10 @@ namespace SmartRoom.Connectors
                 var stream = _client.GetStream();
                 while (_sendBuffer.Count != 0)
                 {
-                    var range = (_sendBuffer.Count < SERVER_BUFFER ? _sendBuffer.Count : SERVER_BUFFER);
-                    var toSend = _sendBuffer.GetRange(0, range); //Potential fragmentation of SET pkg!
+                    var range = GetMaxRange(_sendBuffer, SERVER_BUFFER - 1);
+                    var toSend = _sendBuffer.GetRange(0, range);
+                    toSend.Add(0b01100000); //EOT
+
                     lock (_transmitLock)
                     {
                         _sendBuffer.RemoveRange(0, range);

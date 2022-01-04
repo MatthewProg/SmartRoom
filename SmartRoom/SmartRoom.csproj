@@ -64,6 +64,9 @@
     <AndroidKeyStore>false</AndroidKeyStore>
     <AndroidSigningKeyStore>
     </AndroidSigningKeyStore>
+    <AndroidSupportedAbis />
+    <AndroidSigningStorePass>
+    </AndroidSigningStorePass>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
